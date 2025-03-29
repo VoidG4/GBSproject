@@ -1,14 +1,9 @@
 package com.example.gbsproject;
 
 import javafx.fxml.FXML;
-import javafx.event.ActionEvent;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.text.Font;
 import javafx.scene.layout.AnchorPane;
@@ -16,8 +11,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-
-import java.io.IOException;
 
 public class LoginPageViewController {
     @FXML
@@ -97,30 +90,5 @@ public class LoginPageViewController {
         stackPane.prefHeightProperty().bind(mainAnchorPane.heightProperty());
 
         mainAnchorPane.getChildren().add(stackPane);
-    }
-
-    @FXML
-    protected  void homeButtonClick(ActionEvent event) {
-        try {
-            // Load the FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("login-page-view.fxml"));
-            Parent root = loader.load();
-
-
-            // Get the current stage (window)
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            double width = stage.getWidth();
-            double height = stage.getHeight();
-
-            // Set the new scene
-            Scene scene = new Scene(root, width, height);
-            stage.setScene(scene);
-
-            stage.setWidth(width);
-            stage.setHeight(height);
-            stage.show();
-        } catch (IOException e) {
-            //e.printStackTrace();
-        }
     }
 }
