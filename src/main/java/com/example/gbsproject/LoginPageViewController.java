@@ -73,12 +73,12 @@ public class LoginPageViewController {
         btnLogin.setFont(customFont);
         btnLogin.setStyle("-fx-background-color: rgba(2,93,11,0.8); -fx-text-fill: white;-fx-font-size: 16px; -fx-padding: 10px 15px;"); // Light green with white text
 
-        Hyperlink emailLink = new Hyperlink("Sign up");
+        Hyperlink signUpText= new Hyperlink("Sign up");
         Hyperlink link = new Hyperlink("Forgotten your username?");
         Hyperlink link2 = new Hyperlink("Forgotten your password?");
         link2.setStyle(" -fx-font-size: 14px; -fx-underline: true");
         link.setStyle(" -fx-font-size: 14px; -fx-underline: true");
-        emailLink.setStyle(" -fx-font-size: 14px; -fx-underline: true");
+        signUpText.setStyle(" -fx-font-size: 14px; -fx-underline: true");
 
         // Add elements to GridPane
         gridPane.add(lblTitle, 0, 0, 2, 1); // Title spans across two columns
@@ -89,7 +89,7 @@ public class LoginPageViewController {
         gridPane.add(link, 0, 5, 2, 1);
         gridPane.add(link2, 0, 6, 2, 1);
         gridPane.add(lblText2, 0, 8, 2, 1);
-        gridPane.add(emailLink, 0, 9, 2, 1);
+        gridPane.add(signUpText, 0, 9, 2, 1);
 
         // Wrap GridPane inside a StackPane to keep it centered horizontally and lower vertically
         StackPane stackPane = new StackPane(gridPane);
@@ -100,10 +100,47 @@ public class LoginPageViewController {
 
         mainAnchorPane.getChildren().add(stackPane);
 
-        btnLogin.setOnAction(_ -> openNextFXML());
+        btnLogin.setOnAction(_ -> Login());
+        signUpText.setOnMouseClicked(_ ->SignUp());
+
     }
 
-    private void openNextFXML() {
+    private void SignUp() {
+        try {
+            // Get the current stage and save its position and size
+            Stage currentStage = (Stage) mainAnchorPane.getScene().getWindow();
+            double currentWidth = currentStage.getWidth();
+            double currentHeight = currentStage.getHeight();
+            double currentX = currentStage.getX();
+            double currentY = currentStage.getY();
+
+            // Load the new FXML file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("sign-up-page-view.fxml")); // Replace with the actual path to the new FXML file
+            Parent nextPage = loader.load();
+
+            // Create a new scene with the loaded FXML
+            Scene nextScene = new Scene(nextPage);
+
+            // Set the stage to the previous size and position
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+            stage.setWidth(currentWidth);
+            stage.setHeight(currentHeight);
+            stage.setX(currentX);
+            stage.setY(currentY);
+
+            // Set the new scene and show the stage
+            stage.setScene(nextScene);
+            stage.show();
+
+        } catch (IOException e) {
+            // Log the exception using a logger instead of printStackTrace()
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
+            // Optionally, show a dialog to notify the user of the error
+            showErrorDialog();
+        }
+    }
+
+    private void Login() {
         try {
             // Get the current stage and save its position and size
             Stage currentStage = (Stage) mainAnchorPane.getScene().getWindow();
