@@ -1,0 +1,3 @@
+# GBS Project (Greece Business School)
+
+This is a project...
