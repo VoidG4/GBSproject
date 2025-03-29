@@ -2,8 +2,11 @@ package com.example.gbsproject;
 
 import javafx.fxml.FXML;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.text.Font;
 import javafx.scene.layout.AnchorPane;
@@ -11,10 +14,16 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class LoginPageViewController {
     @FXML
     private AnchorPane mainAnchorPane;
+
+    private static final Logger LOGGER = Logger.getLogger(LoginPageViewController.class.getName());
 
     @FXML
     public void initialize() {
@@ -90,5 +99,51 @@ public class LoginPageViewController {
         stackPane.prefHeightProperty().bind(mainAnchorPane.heightProperty());
 
         mainAnchorPane.getChildren().add(stackPane);
+
+        btnLogin.setOnAction(_ -> openNextFXML());
+    }
+
+    private void openNextFXML() {
+        try {
+            // Get the current stage and save its position and size
+            Stage currentStage = (Stage) mainAnchorPane.getScene().getWindow();
+            double currentWidth = currentStage.getWidth();
+            double currentHeight = currentStage.getHeight();
+            double currentX = currentStage.getX();
+            double currentY = currentStage.getY();
+
+            // Load the new FXML file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("home-page-view.fxml")); // Replace with the actual path to the new FXML file
+            Parent nextPage = loader.load();
+
+            // Create a new scene with the loaded FXML
+            Scene nextScene = new Scene(nextPage);
+
+            // Set the stage to the previous size and position
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+            stage.setWidth(currentWidth);
+            stage.setHeight(currentHeight);
+            stage.setX(currentX);
+            stage.setY(currentY);
+
+            // Set the new scene and show the stage
+            stage.setScene(nextScene);
+            stage.show();
+
+        } catch (IOException e) {
+            // Log the exception using a logger instead of printStackTrace()
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
+            // Optionally, show a dialog to notify the user of the error
+            showErrorDialog();
+        }
+    }
+
+    // Utility method to show error dialogs
+    private void showErrorDialog() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText("There was an issue opening the next page.");
+        alert.showAndWait();
     }
 }

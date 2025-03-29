@@ -11,6 +11,7 @@ module com.example.gbsproject {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.desktop;
+    requires java.logging;
 
     opens com.example.gbsproject to javafx.fxml;
     exports com.example.gbsproject;
