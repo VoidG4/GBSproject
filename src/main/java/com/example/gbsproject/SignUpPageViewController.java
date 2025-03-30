@@ -1,5 +1,6 @@
 package com.example.gbsproject;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,6 +22,11 @@ public class SignUpPageViewController {
 
     public AnchorPane mainAnchorPane;
     public void initialize() {
+
+        Platform.runLater(() -> {
+            // Request focus on the mainAnchorPane to remove focus from text fields
+            mainAnchorPane.requestFocus();
+        });
 
         // Create the GridPane
         GridPane gridPane = new GridPane();

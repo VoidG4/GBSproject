@@ -36,6 +36,9 @@ public class LoginPageViewController {
             stage.setMinWidth(1100);
             stage.setMaxWidth(2000);
             stage.setMinHeight(790);
+
+            // Request focus on the mainAnchorPane to remove focus from text fields
+            mainAnchorPane.requestFocus();
         });
 
 

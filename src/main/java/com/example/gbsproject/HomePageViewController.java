@@ -12,13 +12,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-
 import java.io.IOException;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class HomePageViewController {
-
     private static final Logger LOGGER = Logger.getLogger(HomePageViewController.class.getName());
     public Button buttonMenuAccount;
     public AnchorPane mainAnchorPane;
@@ -36,7 +35,6 @@ public class HomePageViewController {
         helpPane.setVisible(false);
         studiesPane.setVisible(false);
     }
-
 
     @FXML
     protected void accountClicked() {
