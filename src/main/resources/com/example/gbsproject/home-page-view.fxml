@@ -194,24 +194,23 @@
         </fill>
     </Circle>
     <Circle fill="DODGERBLUE" layoutX="751.0" layoutY="1029.0" radius="151.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-    <Label layoutX="377.0" layoutY="211.0" maxWidth="1.7976931348623157E308" prefHeight="78.0" prefWidth="507.0" style="-fx-alignment: center;" text="Welcome User" AnchorPane.leftAnchor="377.0" AnchorPane.rightAnchor="390.0">
+    <Label layoutX="328.0" layoutY="130.0" maxWidth="1.7976931348623157E308" prefHeight="34.0" prefWidth="212.0" style="-fx-alignment: center;" text="Welcome User" AnchorPane.leftAnchor="328.0" AnchorPane.rightAnchor="734.0">
         <font>
             <Font name="Droid Sans Mono Dotted" size="27.0" />
         </font>
     </Label>
-    <AnchorPane fx:id="accountPane" layoutX="1027.0" layoutY="144.0" onMouseClicked="#accountClicked" prefHeight="116.0" prefWidth="180.0" style="-fx-background-color: white;" visible="false" AnchorPane.rightAnchor="67.0">
+    <AnchorPane fx:id="accountPane" layoutX="1003.0" layoutY="149.0" onMouseClicked="#accountClicked" prefHeight="116.0" prefWidth="180.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="91.0">
         <Hyperlink layoutX="18.0" layoutY="18.0" text="Update contact details" />
         <Hyperlink layoutX="18.0" layoutY="46.0" text="Change password" />
         <Hyperlink layoutX="18.0" layoutY="75.0" onMouseClicked="#logOut" text="Log out" />
     </AnchorPane>
-    <AnchorPane fx:id="helpPane" layoutX="1000.0" layoutY="149.0" prefHeight="98.0" prefWidth="151.0" style="-fx-background-color: white;" visible="false" AnchorPane.rightAnchor="1.0">
+    <AnchorPane fx:id="helpPane" layoutX="1000.0" layoutY="149.0" prefHeight="98.0" prefWidth="151.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="1.0">
         <Label layoutX="14.0" layoutY="14.0" prefHeight="72.0" prefWidth="259.0" text="Need Help?&#10;For help with any of your studies,&#10;please contact the Student Engagement&#10;team at " />
         <Hyperlink layoutX="62.0" layoutY="65.0" text="enquiries@gbs.gr" />
     </AnchorPane>
-    <AnchorPane fx:id="studiesPane" layoutX="932.0" layoutY="148.0" prefHeight="109.0" prefWidth="145.0"
-                style="-fx-background-color: white;" visible="false" AnchorPane.rightAnchor="197.0">
-        <Hyperlink layoutX="14.0" layoutY="14.0" text="Enrol for a course"/>
-        <Hyperlink layoutX="15.0" layoutY="40.0" text="View GPA"/>
-        <Hyperlink layoutX="15.0" layoutY="68.0" text="Print certificate"/>
+    <AnchorPane fx:id="studiesPane" layoutX="911.0" layoutY="148.0" prefHeight="109.0" prefWidth="145.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="218.0">
+        <Hyperlink layoutX="14.0" layoutY="14.0" text="Enrol for a course" />
+        <Hyperlink layoutX="15.0" layoutY="40.0" text="View GPA" />
+        <Hyperlink layoutX="15.0" layoutY="68.0" text="Print certificate" />
     </AnchorPane>
 </AnchorPane>
