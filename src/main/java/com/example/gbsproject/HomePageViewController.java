@@ -1,5 +1,6 @@
 package com.example.gbsproject;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,6 +42,17 @@ public class HomePageViewController {
     private AnchorPane studiesPane;
     @FXML
     public void initialize() {
+        Platform.runLater(() -> {
+            // Now we can safely access the Stage
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+
+            // Set the minimum width and height for the stage (window)
+            stage.setMinWidth(1460);
+            stage.setMinHeight(790);
+
+            // Request focus on the mainAnchorPane to remove focus from text fields
+            mainAnchorPane.requestFocus();
+        });
         initializeScrollPane();
     }
 
@@ -168,13 +180,13 @@ public class HomePageViewController {
         AITutorLabel.setAlignment(Pos.CENTER); // Center align the label text
 
         ImageView courses = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/online-course.png"))));
-        courses.setFitHeight(35);
-        courses.setFitWidth(35);
+        courses.setFitHeight(40);
+        courses.setFitWidth(40);
         courses.setPreserveRatio(true);
 
         ImageView aiTutor = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/generative.png"))));
-        aiTutor.setFitHeight(40);
-        aiTutor.setFitWidth(40);
+        aiTutor.setFitHeight(45);
+        aiTutor.setFitWidth(45);
         aiTutor.setPreserveRatio(true);
 
         // Position the label at the top of the scroll pane
@@ -184,11 +196,6 @@ public class HomePageViewController {
         AnchorPane.setTopAnchor(courses, 250.0); // Adjust vertical positioning
         AnchorPane.setLeftAnchor(courses, 200.0); // Adjust horizontal positioning
 
-        AnchorPane.setTopAnchor(AITutorLabel, 610.0); // Adjust vertical positioning
-        AnchorPane.setLeftAnchor(AITutorLabel, 240.0); // Adjust horizontal positioning
-
-        AnchorPane.setTopAnchor(aiTutor, 610.0); // Adjust vertical positioning
-        AnchorPane.setLeftAnchor(aiTutor, 190.0); // Adjust horizontal positioning
 
         // Create the new AnchorPane for the AI Tutor section
         AnchorPane aiTutorSection = new AnchorPane();
@@ -224,45 +231,37 @@ public class HomePageViewController {
         // Bind the width of aiTutorSection to the mainAnchorPane width (dynamic resizing)
         aiTutorSection.prefWidthProperty().bind(mainAnchorPane.widthProperty().subtract(400));  // Subtract margins
 
-        // Set the vertical position of the AI Tutor section
-        AnchorPane.setTopAnchor(aiTutorSection, 660.0); // Adjust vertical position
-        AnchorPane.setLeftAnchor(aiTutorSection, 150.0);
-
-        TilePane buttonContainer = new TilePane();
+        FlowPane buttonContainer = new FlowPane();
         buttonContainer.setHgap(10);
         buttonContainer.setVgap(10);
-        buttonContainer.setPrefColumns(4); // Number of buttons per row
+        buttonContainer.setPrefWrapLength(800); // Adjust width to allow wrapping
         buttonContainer.setAlignment(Pos.CENTER);
-        buttonContainer.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
+        buttonContainer.setStyle("-fx-background-color: transparent;");
 
-        // Add multiple buttons for scrolling
-        for (int i = 1; i <= 8; i++) {
-            Button button = new Button("Course" + i);
-            button.setFont(new Font(20)); // Bigger letters
-            button.setPrefSize(350, 100); // Bigger button size
+        double buttonWidth = 291;
+        double buttonHeight = 100;
 
-            // Set the style for the button
+        int i;
+        for (i = 1; i <= 8; i++) {
+            Button button = new Button("Course " + i);
+            button.setFont(new Font(20));
+            button.setPrefSize(buttonWidth, buttonHeight);
             button.setStyle("-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray; -fx-font-weight: bold;");
-            button.setAlignment(Pos.BASELINE_LEFT); // Align text to the left
-            button.setWrapText(true); // Enable multiline text
+            button.setAlignment(Pos.BASELINE_LEFT);
+            button.setWrapText(true);
 
-            // Load the image for the arrow
             ImageView arrow = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/next.png"))));
             arrow.setFitHeight(32);
             arrow.setFitWidth(32);
             arrow.setPreserveRatio(true);
-
-            // Set the button's graphic to the arrow and position it to the right of the text
             button.setGraphic(arrow);
-            button.setGraphicTextGap(10); // Space between the text and the graphic (arrow)
+            button.setGraphicTextGap(10);
 
-            // Apply the underline effect on hover
             button.setOnMouseEntered(_ -> {
                 button.setStyle("-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray; -fx-underline: true;-fx-font-weight: bold;");
                 button.setCursor(Cursor.HAND);
             });
 
-            // Remove the underline effect when hover exits
             button.setOnMouseExited(_ -> {
                 button.setStyle("-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray;-fx-font-weight: bold;");
                 button.setCursor(Cursor.DEFAULT);
@@ -271,29 +270,37 @@ public class HomePageViewController {
             buttonContainer.getChildren().add(button);
         }
 
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(buttonContainer);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
-        scrollPane.setPannable(true);
+        double topAnchor = 300.0;
+        double flowPaneHeight = buttonHeight*(i-1)/3;
+        double lastButtonY = topAnchor+flowPaneHeight;
 
-        scrollPane.prefWidthProperty().bind(mainAnchorPane.widthProperty().subtract(400));
-        // MANUAL POSITIONING (example: placing it 100px from the top and 200px from the left)
-        AnchorPane.setTopAnchor(scrollPane, 300.0);  // Change this value to move it up or down
-        AnchorPane.setLeftAnchor(scrollPane, 150.0); // Change this value to move it left or right
+        AnchorPane.setTopAnchor(buttonContainer, 300.0);
+        AnchorPane.setLeftAnchor(buttonContainer, 150.0);
+
+        AnchorPane.setTopAnchor(AITutorLabel, lastButtonY + 50); // Adjust vertical positioning
+        AnchorPane.setLeftAnchor(AITutorLabel, 235.0); // Adjust horizontal positioning
+
+        AnchorPane.setTopAnchor(aiTutor, lastButtonY + 50); // Adjust vertical positioning
+        AnchorPane.setLeftAnchor(aiTutor, 185.0); // Adjust horizontal positioning
+
+        // Set the vertical position of the AI Tutor section
+        AnchorPane.setTopAnchor(aiTutorSection, lastButtonY + 100); // Adjust vertical position
+        AnchorPane.setLeftAnchor(aiTutorSection, 150.0);
 
         // Add listener to resize width of ScrollPane based on window size
         mainAnchorPane.widthProperty().addListener((_, _, _) -> {
             // Adjust width of ScrollPane dynamically as the form resizes
-            scrollPane.prefWidthProperty().bind(mainAnchorPane.widthProperty().subtract(400));
+            buttonContainer.prefWidthProperty().bind(mainAnchorPane.widthProperty().subtract(400));
         });
 
         mainAnchorPane.getChildren().add(courses);
         mainAnchorPane.getChildren().add(coursesLabel);
-        mainAnchorPane.getChildren().add(scrollPane);
+        mainAnchorPane.getChildren().add(buttonContainer);
         mainAnchorPane.getChildren().add(AITutorLabel);
         mainAnchorPane.getChildren().add(aiTutor);
         mainAnchorPane.getChildren().add(aiTutorSection);
+
+
     }
 
     @NotNull

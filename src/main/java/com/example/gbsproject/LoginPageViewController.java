@@ -161,10 +161,10 @@ public class LoginPageViewController {
 
             // Set the stage to the previous size and position
             Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
-            stage.setWidth(currentWidth);
-            stage.setHeight(currentHeight);
-            stage.setX(currentX);
-            stage.setY(currentY);
+            stage.setWidth(1600);
+            stage.setHeight(950);
+            stage.centerOnScreen();
+
 
             // Set the new scene and show the stage
             stage.setScene(nextScene);
