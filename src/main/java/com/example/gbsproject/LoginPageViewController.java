@@ -145,13 +145,6 @@ public class LoginPageViewController {
 
     private void Login() {
         try {
-            // Get the current stage and save its position and size
-            Stage currentStage = (Stage) mainAnchorPane.getScene().getWindow();
-            double currentWidth = currentStage.getWidth();
-            double currentHeight = currentStage.getHeight();
-            double currentX = currentStage.getX();
-            double currentY = currentStage.getY();
-
             // Load the new FXML file
             FXMLLoader loader = new FXMLLoader(getClass().getResource("home-page-view.fxml")); // Replace with the actual path to the new FXML file
             Parent nextPage = loader.load();
