@@ -115,7 +115,7 @@
         </fill>
     </Circle>
     <Circle fill="DODGERBLUE" layoutX="434.0" layoutY="3.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-    <AnchorPane layoutX="931.0" layoutY="37.0" prefHeight="122.0" prefWidth="92.0" AnchorPane.rightAnchor="251.0">
+    <AnchorPane layoutX="936.0" layoutY="36.0" prefHeight="122.0" prefWidth="92.0" AnchorPane.rightAnchor="246.0">
         <cursor>
             <Cursor fx:constant="HAND" />
         </cursor>
@@ -159,6 +159,9 @@
             <font>
                 <Font name="System Bold" size="15.0" />
             </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
         </Button>
     </AnchorPane>
     <AnchorPane layoutX="839.0" layoutY="61.0" prefHeight="78.0" prefWidth="78.0" AnchorPane.rightAnchor="357.0">
@@ -194,11 +197,6 @@
         </fill>
     </Circle>
     <Circle fill="DODGERBLUE" layoutX="751.0" layoutY="1029.0" radius="151.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-    <Label layoutX="328.0" layoutY="130.0" maxWidth="1.7976931348623157E308" prefHeight="34.0" prefWidth="212.0" style="-fx-alignment: center;" text="Welcome User" AnchorPane.leftAnchor="328.0" AnchorPane.rightAnchor="734.0">
-        <font>
-            <Font name="Droid Sans Mono Dotted" size="27.0" />
-        </font>
-    </Label>
     <AnchorPane fx:id="accountPane" layoutX="1003.0" layoutY="149.0" onMouseClicked="#accountClicked" prefHeight="116.0" prefWidth="180.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="91.0">
         <Hyperlink layoutX="18.0" layoutY="18.0" text="Update contact details" />
         <Hyperlink layoutX="18.0" layoutY="46.0" text="Change password" />
