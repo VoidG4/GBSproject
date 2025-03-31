@@ -2,6 +2,7 @@ package com.example.gbsproject;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -12,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -44,7 +46,7 @@ public class HomePageViewController {
             Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
 
             // Set the minimum width and height for the stage (window)
-            stage.setMinWidth(1460);
+            stage.setMinWidth(1600);
             stage.setMinHeight(790);
 
             // Request focus on the mainAnchorPane to remove focus from text fields
@@ -165,16 +167,40 @@ public class HomePageViewController {
     }
 
     private void initializeScrollPane() {
-        // Create the label for "Courses"
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.setPrefWidth(1600);
+        scrollPane.setPrefHeight(780);
+        scrollPane.setStyle("-fx-background-color: transparent;-fx-background: transparent;");
+
+        // Stops the event from giving focus to the ScrollPane
+        scrollPane.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_PRESSED, Event::consume);
+
+
+        AnchorPane.setTopAnchor(scrollPane, 180.0);
+        AnchorPane.setLeftAnchor(scrollPane, 0.0);
+        AnchorPane.setRightAnchor(scrollPane, 0.0);
+        AnchorPane.setBottomAnchor(scrollPane, 0.0);
+
+        AnchorPane contentPane = new AnchorPane();
+        contentPane.setMinHeight(1000); // Ensure enough height for scrolling
+        contentPane.setStyle("-fx-background-color: transparent;");
+
         Label coursesLabel = new Label("COURSES");
-        coursesLabel.setFont(new Font("Arial", 30)); // Set large font size
-        coursesLabel.setStyle("-fx-font-weight: bold;"); // Make the font bold
-        coursesLabel.setAlignment(Pos.CENTER); // Center align the label text
+        coursesLabel.setFont(new Font("Arial", 30));
+        coursesLabel.setStyle("-fx-font-weight: bold;-fx-background-color: transparent; -fx-text-fill: black;");
+        coursesLabel.setAlignment(Pos.CENTER);
 
         Label AITutorLabel = new Label("AI TUTOR");
-        AITutorLabel.setFont(new Font("Arial", 30)); // Set large font size
-        AITutorLabel.setStyle("-fx-font-weight: bold;"); // Make the font bold
-        AITutorLabel.setAlignment(Pos.CENTER); // Center align the label text
+        AITutorLabel.setFont(new Font("Arial", 30));
+        AITutorLabel.setStyle("-fx-font-weight: bold;-fx-background-color: transparent;-fx-text-fill: black;");
+        AITutorLabel.setAlignment(Pos.CENTER);
+
+        Label announcementLabel = new Label("ANNOUNCEMENTS");
+        announcementLabel.setFont(new Font("Arial", 30));
+        announcementLabel.setStyle("-fx-font-weight: bold;-fx-background-color: transparent; -fx-text-fill: black;");
+        announcementLabel.setAlignment(Pos.CENTER);
 
         ImageView courses = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/online-course.png"))));
         courses.setFitHeight(40);
@@ -186,33 +212,32 @@ public class HomePageViewController {
         aiTutor.setFitWidth(45);
         aiTutor.setPreserveRatio(true);
 
-        // Position the label at the top of the scroll pane
-        AnchorPane.setTopAnchor(coursesLabel, 250.0); // Adjust vertical positioning
-        AnchorPane.setLeftAnchor(coursesLabel, 250.0); // Adjust horizontal positioning
+        ImageView announcements = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/megaphone.png"))));
+        announcements.setFitHeight(45);
+        announcements.setFitWidth(45);
+        announcements.setPreserveRatio(true);
 
-        AnchorPane.setTopAnchor(courses, 250.0); // Adjust vertical positioning
-        AnchorPane.setLeftAnchor(courses, 200.0); // Adjust horizontal positioning
+        AnchorPane.setTopAnchor(coursesLabel, 50.0);
+        AnchorPane.setLeftAnchor(coursesLabel, 250.0);
 
+        AnchorPane.setTopAnchor(courses, 50.0);
+        AnchorPane.setLeftAnchor(courses, 200.0);
 
-        // Create the new AnchorPane for the AI Tutor section
         AnchorPane aiTutorSection = new AnchorPane();
         aiTutorSection.setStyle("-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 10;");
 
-        // Create the title label
         Label aiTutorTitleLabel = new Label("Welcome to the AI Tutor");
-        aiTutorTitleLabel.setFont(new Font("Arial", 24)); // Large title font
-        aiTutorTitleLabel.setStyle("-fx-font-weight: bold;");
+        aiTutorTitleLabel.setFont(new Font("Arial", 24));
+        aiTutorTitleLabel.setStyle("-fx-font-weight: bold;-fx-text-fill: black;");
 
         Label aiTutorDescriptionLabel = getAiTutorDescriptionLabel();
 
-        // Create the green button
         Button beginWithAITutorButton = new Button("Begin with AI Tutor");
         beginWithAITutorButton.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;");
         beginWithAITutorButton.setFont(new Font("Arial", 18));
         beginWithAITutorButton.setPrefSize(200, 50);
         beginWithAITutorButton.setAlignment(Pos.CENTER);
 
-        // Position the elements within the AI Tutor section
         AnchorPane.setTopAnchor(aiTutorTitleLabel, 20.0);
         AnchorPane.setLeftAnchor(aiTutorTitleLabel, 20.0);
 
@@ -222,24 +247,48 @@ public class HomePageViewController {
         AnchorPane.setTopAnchor(beginWithAITutorButton, 140.0);
         AnchorPane.setLeftAnchor(beginWithAITutorButton, 20.0);
 
-        // Add the title, description, and button to the AI Tutor section
         aiTutorSection.getChildren().addAll(aiTutorTitleLabel, aiTutorDescriptionLabel, beginWithAITutorButton);
+        aiTutorSection.prefWidthProperty().bind(contentPane.widthProperty().subtract(400));
 
-        // Bind the width of aiTutorSection to the mainAnchorPane width (dynamic resizing)
-        aiTutorSection.prefWidthProperty().bind(mainAnchorPane.widthProperty().subtract(400));  // Subtract margins
 
-        FlowPane buttonContainer = new FlowPane();
-        buttonContainer.setHgap(10);
-        buttonContainer.setVgap(10);
-        buttonContainer.setPrefWrapLength(800); // Adjust width to allow wrapping
-        buttonContainer.setAlignment(Pos.CENTER);
+        AnchorPane announcementPane = new AnchorPane();
+        announcementPane.setStyle("-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 10;");
+
+        Label titleLabel = new Label("News");
+        titleLabel.setFont(new Font("Arial", 24));
+        titleLabel.setStyle("-fx-font-weight: bold;-fx-text-fill: black;");
+
+        Label descriptionLabel = getAnnouncementDescriptionLabel();
+
+        Button actionButton = new Button("Learn More");
+        actionButton.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;");
+        actionButton.setFont(new Font("Arial", 18));
+        actionButton.setPrefSize(200, 50);
+        actionButton.setAlignment(Pos.CENTER);
+
+        AnchorPane.setTopAnchor(titleLabel, 20.0);
+        AnchorPane.setLeftAnchor(titleLabel, 20.0);
+
+        AnchorPane.setTopAnchor(descriptionLabel, 60.0);
+        AnchorPane.setLeftAnchor(descriptionLabel, 20.0);
+
+        AnchorPane.setTopAnchor(actionButton, 140.0);
+        AnchorPane.setLeftAnchor(actionButton, 20.0);
+        announcementPane.getChildren().addAll(titleLabel, descriptionLabel, actionButton);
+        announcementPane.prefWidthProperty().bind(contentPane.widthProperty().subtract(400));
+
+
+
+        FlowPane buttonContainer = new FlowPane(10, 10);
+        buttonContainer.setPrefWrapLength(1000);
+        buttonContainer.setAlignment(Pos.TOP_LEFT);
         buttonContainer.setStyle("-fx-background-color: transparent;");
 
-        double buttonWidth = 291;
+        double buttonWidth = 385;
         double buttonHeight = 100;
 
         int i;
-        for (i = 1; i <= 8; i++) {
+        for (i = 1; i <= 9; i++) {
             Button button = new Button("Course " + i);
             button.setFont(new Font(20));
             button.setPrefSize(buttonWidth, buttonHeight);
@@ -267,38 +316,37 @@ public class HomePageViewController {
             buttonContainer.getChildren().add(button);
         }
 
-        double topAnchor = 300.0;
-        double flowPaneHeight = buttonHeight*(i-1)/3;
-        double lastButtonY = topAnchor+flowPaneHeight;
-
-        AnchorPane.setTopAnchor(buttonContainer, 300.0);
+        double topAnchor = 100.0;
+        double buttonContainerHeight = buttonHeight*(i-1)/3;
+        AnchorPane.setTopAnchor(buttonContainer, topAnchor);
         AnchorPane.setLeftAnchor(buttonContainer, 150.0);
+        AnchorPane.setRightAnchor(buttonContainer, 250.0);
 
-        AnchorPane.setTopAnchor(AITutorLabel, lastButtonY + 50); // Adjust vertical positioning
-        AnchorPane.setLeftAnchor(AITutorLabel, 235.0); // Adjust horizontal positioning
+        AnchorPane.setTopAnchor(AITutorLabel, topAnchor + buttonContainerHeight + 100);
+        AnchorPane.setLeftAnchor(AITutorLabel, 235.0);
 
-        AnchorPane.setTopAnchor(aiTutor, lastButtonY + 50); // Adjust vertical positioning
-        AnchorPane.setLeftAnchor(aiTutor, 185.0); // Adjust horizontal positioning
+        AnchorPane.setTopAnchor(aiTutor, topAnchor + buttonContainerHeight+ 100);
+        AnchorPane.setLeftAnchor(aiTutor, 185.0);
 
-        // Set the vertical position of the AI Tutor section
-        AnchorPane.setTopAnchor(aiTutorSection, lastButtonY + 100); // Adjust vertical position
+        AnchorPane.setTopAnchor(aiTutorSection, topAnchor + buttonContainerHeight+ 150);
         AnchorPane.setLeftAnchor(aiTutorSection, 150.0);
 
-        // Add listener to resize width of ScrollPane based on window size
-        mainAnchorPane.widthProperty().addListener((_, _, _) -> {
-            // Adjust width of ScrollPane dynamically as the form resizes
-            buttonContainer.prefWidthProperty().bind(mainAnchorPane.widthProperty().subtract(400));
-        });
+        AnchorPane.setTopAnchor(announcementLabel, topAnchor + buttonContainerHeight + 450);
+        AnchorPane.setLeftAnchor(announcementLabel, 235.0);
 
-        mainAnchorPane.getChildren().add(courses);
-        mainAnchorPane.getChildren().add(coursesLabel);
-        mainAnchorPane.getChildren().add(buttonContainer);
-        mainAnchorPane.getChildren().add(AITutorLabel);
-        mainAnchorPane.getChildren().add(aiTutor);
-        mainAnchorPane.getChildren().add(aiTutorSection);
+        AnchorPane.setTopAnchor(announcements, topAnchor + buttonContainerHeight+ 450);
+        AnchorPane.setLeftAnchor(announcements, 185.0);
 
+        AnchorPane.setTopAnchor(announcementPane, topAnchor + buttonContainerHeight+ 500);
+        AnchorPane.setLeftAnchor(announcementPane, 150.0);
 
+        contentPane.getChildren().addAll(courses, coursesLabel, buttonContainer, AITutorLabel, aiTutor, aiTutorSection, announcementLabel, announcements, announcementPane);
+        scrollPane.setContent(contentPane);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Ensure vertical scroll bar
+
+        mainAnchorPane.getChildren().add(scrollPane);
     }
+
 
     @NotNull
     private static Label getAiTutorDescriptionLabel() {
@@ -310,4 +358,13 @@ public class HomePageViewController {
         return aiTutorDescriptionLabel;
     }
 
+    @NotNull
+    private static Label getAnnouncementDescriptionLabel() {
+        Label descriptionLabel = new Label("Stay updated with the latest announcements and important updates here. Never miss out on crucial information!");
+        descriptionLabel.setFont(new Font("Arial", 18));
+        descriptionLabel.setWrapText(true);
+        descriptionLabel.setMaxWidth(600);
+        descriptionLabel.setStyle("-fx-text-fill: #333;");
+        return descriptionLabel;
+    }
 }

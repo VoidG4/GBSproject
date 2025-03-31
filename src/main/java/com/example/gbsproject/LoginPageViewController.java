@@ -108,6 +108,13 @@ public class LoginPageViewController {
 
     }
 
+    @FXML
+    private void formClicked(){
+        // Request focus on the mainAnchorPane to remove focus from text fields
+        mainAnchorPane.requestFocus();
+    }
+
+
     private void SignUp() {
         try {
             // Get the current stage and save its position and size
@@ -155,7 +162,7 @@ public class LoginPageViewController {
             // Set the stage to the previous size and position
             Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
             stage.setWidth(1600);
-            stage.setHeight(950);
+            stage.setHeight(1000);
             stage.centerOnScreen();
 
 

@@ -1,6 +1,7 @@
 package com.example.gbsproject;
 
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,6 +22,7 @@ public class SignUpPageViewController {
     private static final Logger LOGGER = Logger.getLogger(SignUpPageViewController.class.getName());
 
     public AnchorPane mainAnchorPane;
+    @FXML
     public void initialize() {
 
         Platform.runLater(() -> {
@@ -109,6 +111,12 @@ public class SignUpPageViewController {
         mainAnchorPane.getChildren().add(stackPane);
 
         btnSignUp.setOnMouseClicked(_ ->SignUp());
+    }
+
+    @FXML
+    private void formClicked(){
+        // Request focus on the mainAnchorPane to remove focus from text fields
+        mainAnchorPane.requestFocus();
     }
 
     private void SignUp() {
