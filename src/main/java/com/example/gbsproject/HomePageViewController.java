@@ -128,6 +128,10 @@ public class HomePageViewController {
         }
     }
 
+    @FXML
+    protected void certificateClicked(){
+
+    }
 
     @FXML
     protected  void homeButtonClick(ActionEvent event) {
@@ -304,12 +308,12 @@ public class HomePageViewController {
             button.setGraphicTextGap(10);
 
             button.setOnMouseEntered(_ -> {
-                button.setStyle("-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray; -fx-underline: true;-fx-font-weight: bold;");
+                button.setStyle("-fx-border-width: 3px;-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: #72B3FF; -fx-underline: true;-fx-font-weight: bold;");
                 button.setCursor(Cursor.HAND);
             });
 
             button.setOnMouseExited(_ -> {
-                button.setStyle("-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray;-fx-font-weight: bold;");
+                button.setStyle("-fx-border-width: 1px;-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color:  lightgray;-fx-font-weight: bold;");
                 button.setCursor(Cursor.DEFAULT);
             });
 

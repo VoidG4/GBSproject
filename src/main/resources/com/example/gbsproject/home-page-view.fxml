@@ -209,6 +209,6 @@
     <AnchorPane fx:id="studiesPane" layoutX="911.0" layoutY="148.0" prefHeight="109.0" prefWidth="145.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="218.0">
         <Hyperlink layoutX="14.0" layoutY="14.0" text="Enrol for a course" />
         <Hyperlink layoutX="15.0" layoutY="40.0" text="View GPA" />
-        <Hyperlink layoutX="15.0" layoutY="68.0" text="Print certificate" />
+        <Hyperlink layoutX="15.0" layoutY="68.0" onMouseClicked="#certificateClicked" text="Print certificate" />
     </AnchorPane>
 </AnchorPane>
