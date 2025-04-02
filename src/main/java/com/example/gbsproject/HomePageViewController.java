@@ -292,7 +292,7 @@ public class HomePageViewController {
         double buttonHeight = 100;
 
         int i;
-        for (i = 1; i <= 9; i++) {
+        for (i = 1; i <= 6 ; i++) {
             Button button = new Button("Course " + i);
             button.setFont(new Font(20));
             button.setPrefSize(buttonWidth, buttonHeight);
