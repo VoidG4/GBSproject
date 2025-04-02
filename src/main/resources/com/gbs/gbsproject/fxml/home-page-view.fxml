@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="mainAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="1000.0" onMouseClicked="#formClicked" prefHeight="728.0" prefWidth="1274.0" style="-fx-background-color: rgb(240,240,240);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.gbsproject.SignUpPageViewController">
+<AnchorPane fx:id="mainAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="1000.0" onMouseClicked="#formClicked" prefHeight="728.0" prefWidth="1274.0" style="-fx-background-color: rgb(240,240,240);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.HomePageViewController">
     <Circle fill="#168fff" layoutX="132.0" layoutY="80.0" radius="170.0" strokeType="INSIDE" strokeWidth="0.0">
         <stroke>
             <LinearGradient>
@@ -115,25 +115,67 @@
         </fill>
     </Circle>
     <Circle fill="DODGERBLUE" layoutX="434.0" layoutY="3.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-    <AnchorPane layoutX="931.0" layoutY="37.0" prefHeight="122.0" prefWidth="92.0" AnchorPane.rightAnchor="251.0">
+    <AnchorPane layoutX="936.0" layoutY="36.0" prefHeight="122.0" prefWidth="92.0" AnchorPane.rightAnchor="246.0">
         <cursor>
             <Cursor fx:constant="HAND" />
         </cursor>
+        <ImageView fitHeight="52.0" fitWidth="52.0" layoutX="21.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@/studies.png" />
+        </ImageView>
+        <Button fx:id="buttonMenuStudies" alignment="BOTTOM_CENTER" layoutX="9.0" layoutY="31.0" mnemonicParsing="false" onMouseClicked="#studiesClicked" prefHeight="76.0" prefWidth="77.0" style="-fx-background-color: rgba(0,0,0,0);" text="Studies" underline="true">
+            <font>
+                <Font name="System Bold" size="15.0" />
+            </font>
+            <contextMenu>
+                <ContextMenu>
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                    </items>
+                </ContextMenu>
+            </contextMenu>
+        </Button>
     </AnchorPane>
     <AnchorPane layoutX="1040.0" layoutY="46.0" prefHeight="98.0" prefWidth="89.0" AnchorPane.rightAnchor="142.0">
         <cursor>
             <Cursor fx:constant="HAND" />
         </cursor>
+        <ImageView fitHeight="62.0" fitWidth="52.0" layoutX="22.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@/account.png" />
+        </ImageView>
+        <Button fx:id="buttonMenuAccount" alignment="BOTTOM_CENTER" layoutX="3.0" layoutY="22.0" mnemonicParsing="false" onMouseClicked="#accountClicked" prefHeight="76.0" prefWidth="89.0" style="-fx-background-color: rgba(0,0,0,0);" text="Account" underline="true">
+            <font>
+                <Font name="System Bold" size="15.0" />
+            </font>
+        </Button>
     </AnchorPane>
     <AnchorPane layoutX="1149.0" layoutY="38.0" prefHeight="109.0" prefWidth="79.0" AnchorPane.rightAnchor="46.0">
         <cursor>
             <Cursor fx:constant="HAND" />
         </cursor>
+        <ImageView fitHeight="52.0" fitWidth="52.0" layoutX="14.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@/help.png" />
+        </ImageView>
+        <Button alignment="BOTTOM_CENTER" layoutX="2.0" layoutY="29.0" mnemonicParsing="false" onMouseClicked="#helpClicked" prefHeight="76.0" prefWidth="77.0" style="-fx-background-color: rgba(0,0,0,0);" text="Help" underline="true">
+            <font>
+                <Font name="System Bold" size="15.0" />
+            </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+        </Button>
     </AnchorPane>
     <AnchorPane layoutX="839.0" layoutY="61.0" prefHeight="78.0" prefWidth="78.0" AnchorPane.rightAnchor="357.0">
         <cursor>
             <Cursor fx:constant="HAND" />
         </cursor>
+        <ImageView layoutX="14.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@/home.png" />
+        </ImageView>
+        <Button alignment="BOTTOM_CENTER" layoutX="6.0" layoutY="7.0" mnemonicParsing="false" onAction="#homeButtonClick" prefHeight="76.0" prefWidth="67.0" style="-fx-background-color: rgba(0,0,0,0);" text="Home" underline="true">
+            <font>
+                <Font name="System Bold" size="15.0" />
+            </font>
+        </Button>
     </AnchorPane>
     <Circle fill="#23c2d763" layoutX="133.0" layoutY="829.0" radius="327.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
     <Circle layoutX="487.0" layoutY="948.0" radius="232.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0">
@@ -155,4 +197,18 @@
         </fill>
     </Circle>
     <Circle fill="DODGERBLUE" layoutX="751.0" layoutY="1029.0" radius="151.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+    <AnchorPane fx:id="accountPane" layoutX="1003.0" layoutY="149.0" onMouseClicked="#accountClicked" prefHeight="116.0" prefWidth="180.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="91.0">
+        <Hyperlink layoutX="18.0" layoutY="18.0" text="Update contact details" />
+        <Hyperlink layoutX="18.0" layoutY="46.0" text="Change password" />
+        <Hyperlink layoutX="18.0" layoutY="75.0" onMouseClicked="#logOut" text="Log out" />
+    </AnchorPane>
+    <AnchorPane fx:id="helpPane" layoutX="1000.0" layoutY="149.0" prefHeight="98.0" prefWidth="151.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="1.0">
+        <Label layoutX="14.0" layoutY="14.0" prefHeight="72.0" prefWidth="259.0" text="Need Help?&#10;For help with any of your studies,&#10;please contact the Student Engagement&#10;team at " />
+        <Hyperlink layoutX="62.0" layoutY="65.0" text="enquiries@gbs.gr" />
+    </AnchorPane>
+    <AnchorPane fx:id="studiesPane" layoutX="911.0" layoutY="148.0" prefHeight="109.0" prefWidth="145.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="218.0">
+        <Hyperlink layoutX="14.0" layoutY="14.0" text="Enrol for a course" />
+        <Hyperlink layoutX="15.0" layoutY="40.0" text="View GPA" />
+        <Hyperlink layoutX="15.0" layoutY="68.0" onMouseClicked="#certificateClicked" text="Print certificate" />
+    </AnchorPane>
 </AnchorPane>

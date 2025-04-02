@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.gbsproject.AdminPageViewController">
+<AnchorPane fx:id="mainAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="1000.0" onMouseClicked="#formClicked" prefHeight="728.0" prefWidth="1274.0" style="-fx-background-color: rgb(240,240,240);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.SignUpPageViewController">
     <Circle fill="#168fff" layoutX="132.0" layoutY="80.0" radius="170.0" strokeType="INSIDE" strokeWidth="0.0">
         <stroke>
             <LinearGradient>
@@ -155,9 +155,4 @@
         </fill>
     </Circle>
     <Circle fill="DODGERBLUE" layoutX="751.0" layoutY="1029.0" radius="151.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-    <Label layoutX="377.0" layoutY="211.0" maxWidth="1.7976931348623157E308" prefHeight="78.0" prefWidth="507.0" style="-fx-alignment: center;" text="Admin page&#10;" AnchorPane.leftAnchor="377.0" AnchorPane.rightAnchor="390.0">
-        <font>
-            <Font name="Droid Sans Mono Dotted" size="27.0" />
-        </font>
-    </Label>
 </AnchorPane>

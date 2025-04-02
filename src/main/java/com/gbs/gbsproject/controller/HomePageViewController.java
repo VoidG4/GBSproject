@@ -1,4 +1,4 @@
-package com.example.gbsproject;
+package com.gbs.gbsproject.controller;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -102,7 +102,7 @@ public class HomePageViewController {
     protected void logOut() {
         try {
             // Load the FXML file for the login page
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("login-page-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/login-page-view.fxml"));
             Parent root = loader.load();
 
             // Get the current stage (window) from the list of all windows
@@ -137,7 +137,7 @@ public class HomePageViewController {
     protected  void homeButtonClick(ActionEvent event) {
         try {
             // Load the FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("home-page-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/home-page-view.fxml"));
             Parent root = loader.load();
 
 

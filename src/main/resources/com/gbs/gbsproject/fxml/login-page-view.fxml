@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="mainAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="1000.0" onMouseClicked="#formClicked" prefHeight="728.0" prefWidth="1274.0" style="-fx-background-color: rgb(240,240,240);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.gbsproject.LoginPageViewController">
+<AnchorPane fx:id="mainAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="1000.0" onMouseClicked="#formClicked" prefHeight="728.0" prefWidth="1274.0" style="-fx-background-color: rgb(240,240,240);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.LoginPageViewController">
     <Circle fill="#168fff" layoutX="132.0" layoutY="80.0" radius="170.0" strokeType="INSIDE" strokeWidth="0.0">
         <stroke>
             <LinearGradient>

@@ -1,4 +1,4 @@
-package com.example.gbsproject;
+package com.gbs.gbsproject;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +10,7 @@ import java.io.IOException;
 public class GBSApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(GBSApplication.class.getResource("login-page-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(GBSApplication.class.getResource("/com/gbs/gbsproject/fxml/login-page-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1300, 800);
         stage.setTitle("GBS");
         stage.setScene(scene);

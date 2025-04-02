@@ -1,4 +1,4 @@
-package com.example.gbsproject;
+package com.gbs.gbsproject.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -129,7 +129,7 @@ public class SignUpPageViewController {
             double currentY = currentStage.getY();
 
             // Load the new FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("login-page-view.fxml")); // Replace with the actual path to the new FXML file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/login-page-view.fxml")); // Replace with the actual path to the new FXML file
             Parent nextPage = loader.load();
 
             // Create a new scene with the loaded FXML

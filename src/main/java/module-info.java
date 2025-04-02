@@ -14,6 +14,8 @@ module com.example.gbsproject {
     requires java.logging;
     requires annotations;
 
-    opens com.example.gbsproject to javafx.fxml;
-    exports com.example.gbsproject;
+    opens com.gbs.gbsproject to javafx.fxml;
+    exports com.gbs.gbsproject;
+    exports com.gbs.gbsproject.controller;
+    opens com.gbs.gbsproject.controller to javafx.fxml;
 }
