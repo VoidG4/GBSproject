@@ -106,6 +106,36 @@ public class HomePageViewController {
     }
 
     @FXML
+    protected void gpaClicked() {
+        try {
+            // Load the FXML file for the login page
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/gpa-view.fxml"));
+            Parent root = loader.load();
+
+            // Get the current stage (window) from the list of all windows
+            Stage stage = (Stage) Stage.getWindows().stream()
+                    .filter(Window::isShowing)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("No window found"));
+
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+
+            // Set the new scene with the same window size
+            Scene scene = new Scene(root, width, height);
+            stage.setScene(scene);
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.show();
+        } catch (IOException e) {
+            // Log the exception using a logger instead of printStackTrace()
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the login page", e);
+            // Optionally, show a dialog to notify the user of the error
+            showErrorDialog();
+        }
+    }
+
+    @FXML
     protected void logOut() {
         try {
             // Load the FXML file for the login page
