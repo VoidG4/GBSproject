@@ -10,9 +10,10 @@ module com.example.gbsproject {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
-    requires java.desktop;
     requires java.logging;
     requires annotations;
+    requires itextpdf;
+    requires javafx.swing;
 
     opens com.gbs.gbsproject to javafx.fxml;
     exports com.gbs.gbsproject;

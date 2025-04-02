@@ -1,5 +1,10 @@
 package com.gbs.gbsproject.controller;
 
+import com.itextpdf.text.Rectangle;
+
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfWriter;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -22,6 +27,8 @@ import javafx.stage.Window;
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.util.Objects;
@@ -47,7 +54,7 @@ public class HomePageViewController {
 
             // Set the minimum width and height for the stage (window)
             stage.setMinWidth(1600);
-            stage.setMinHeight(790);
+            //stage.setMinHeight(790);
 
             // Request focus on the mainAnchorPane to remove focus from text fields
             mainAnchorPane.requestFocus();
@@ -130,7 +137,46 @@ public class HomePageViewController {
 
     @FXML
     protected void certificateClicked(){
+        try {
+            // Create and save the PDF in the Downloads folder
+            String pdfPath = savePdfToDownloads();
 
+            String os = System.getProperty("os.name").toLowerCase();  // Get the OS name and convert to lowercase
+
+            try {
+                ProcessBuilder processBuilder;
+
+                if (os.contains("win")) {
+                    // Command to open Chrome (Windows example)
+                    processBuilder = new ProcessBuilder("cmd", "/c", "start", "chrome", pdfPath);
+
+                } else if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
+                    // Command for Linux or macOS (xdg-open on Linux, open on macOS)
+                    if (os.contains("mac")) {
+                        processBuilder = new ProcessBuilder("open", pdfPath);  // macOS-specific
+                    } else {
+                        processBuilder = new ProcessBuilder("xdg-open", pdfPath);  // Linux-specific
+                    }
+
+                } else {
+                    System.out.println("Unknown OS: " + os);
+                    return;
+                }
+
+                // Start the process
+                Process process = processBuilder.start();
+                process.waitFor();  // Optionally wait for the process to finish
+
+            } catch (IOException | InterruptedException e) {
+                System.out.println("Error opening URL or file: " + e.getMessage());
+            }
+
+        } catch (Exception e) {
+            // Log the exception using a logger instead of printStackTrace()
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the login page", e);
+            // Optionally, show a dialog to notify the user of the error
+            showErrorDialog();
+        }
     }
 
     @FXML
@@ -351,6 +397,89 @@ public class HomePageViewController {
         mainAnchorPane.getChildren().add(scrollPane);
     }
 
+    // Method to create PDF and save it in the Downloads folder
+    private String savePdfToDownloads() {
+        try {
+            // Define the path where the PDF will be saved
+            String userHome = System.getProperty("user.home");
+            String downloadsPath = userHome + File.separator + "Downloads";
+            String pdfPath = downloadsPath + File.separator + "Certificate_of_Completion.pdf";
+
+            // Create the document in landscape orientation
+            Document document = new Document(PageSize.A4.rotate());
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
+
+            // Open the document for writing
+            document.open();
+
+            // Load the background image
+            String backgroundPath = "/home/gat/IdeaProjects/GBSproject/src/main/resources/background.png";
+            com.itextpdf.text.Image backgroundImage = com.itextpdf.text.Image.getInstance(backgroundPath);
+            backgroundImage.setAbsolutePosition(0, 90);
+            backgroundImage.scaleToFit(PageSize.A4.rotate().getWidth(), PageSize.A4.rotate().getHeight()); // Scale it to cover the whole page
+            document.add(backgroundImage);
+
+            // Add "Congratulations" heading in black font
+            com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 48, com.itextpdf.text.Font.BOLD, BaseColor.BLACK); // Black color
+            Paragraph title = new Paragraph("Congratulations!", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            title.setSpacingBefore(100); // Add space before title
+            document.add(title);
+
+            // Add certificate body text in black font
+            com.itextpdf.text.Font bodyFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 24, com.itextpdf.text.Font.NORMAL, BaseColor.BLACK); // Black color
+            Paragraph body = new Paragraph("This certificate is awarded to", bodyFont);
+            body.setAlignment(Element.ALIGN_CENTER);
+            body.setSpacingAfter(20);
+            document.add(body);
+
+            // Add recipient name placeholder (you can change this dynamically later)
+            com.itextpdf.text.Font nameFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 30, com.itextpdf.text.Font.BOLDITALIC, BaseColor.BLACK); // Black color
+            Paragraph recipient = new Paragraph("[Recipient Name]", nameFont);
+            recipient.setAlignment(Element.ALIGN_CENTER);
+            recipient.setSpacingAfter(40);
+            document.add(recipient);
+
+            // Add the certificate details
+            Paragraph details = new Paragraph("For successfully completing the course at\n" +
+                    "Greece Business School", bodyFont);
+            details.setAlignment(Element.ALIGN_CENTER);
+            details.setSpacingAfter(40);
+            document.add(details);
+
+            // Add a line (for separation)
+            Paragraph line = new Paragraph("------------------------------------------------------------");
+            line.setAlignment(Element.ALIGN_CENTER);
+            line.setSpacingAfter(40);
+            document.add(line);
+
+
+            // Add the blue rectangle at the bottom
+            PdfContentByte canvas = writer.getDirectContent();
+            Rectangle blueRectangle = new Rectangle(0, 0, PageSize.A4.rotate().getWidth(), 100); // Rectangle at the bottom
+            BaseColor lightBlue = new BaseColor(40, 126, 255);
+            blueRectangle.setBackgroundColor(lightBlue); // Blue color
+            canvas.rectangle(blueRectangle);
+            canvas.fill(); // Fill the rectangle
+
+            // Add the date
+            Paragraph date = new Paragraph("Date: April 2025", bodyFont);
+            date.setAlignment(Element.ALIGN_CENTER);
+            document.add(date);
+
+            // Close the document
+            document.close();
+
+            return pdfPath;
+
+        } catch (Exception e) {
+            // Log the exception using a logger instead of printStackTrace()
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
+            // Optionally, show a dialog to notify the user of the error
+            showErrorDialog();
+        }
+        return null;
+    }
 
     @NotNull
     private static Label getAiTutorDescriptionLabel() {
