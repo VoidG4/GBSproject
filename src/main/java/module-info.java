@@ -14,6 +14,8 @@ module com.example.gbsproject {
     requires annotations;
     requires itextpdf;
     requires javafx.swing;
+    requires okhttp3;
+    requires org.json;
 
     opens com.gbs.gbsproject to javafx.fxml;
     exports com.gbs.gbsproject;

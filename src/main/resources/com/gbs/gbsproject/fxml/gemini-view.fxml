@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="mainAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="1000.0" onMouseClicked="#formClicked" prefHeight="728.0" prefWidth="1274.0" style="-fx-background-color: rgb(240,240,240);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.HomePageViewController">
+<AnchorPane fx:id="mainAnchorPane" onMouseClicked="#formClicked" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.GeminiController">
     <Circle fill="#168fff" layoutX="132.0" layoutY="80.0" radius="170.0" strokeType="INSIDE" strokeWidth="0.0">
         <stroke>
             <LinearGradient>
@@ -159,9 +159,9 @@
             <font>
                 <Font name="System Bold" size="15.0" />
             </font>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
+            <cursor>
+                <Cursor fx:constant="HAND" />
+            </cursor>
         </Button>
     </AnchorPane>
     <AnchorPane layoutX="839.0" layoutY="61.0" prefHeight="78.0" prefWidth="78.0" AnchorPane.rightAnchor="357.0">
@@ -178,7 +178,7 @@
         </Button>
     </AnchorPane>
     <Circle fill="#23c2d763" layoutX="133.0" layoutY="829.0" radius="327.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-    <Circle layoutX="487.0" layoutY="948.0" radius="232.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0">
+    <Circle layoutX="487.0" layoutY="972.0" radius="232.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0">
         <fill>
             <LinearGradient>
                 <stops>
@@ -211,4 +211,14 @@
         <Hyperlink layoutX="15.0" layoutY="40.0" onMouseClicked="#gpaClicked" text="View GPA" />
         <Hyperlink layoutX="15.0" layoutY="68.0" onMouseClicked="#certificateClicked" text="Print certificate" />
     </AnchorPane>
+   <TextField fx:id="userInputField" layoutX="604.0" layoutY="856.0" prefHeight="45.0" prefWidth="925.0" promptText="Ask a question..." AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="400.0">
+      <font>
+         <Font name="Droid Sans Mono Dotted" size="23.0" />
+      </font>
+   </TextField>
+   <Button fx:id="buttonAsk" layoutX="1275.0" layoutY="856.0" mnemonicParsing="false" onMouseClicked="#onButtonAskClicked" prefHeight="45.0" prefWidth="92.0" style="-fx-background-color: rgb(21, 137, 0);" text="Ask" textFill="WHITE" AnchorPane.rightAnchor="300.0">
+      <font>
+         <Font name="System Bold" size="19.0" />
+      </font>
+   </Button>
 </AnchorPane>
