@@ -45,6 +45,8 @@ public class GeminiController {
     private VBox chatBox;
     private ScrollPane scrollPane;
     @FXML
+    private ImageView loading;
+    @FXML
     private Button buttonAsk;
 
     @FXML
@@ -80,6 +82,13 @@ public class GeminiController {
         mainAnchorPane.getChildren().add(aiTutor);       // Add the image
         mainAnchorPane.getChildren().add(scrollPane);
 
+        mainAnchorPane.setOnKeyPressed(event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                // Perform the action when Enter is pressed
+                onButtonAskClicked();
+            }
+        });
+
         buttonAsk.setOnAction(_ -> onButtonAskClicked());
 
         AnchorPane.setTopAnchor(scrollPane, 280.0);
@@ -88,6 +97,11 @@ public class GeminiController {
         AnchorPane.setBottomAnchor(scrollPane, 130.0);
 
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Ensure vertical scroll bar
+
+        Image i = new Image(new File("src/main/resources/loading.gif").toURI().toString());
+        loading.setImage(i);
+        loading.setFitHeight(50);
+        loading.setFitWidth(60);
     }
 
     private void displayMessage(String message, boolean isUser) {
@@ -133,7 +147,8 @@ public class GeminiController {
         }
 
         chatBox.getChildren().add(messageContainer);
-        Platform.runLater(() -> scrollPane.setVvalue(1.0)); // Auto-scroll to the bottom
+        scrollPane.setVvalue(1.0); // Auto-scroll to the bottom
+        loading.setVisible(false);
     }
 
     @FXML
@@ -142,9 +157,9 @@ public class GeminiController {
         if (!userMessage.isEmpty()) {
             displayMessage(userMessage, true); // User message on the right
             userInputField.clear();
-
             new Thread(() -> {
                 try {
+                    loading.setVisible(true);
                     String response = GeminiService.askGemini(userMessage);
                     Platform.runLater(() -> displayMessage(response, false)); // Gemini's response on the left
                 } catch (IOException e) {
@@ -153,8 +168,6 @@ public class GeminiController {
             }).start();
         }
     }
-
-
 
     @FXML
     protected void formClicked() {

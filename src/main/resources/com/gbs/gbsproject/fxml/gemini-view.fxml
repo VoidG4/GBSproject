@@ -211,14 +211,15 @@
         <Hyperlink layoutX="15.0" layoutY="40.0" onMouseClicked="#gpaClicked" text="View GPA" />
         <Hyperlink layoutX="15.0" layoutY="68.0" onMouseClicked="#certificateClicked" text="Print certificate" />
     </AnchorPane>
-   <TextField fx:id="userInputField" layoutX="604.0" layoutY="856.0" prefHeight="45.0" prefWidth="925.0" promptText="Ask a question..." AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="400.0">
+   <TextField fx:id="userInputField" layoutX="604.0" layoutY="856.0" prefHeight="45.0" prefWidth="925.0" promptText="Ask a question..." AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="400.0">
       <font>
          <Font name="Droid Sans Mono Dotted" size="23.0" />
       </font>
    </TextField>
-   <Button fx:id="buttonAsk" layoutX="1275.0" layoutY="856.0" mnemonicParsing="false" onMouseClicked="#onButtonAskClicked" prefHeight="45.0" prefWidth="92.0" style="-fx-background-color: rgb(21, 137, 0);" text="Ask" textFill="WHITE" AnchorPane.rightAnchor="300.0">
+   <Button fx:id="buttonAsk" layoutX="1275.0" layoutY="856.0" mnemonicParsing="false" onMouseClicked="#onButtonAskClicked" prefHeight="45.0" prefWidth="92.0" style="-fx-background-color: rgb(21, 137, 0);" text="Ask" textFill="WHITE" AnchorPane.bottomAnchor="73.0" AnchorPane.rightAnchor="300.0">
       <font>
          <Font name="System Bold" size="19.0" />
       </font>
    </Button>
+   <ImageView fx:id="loading" fitHeight="83.0" fitWidth="135.0" layoutX="318.0" layoutY="769.0" pickOnBounds="true" preserveRatio="true" visible="false" />
 </AnchorPane>
