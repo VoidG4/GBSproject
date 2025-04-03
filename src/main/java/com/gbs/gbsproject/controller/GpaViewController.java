@@ -1,8 +1,6 @@
 package com.gbs.gbsproject.controller;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfWriter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +14,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -186,13 +183,13 @@ public class GpaViewController {
 
             // Create the document in landscape orientation
             Document document = new Document(PageSize.A4.rotate());
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
+            //PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
 
             // Open the document for writing
             document.open();
 
             // Load the background image
-            String backgroundPath = "/home/gat/IdeaProjects/GBSproject/src/main/resources/background.png";
+            String backgroundPath = "/home/gat/IdeaProjects/GBSproject/src/main/resources/background.jpg";
             com.itextpdf.text.Image backgroundImage = com.itextpdf.text.Image.getInstance(backgroundPath);
             backgroundImage.setAbsolutePosition(0, 90);
             backgroundImage.scaleToFit(PageSize.A4.rotate().getWidth(), PageSize.A4.rotate().getHeight()); // Scale it to cover the whole page
@@ -231,15 +228,6 @@ public class GpaViewController {
             line.setAlignment(Element.ALIGN_CENTER);
             line.setSpacingAfter(40);
             document.add(line);
-
-
-            // Add the blue rectangle at the bottom
-            PdfContentByte canvas = writer.getDirectContent();
-            Rectangle blueRectangle = new Rectangle(0, 0, PageSize.A4.rotate().getWidth(), 100); // Rectangle at the bottom
-            BaseColor lightBlue = new BaseColor(40, 126, 255);
-            blueRectangle.setBackgroundColor(lightBlue); // Blue color
-            canvas.rectangle(blueRectangle);
-            canvas.fill(); // Fill the rectangle
 
             // Add the date
             Paragraph date = new Paragraph("Date: April 2025", bodyFont);

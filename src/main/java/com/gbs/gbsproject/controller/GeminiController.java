@@ -2,8 +2,6 @@ package com.gbs.gbsproject.controller;
 
 import com.gbs.gbsproject.service.GeminiService;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfWriter;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,9 +21,7 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.scene.text.Font;
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -48,6 +44,12 @@ public class GeminiController {
     private ImageView loading;
     @FXML
     private Button buttonAsk;
+    @FXML
+    private Button button1;
+    @FXML
+    private Button button2;
+    @FXML
+    private Button button3;
 
     @FXML
     private void initialize(){
@@ -108,7 +110,7 @@ public class GeminiController {
         TextFlow textFlow = new TextFlow();
         textFlow.setStyle("-fx-padding: 10px; -fx-background-radius: 10px;");
         Font customFont = Font.font("Droid Sans Mono Dotted", 26);
-        textFlow.setMaxWidth(500);
+        textFlow.setMaxWidth(700);
 
         Pattern pattern = Pattern.compile("(\\*\\*([^*]+)\\*\\*)|(\\*([^*]+))");
         Matcher matcher = pattern.matcher(message);
@@ -150,6 +152,52 @@ public class GeminiController {
         scrollPane.setVvalue(1.0); // Auto-scroll to the bottom
         loading.setVisible(false);
     }
+
+    @FXML
+    protected void button1MouseEntered(){
+        button1.setStyle("-fx-background-color: rgba(0,0,0,0.05);-fx-border-radius: 20px;-fx-text-fill: black;");
+    }
+
+    @FXML
+    protected void button1MouseExited(){
+        button1.setStyle("-fx-background-color: transparent;-fx-border-color: #3498db;-fx-border-radius: 20px;-fx-text-fill: #3498db;");
+    }
+
+    @FXML
+    protected void button2MouseEntered(){
+        button2.setStyle("-fx-background-color: rgba(0,0,0,0.05);-fx-border-radius: 20px;-fx-text-fill: black;");
+    }
+
+    @FXML
+    protected void button2MouseExited(){
+        button2.setStyle("-fx-background-color: transparent;-fx-border-color: #3498db;-fx-border-radius: 20px;-fx-text-fill: #3498db;");
+    }
+
+    @FXML
+    protected void button3MouseEntered(){
+        button3.setStyle("-fx-background-color: rgba(0,0,0,0.05);-fx-border-radius: 20px;-fx-text-fill: black;");
+    }
+
+    @FXML
+    protected void button3MouseExited(){
+        button3.setStyle("-fx-background-color: transparent;-fx-border-color: #3498db;-fx-border-radius: 20px;-fx-text-fill: #3498db;");
+    }
+
+    @FXML
+    protected void studyPlanClicked(){
+        userInputField.setText("Make me a study plan about: ");
+    }
+
+    @FXML
+    protected void summaryClicked(){
+        userInputField.setText("Give me a summary on: ");
+    }
+
+    @FXML
+    protected void quizClicked(){
+        userInputField.setText("Make a quiz to test me on: ");
+    }
+
 
     @FXML
     protected void onButtonAskClicked(){
@@ -363,13 +411,13 @@ public class GeminiController {
 
             // Create the document in landscape orientation
             Document document = new Document(PageSize.A4.rotate());
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
+            //PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
 
             // Open the document for writing
             document.open();
 
             // Load the background image
-            String backgroundPath = "/home/gat/IdeaProjects/GBSproject/src/main/resources/background.png";
+            String backgroundPath = "/home/gat/IdeaProjects/GBSproject/src/main/resources/background.jpg";
             com.itextpdf.text.Image backgroundImage = com.itextpdf.text.Image.getInstance(backgroundPath);
             backgroundImage.setAbsolutePosition(0, 90);
             backgroundImage.scaleToFit(PageSize.A4.rotate().getWidth(), PageSize.A4.rotate().getHeight()); // Scale it to cover the whole page
@@ -408,15 +456,6 @@ public class GeminiController {
             line.setAlignment(Element.ALIGN_CENTER);
             line.setSpacingAfter(40);
             document.add(line);
-
-
-            // Add the blue rectangle at the bottom
-            PdfContentByte canvas = writer.getDirectContent();
-            Rectangle blueRectangle = new Rectangle(0, 0, PageSize.A4.rotate().getWidth(), 100); // Rectangle at the bottom
-            BaseColor lightBlue = new BaseColor(40, 126, 255);
-            blueRectangle.setBackgroundColor(lightBlue); // Blue color
-            canvas.rectangle(blueRectangle);
-            canvas.fill(); // Fill the rectangle
 
             // Add the date
             Paragraph date = new Paragraph("Date: April 2025", bodyFont);
