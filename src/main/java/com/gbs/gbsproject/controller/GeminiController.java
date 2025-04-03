@@ -186,16 +186,22 @@ public class GeminiController {
     @FXML
     protected void studyPlanClicked(){
         userInputField.setText("Make me a study plan about: ");
+        userInputField.requestFocus();
+        userInputField.positionCaret(userInputField.getText().length());
     }
 
     @FXML
     protected void summaryClicked(){
         userInputField.setText("Give me a summary on: ");
+        userInputField.requestFocus();
+        userInputField.positionCaret(userInputField.getText().length());
     }
 
     @FXML
     protected void quizClicked(){
         userInputField.setText("Make a quiz to test me on: ");
+        userInputField.requestFocus();
+        userInputField.positionCaret(userInputField.getText().length());
     }
 
 

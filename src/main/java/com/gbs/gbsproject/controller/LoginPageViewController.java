@@ -25,6 +25,9 @@ public class LoginPageViewController {
 
     private static final Logger LOGGER = Logger.getLogger(LoginPageViewController.class.getName());
 
+    public LoginPageViewController(){
+    }
+
     @FXML
     public void initialize() {
 
@@ -102,6 +105,7 @@ public class LoginPageViewController {
         stackPane.prefHeightProperty().bind(mainAnchorPane.heightProperty());
 
         mainAnchorPane.getChildren().add(stackPane);
+        mainAnchorPane.setOnMouseClicked(_ -> formClicked());
 
         btnLogin.setOnAction(_ -> Login());
         signUpText.setOnMouseClicked(_ ->SignUp());
