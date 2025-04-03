@@ -3,11 +3,29 @@ package com.gbs.gbsproject.service;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class GeminiService {
-    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+    private static final String API_URL;
+
+    static {
+        // Load API_URL from config.properties file
+        Properties configProperties = new Properties();
+        try (InputStream input = new FileInputStream("config.properties")) {
+            configProperties.load(input);
+            API_URL = configProperties.getProperty("API_URL"); // Get the API_URL from the file
+            if (API_URL == null || API_URL.isEmpty()) {
+                throw new RuntimeException("API_URL is not defined in config.properties");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading config.properties", e);
+        }
+    }
 
     public static String askGemini(String question) throws IOException {
         OkHttpClient client = new OkHttpClient.Builder()

@@ -102,8 +102,8 @@ public class GeminiController {
 
         Image i = new Image(new File("src/main/resources/loading.gif").toURI().toString());
         loading.setImage(i);
-        loading.setFitHeight(50);
-        loading.setFitWidth(60);
+        loading.setFitHeight(60);
+        loading.setFitWidth(70);
     }
 
     private void displayMessage(String message, boolean isUser) {
@@ -208,6 +208,7 @@ public class GeminiController {
             new Thread(() -> {
                 try {
                     loading.setVisible(true);
+
                     String response = GeminiService.askGemini(userMessage);
                     Platform.runLater(() -> displayMessage(response, false)); // Gemini's response on the left
                 } catch (IOException e) {

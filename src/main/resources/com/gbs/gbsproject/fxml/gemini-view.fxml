@@ -221,7 +221,7 @@
          <Font name="System Bold" size="19.0" />
       </font>
    </Button>
-   <ImageView fx:id="loading" fitHeight="83.0" fitWidth="135.0" layoutX="318.0" layoutY="769.0" pickOnBounds="true" preserveRatio="true" visible="false" />
+   <ImageView fx:id="loading" fitHeight="130.0" fitWidth="222.0" layoutX="318.0" layoutY="769.0" pickOnBounds="true" preserveRatio="true" visible="false" />
    <Button fx:id="button1" layoutX="58.0" layoutY="298.0" mnemonicParsing="false" onMouseClicked="#studyPlanClicked" onMouseEntered="#button1MouseEntered" onMouseExited="#button1MouseExited" prefHeight="158.0" prefWidth="215.0" style="-fx-background-color: transparent; -fx-border-color: #3498db; -fx-border-radius: 20; -fx-text-fill: #3498db;" text="Make me a study plan" textAlignment="CENTER" wrapText="true">
       <font>
          <Font size="21.0" />
