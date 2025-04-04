@@ -22,4 +22,6 @@ module com.example.gbsproject {
     exports com.gbs.gbsproject;
     exports com.gbs.gbsproject.controller;
     opens com.gbs.gbsproject.controller to javafx.fxml;
+    opens com.gbs.gbsproject.model to javafx.base;
+
 }
