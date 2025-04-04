@@ -2,7 +2,6 @@ package com.gbs.gbsproject.dao;
 
 import com.gbs.gbsproject.model.Course;
 import com.gbs.gbsproject.util.DatabaseUtil;
-import javafx.scene.chart.PieChart;
 
 import java.sql.*;
 import java.util.ArrayList;
