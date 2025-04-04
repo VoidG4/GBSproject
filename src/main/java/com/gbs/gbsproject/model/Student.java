@@ -1,39 +1,26 @@
 package com.gbs.gbsproject.model;
 
-public class Student {
-    private int id;
-    private String name;
+public class Student extends User {
     private String surname;
     private String username;
+    private String password;
     private String email;
 
-    public Student() {
+    // Constructor with id and name (inherited from User)
+    public Student(int id, String name) {
+        super(id, name);
     }
 
-    public Student(int id, String name, String surname, String username, String email) {
-        this.id = id;
-        this.name = name;
+    // Constructor with all fields
+    public Student(int id, String name, String surname, String username, String password, String email) {
+        super(id, name);
         this.surname = surname;
         this.username = username;
+        this.password = password;
         this.email = email;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    // Getters and Setters
     public String getSurname() {
         return surname;
     }
@@ -50,6 +37,14 @@ public class Student {
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -58,3 +53,4 @@ public class Student {
         this.email = email;
     }
 }
+

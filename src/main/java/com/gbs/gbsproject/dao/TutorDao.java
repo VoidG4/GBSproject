@@ -22,7 +22,7 @@ public class TutorDao {
              ResultSet rs = stmt.executeQuery("SELECT * FROM tutor")) {
 
             while (rs.next()) {
-                Tutor t = new Tutor();
+                Tutor t = new Tutor(rs.getInt("id"), rs.getString("name"));
                 t.setId(rs.getInt("id"));
                 t.setName(rs.getString("name"));
                 t.setSurname(rs.getString("surname"));

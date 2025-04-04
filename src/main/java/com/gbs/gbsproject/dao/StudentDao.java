@@ -22,7 +22,7 @@ public class StudentDao {
              ResultSet rs = stmt.executeQuery("SELECT * FROM student")) {
 
             while (rs.next()) {
-                Student s = new Student();
+                Student s = new Student(rs.getInt("id"), rs.getString("name"));
                 s.setId(rs.getInt("id"));
                 s.setName(rs.getString("name"));
                 s.setSurname(rs.getString("surname"));

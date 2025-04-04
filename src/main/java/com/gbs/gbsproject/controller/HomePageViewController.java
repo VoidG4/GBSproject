@@ -1,5 +1,6 @@
 package com.gbs.gbsproject.controller;
 
+import com.gbs.gbsproject.model.Student;
 import com.itextpdf.text.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -31,6 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class HomePageViewController {
+    Student student;
     private static final Logger LOGGER = Logger.getLogger(HomePageViewController.class.getName());
     public Button buttonMenuAccount;
     public AnchorPane mainAnchorPane;
@@ -62,6 +64,10 @@ public class HomePageViewController {
         accountPane.setVisible(false);
         helpPane.setVisible(false);
         studiesPane.setVisible(false);
+    }
+
+    public void setStudent(Student student){
+        this.student = student;
     }
 
     @FXML

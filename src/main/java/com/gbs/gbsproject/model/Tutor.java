@@ -1,41 +1,28 @@
 package com.gbs.gbsproject.model;
 
-public class Tutor {
-    private int id;
-    private String name;
+public class Tutor extends User {
     private String surname;
     private String username;
+    private String password;
     private String email;
     private String field;
 
-    public Tutor() {
+    // Constructor with id and name (inherited from User)
+    public Tutor(int id, String name) {
+        super(id, name);
     }
 
-    public Tutor(int id, String name, String surname, String username, String email, String field) {
-        this.id = id;
-        this.name = name;
+    // Constructor with all fields
+    public Tutor(int id, String name, String surname, String username, String password, String email, String field) {
+        super(id, name);
         this.surname = surname;
         this.username = username;
+        this.password = password;
         this.email = email;
         this.field = field;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    // Getters and Setters
     public String getSurname() {
         return surname;
     }
@@ -50,6 +37,14 @@ public class Tutor {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {

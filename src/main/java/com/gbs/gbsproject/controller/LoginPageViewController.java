@@ -1,6 +1,6 @@
 package com.gbs.gbsproject.controller;
 
-import com.gbs.gbsproject.model.Login;
+import com.gbs.gbsproject.model.*;
 import javafx.fxml.FXML;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -121,15 +121,15 @@ public class LoginPageViewController {
             }
 
             try {
-                Login result = UserDao.checkLogin(username, password);
-                if (result != null) {
-                    Login(result.role());
+                User user = UserDao.checkLogin(username, password); // Get the logged-in user object
+
+                if (user != null) {
+                    Login(user); // Pass the user object to the Login method
                 } else {
                     System.out.println("login failed: invalid credentials.");
                 }
             } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, "An error occurred in the connection", e);
-                showErrorDialog();
             }
         });
     }
@@ -171,93 +171,57 @@ public class LoginPageViewController {
         } catch (IOException e) {
             // Log the exception using a logger instead of printStackTrace()
             LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
-            // Optionally, show a dialog to notify the user of the error
-            showErrorDialog();
         }
     }
 
-    private void Login(String role) {
-        switch (role) {
-            case "admin" -> {
-                try {
-                    // Load the new FXML file
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/admin-page-view.fxml")); // Replace with the actual path to the new FXML file
-                    Parent nextPage = loader.load();
+    private void Login(Object user) {
+        try {
+            FXMLLoader loader;
+            Parent nextPage;
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+            Scene nextScene;
 
-                    // Create a new scene with the loaded FXML
-                    Scene nextScene = new Scene(nextPage);
+            switch (user) {
+                case Admin admin -> {
+                    loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/admin-page-view.fxml"));
+                    nextPage = loader.load();
+                    AdminPageViewController adminController = loader.getController();
+                    adminController.setAdmin(admin); // Pass Admin object to the controller
 
-                    // Set the stage to the previous size and position
-                    Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
-                    stage.setWidth(1600);
-                    stage.setHeight(1000);
-                    stage.centerOnScreen();
+                    nextScene = new Scene(nextPage);
+                }
+                case Tutor tutor -> {
+                    loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/tutor-page-view.fxml"));
+                    nextPage = loader.load();
+                    TutorPageViewController tutorController = loader.getController();
+                    tutorController.setTutor(tutor); // Pass Tutor object to the controller
 
-                    // Set the new scene and show the stage
-                    stage.setScene(nextScene);
-                    stage.show();
+                    nextScene = new Scene(nextPage);
+                }
+                case Student student -> {
+                    loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/home-page-view.fxml"));
+                    nextPage = loader.load();
+                    HomePageViewController studentController = loader.getController();
+                    studentController.setStudent(student); // Pass Student object to the controller
 
-                } catch (IOException e) {
-                    // Log the exception using a logger instead of printStackTrace()
-                    LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
-                    // Optionally, show a dialog to notify the user of the error
-                    showErrorDialog();
+                    nextScene = new Scene(nextPage);
+                }
+                case null, default -> {
+                    return; // If no valid user, return
                 }
             }
-            case "tutor" -> {
-                try {
-                    // Load the new FXML file
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/tutor-page-view.fxml")); // Replace with the actual path to the new FXML file
-                    Parent nextPage = loader.load();
 
-                    // Create a new scene with the loaded FXML
-                    Scene nextScene = new Scene(nextPage);
+            // Set the stage to the previous size and position
+            stage.setWidth(1600);
+            stage.setHeight(1000);
+            stage.centerOnScreen();
 
-                    // Set the stage to the previous size and position
-                    Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
-                    stage.setWidth(1600);
-                    stage.setHeight(1000);
-                    stage.centerOnScreen();
-
-
-                    // Set the new scene and show the stage
-                    stage.setScene(nextScene);
-                    stage.show();
-
-                } catch (IOException e) {
-                    // Log the exception using a logger instead of printStackTrace()
-                    LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
-                    // Optionally, show a dialog to notify the user of the error
-                    showErrorDialog();
-                }
-            }
-            case "student" -> {
-                try {
-                    // Load the new FXML file
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/home-page-view.fxml")); // Replace with the actual path to the new FXML file
-                    Parent nextPage = loader.load();
-
-                    // Create a new scene with the loaded FXML
-                    Scene nextScene = new Scene(nextPage);
-
-                    // Set the stage to the previous size and position
-                    Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
-                    stage.setWidth(1600);
-                    stage.setHeight(1000);
-                    stage.centerOnScreen();
-
-
-                    // Set the new scene and show the stage
-                    stage.setScene(nextScene);
-                    stage.show();
-
-                } catch (IOException e) {
-                    // Log the exception using a logger instead of printStackTrace()
-                    LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
-                    // Optionally, show a dialog to notify the user of the error
-                    showErrorDialog();
-                }
-            }
+            // Set the new scene and show the stage
+            stage.setScene(nextScene);
+            stage.show();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
+            showErrorDialog();
         }
     }
 

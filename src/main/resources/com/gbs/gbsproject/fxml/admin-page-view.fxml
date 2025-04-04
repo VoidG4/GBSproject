@@ -166,12 +166,12 @@
             <Font name="Droid Sans Mono Dotted" size="27.0" />
         </font>
     </Label>
-    <AnchorPane fx:id="accountPane" layoutX="1003.0" layoutY="149.0" onMouseClicked="#accountClicked" prefHeight="116.0" prefWidth="180.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="91.0">
+    <AnchorPane fx:id="accountPane" layoutX="1925.0" layoutY="153.0" onMouseClicked="#accountClicked" prefHeight="116.0" prefWidth="180.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="14.0">
         <Hyperlink layoutX="18.0" layoutY="18.0" text="Update contact details" />
         <Hyperlink layoutX="18.0" layoutY="46.0" text="Change password" />
         <Hyperlink layoutX="18.0" layoutY="75.0" onMouseClicked="#logOut" text="Log out" />
     </AnchorPane>
-    <AnchorPane AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+    <AnchorPane layoutX="7.0" layoutY="180.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="-8.0" AnchorPane.topAnchor="180.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
 
         <!-- Left Menu -->
         <AnchorPane prefHeight="1001.0" prefWidth="279.0" style="-fx-background-color: rgba(0,0,0,0.05);">

@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.TutorPageViewController">
+<AnchorPane onMouseClicked="#formClicked" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.TutorPageViewController">
     <Circle fill="#168fff" layoutX="132.0" layoutY="80.0" radius="170.0" strokeType="INSIDE" strokeWidth="0.0">
         <stroke>
             <LinearGradient>
@@ -27,7 +27,7 @@
             </LinearGradient>
         </stroke>
     </Circle>
-    <Rectangle arcHeight="5.0" arcWidth="5.0" height="192.0" layoutX="7.0" layoutY="-12.0" opacity="0.64" strokeType="INSIDE" strokeWidth="0.0" width="2000.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="-733.0">
+    <Rectangle arcHeight="5.0" arcWidth="5.0" height="192.0" layoutX="7.0" layoutY="-12.0" opacity="0.64" strokeType="INSIDE" strokeWidth="0.0" width="2279.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="-167.0">
         <stroke>
             <LinearGradient endX="0.6238095238095238" endY="0.9238095238095239" startX="0.02857142857142857" startY="0.4666666666666667">
                 <stops>
@@ -115,25 +115,31 @@
         </fill>
     </Circle>
     <Circle fill="DODGERBLUE" layoutX="434.0" layoutY="3.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-    <AnchorPane layoutX="931.0" layoutY="37.0" prefHeight="122.0" prefWidth="92.0" AnchorPane.rightAnchor="251.0">
+    <AnchorPane layoutX="1982.0" layoutY="54.0" prefHeight="98.0" prefWidth="89.0" AnchorPane.rightAnchor="45.0">
         <cursor>
             <Cursor fx:constant="HAND" />
         </cursor>
+        <ImageView fitHeight="62.0" fitWidth="52.0" layoutX="22.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@/account.png" />
+        </ImageView>
+        <Button alignment="BOTTOM_CENTER" layoutX="3.0" layoutY="22.0" mnemonicParsing="false" onMouseClicked="#accountClicked" prefHeight="76.0" prefWidth="89.0" style="-fx-background-color: rgba(0,0,0,0);" text="Account" underline="true">
+            <font>
+                <Font name="System Bold" size="15.0" />
+            </font>
+        </Button>
     </AnchorPane>
-    <AnchorPane layoutX="1040.0" layoutY="46.0" prefHeight="98.0" prefWidth="89.0" AnchorPane.rightAnchor="142.0">
+    <AnchorPane layoutX="1899.0" layoutY="68.0" prefHeight="78.0" prefWidth="78.0" AnchorPane.rightAnchor="142.0">
         <cursor>
             <Cursor fx:constant="HAND" />
         </cursor>
-    </AnchorPane>
-    <AnchorPane layoutX="1149.0" layoutY="38.0" prefHeight="109.0" prefWidth="79.0" AnchorPane.rightAnchor="46.0">
-        <cursor>
-            <Cursor fx:constant="HAND" />
-        </cursor>
-    </AnchorPane>
-    <AnchorPane layoutX="839.0" layoutY="61.0" prefHeight="78.0" prefWidth="78.0" AnchorPane.rightAnchor="357.0">
-        <cursor>
-            <Cursor fx:constant="HAND" />
-        </cursor>
+        <ImageView layoutX="14.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@/home.png" />
+        </ImageView>
+        <Button alignment="BOTTOM_CENTER" layoutX="6.0" layoutY="7.0" mnemonicParsing="false" onMouseClicked="#homeButtonClick" prefHeight="76.0" prefWidth="67.0" style="-fx-background-color: rgba(0,0,0,0);" text="Home" underline="true">
+            <font>
+                <Font name="System Bold" size="15.0" />
+            </font>
+        </Button>
     </AnchorPane>
     <Circle fill="#23c2d763" layoutX="133.0" layoutY="829.0" radius="327.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
     <Circle layoutX="487.0" layoutY="948.0" radius="232.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0">
@@ -155,9 +161,93 @@
         </fill>
     </Circle>
     <Circle fill="DODGERBLUE" layoutX="751.0" layoutY="1029.0" radius="151.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-    <Label layoutX="377.0" layoutY="211.0" maxWidth="1.7976931348623157E308" prefHeight="78.0" prefWidth="507.0" style="-fx-alignment: center;" text="Tutor page&#10;" AnchorPane.leftAnchor="377.0" AnchorPane.rightAnchor="390.0">
+    <Label layoutX="377.0" layoutY="211.0" maxWidth="1.7976931348623157E308" prefHeight="78.0" prefWidth="507.0" style="-fx-alignment: center;" AnchorPane.leftAnchor="377.0" AnchorPane.rightAnchor="390.0">
         <font>
             <Font name="Droid Sans Mono Dotted" size="27.0" />
         </font>
     </Label>
+    <AnchorPane fx:id="accountPane" layoutX="1925.0" layoutY="153.0" onMouseClicked="#accountClicked" prefHeight="116.0" prefWidth="180.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="14.0">
+        <Hyperlink layoutX="18.0" layoutY="18.0" text="Update contact details" />
+        <Hyperlink layoutX="18.0" layoutY="46.0" text="Change password" />
+        <Hyperlink layoutX="18.0" layoutY="75.0" onMouseClicked="#logOut" text="Log out" />
+    </AnchorPane>
+    <AnchorPane layoutX="7.0" layoutY="180.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="-8.0" AnchorPane.topAnchor="180.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+
+        <!-- Left Menu -->
+        <AnchorPane prefHeight="1001.0" prefWidth="279.0" style="-fx-background-color: rgba(0,0,0,0.05);">
+            <Button layoutX="12.0" layoutY="146.0" mnemonicParsing="false" onMouseClicked="#displayTutorCourses" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="Edit my courses">
+                <font>
+                    <Font size="22.0" />
+                </font>
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button layoutX="12.0" layoutY="220.0" mnemonicParsing="false" onMouseClicked="#addCourseClicked" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="Add course">
+                <font>
+                    <Font size="22.0" />
+                </font>
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button layoutX="12.0" layoutY="294.0" mnemonicParsing="false" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="Delete course">
+                <font>
+                    <Font size="22.0" />
+                </font>
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button layoutX="12.0" layoutY="368.0" mnemonicParsing="false" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="Make a quiz">
+                <font>
+                    <Font size="22.0" />
+                </font>
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button layoutX="12.0" layoutY="442.0" mnemonicParsing="false" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="Make announcement">
+                <font>
+                    <Font size="22.0" />
+                </font>
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+         <Button layoutX="12.0" layoutY="72.0" mnemonicParsing="false" onMouseClicked="#viewCourses" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="View my courses">
+            <font>
+               <Font size="22.0" />
+            </font>
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+         </Button>
+        </AnchorPane>
+
+        <!-- Right Content -->
+        <AnchorPane style="-fx-background-color: transparent;">
+            <!-- Content components go here -->
+        </AnchorPane>
+        <AnchorPane fx:id="coursePane" layoutX="413.0" layoutY="41.0" prefHeight="349.0" prefWidth="358.0" style="-fx-background-color: white;">
+            <TextField fx:id="nameTextField" alignment="TOP_LEFT" layoutX="65.0" layoutY="73.0" prefHeight="24.0" prefWidth="162.0" />
+         <TextArea fx:id="textAreaDescription" layoutX="65.0" layoutY="141.0" prefHeight="200.0" prefWidth="200.0" />
+         <Button layoutX="234.0" layoutY="47.0" mnemonicParsing="false" onMouseClicked="#addCourse" prefHeight="52.0" prefWidth="101.0" text="Button" />
+        </AnchorPane>
+        <ScrollPane fx:id="scrollPane" layoutX="876.0" layoutY="33.0" prefHeight="83.0" prefWidth="491.0">
+            <AnchorPane fx:id="vboxCourses" minHeight="0.0" minWidth="0.0" prefHeight="101.0" prefWidth="483.0" />
+        </ScrollPane>
+        <ScrollPane layoutX="786.0" layoutY="399.0" pannable="true" prefHeight="559.0" prefWidth="482.0">
+            <AnchorPane fx:id="modifyPane" minHeight="0.0" minWidth="0.0" prefHeight="658.0" prefWidth="485.0">
+                <Label fx:id="courseName" layoutX="21.0" layoutY="22.0" text="Label" />
+                <Button layoutX="14.0" layoutY="40.0" mnemonicParsing="false" onMouseClicked="#addNewSection" prefHeight="34.0" prefWidth="105.0" text="new module +" />
+            <TextField fx:id="titleField" layoutX="161.0" layoutY="18.0" prefHeight="26.0" prefWidth="246.0" />
+            <TextArea fx:id="contentArea" layoutX="163.0" layoutY="81.0" prefHeight="200.0" prefWidth="242.0" />
+            <ChoiceBox fx:id="choice" layoutX="255.0" layoutY="48.0" prefWidth="150.0" />
+            <Label fx:id="sectionLabel" layoutX="163.0" layoutY="61.0" text="section" />
+            <Button layoutX="330.0" layoutY="242.0" mnemonicParsing="false" onMouseClicked="#addContent" text="Button" />
+            </AnchorPane>
+        </ScrollPane>
+
+    </AnchorPane>
 </AnchorPane>

@@ -1,6 +1,7 @@
 package com.gbs.gbsproject.controller;
 
 import com.gbs.gbsproject.dao.CourseDao;
+import com.gbs.gbsproject.model.Admin;
 import com.gbs.gbsproject.model.Course;
 import com.gbs.gbsproject.model.Student;
 import com.gbs.gbsproject.model.Tutor;
@@ -26,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AdminPageViewController {
+    Admin admin;
     private static final Logger LOGGER = Logger.getLogger(AdminPageViewController.class.getName());
     public AnchorPane accountPane;
     public Button buttonMenuAccount;
@@ -70,6 +72,10 @@ public class AdminPageViewController {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "An error occurred while loading the login page", e);
         }
+    }
+
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
     }
 
     public void homeButtonClick(MouseEvent event) {
