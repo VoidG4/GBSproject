@@ -7,6 +7,7 @@ import com.gbs.gbsproject.dao.CourseDao;
 import com.gbs.gbsproject.model.Section;
 import com.gbs.gbsproject.model.SectionContent;
 import com.gbs.gbsproject.model.Tutor;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -16,6 +17,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -233,8 +239,7 @@ public class TutorPageViewController {
         scrollPane.setVisible(true);
         viewScrollPane.setVisible(false);
 
-        CourseDao courseDao = new CourseDao(); // Create CourseDao instance
-        List<Course> courses = courseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
+        List<Course> courses = CourseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
 
         // Clear existing content in the AnchorPane before adding new courses
         vboxCourses.getChildren().clear(); // or AnchorPane, depending on your setup
@@ -295,6 +300,87 @@ public class TutorPageViewController {
         return courseButton;
     }
 
+    @NotNull
+    private Button getCourseButtonDelete(List<Course> courses, int i) {
+        double buttonWidth = 500;
+        double buttonHeight = 100;
+
+        Course course = courses.get(i);
+        Button courseButton = new Button(course.getName()); // Create a button with the course name
+        courseButton.setFont(new Font(20));
+        courseButton.setPrefSize(buttonWidth, buttonHeight);
+        courseButton.setStyle("-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray; -fx-font-weight: bold;");
+        courseButton.setAlignment(Pos.BASELINE_LEFT);
+        courseButton.setWrapText(true);
+
+        ImageView arrow = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/next.png"))));
+        arrow.setFitHeight(32);
+        arrow.setFitWidth(32);
+        arrow.setPreserveRatio(true);
+        courseButton.setGraphic(arrow);
+        courseButton.setGraphicTextGap(10);
+        courseButton.setOnMouseEntered(_ -> {
+            courseButton.setStyle("-fx-border-width: 3px;-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: #72B3FF; -fx-underline: true;-fx-font-weight: bold;");
+            courseButton.setCursor(Cursor.HAND);
+        });
+
+        courseButton.setOnMouseExited(_ -> {
+            courseButton.setStyle("-fx-border-width: 1px;-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray;-fx-font-weight: bold;");
+            courseButton.setCursor(Cursor.DEFAULT);
+        });
+
+        // Manually position the button inside AnchorPane
+        courseButton.setLayoutX(20); // Set horizontal position
+        courseButton.setLayoutY(i * 110 + 20); // Set vertical position with spacing between buttons
+
+        // Add an event handler to handle clicks on the button
+        courseButton.setOnAction(_ -> {
+            // Create a confirmation dialog
+            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmationAlert.setTitle("Delete Course");
+            confirmationAlert.setHeaderText("Are you sure you want to delete this course?");
+            confirmationAlert.setContentText("Once deleted, the course cannot be recovered.");
+
+            // Show the confirmation dialog and wait for the user's response
+            confirmationAlert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    // Proceed to delete the course from the database
+                    boolean success = courseDAO.deleteCourse(course.getId());
+
+                    if (success) {
+                        // Refresh the course list and update UI
+                        Platform.runLater(() -> {
+                            // Remove the button from the container
+                            vboxCourses.getChildren().remove(courseButton);
+
+                            refreshCourseList(vboxCourses);
+                        });
+                    } else {
+                        System.out.println("Error deleting the course from the database.");
+                    }
+                } else {
+                    System.out.println("Course deletion cancelled.");
+                }
+            });
+        });
+
+        return courseButton;
+    }
+
+    private void refreshCourseList(AnchorPane buttonContainer) {
+        // First clear the existing buttons
+        buttonContainer.getChildren().clear();
+
+        // Fetch updated list of courses from the database
+        List<Course> updatedCourses = CourseDao.getCoursesByTutorId(tutor.getId());
+
+        // Add buttons for the remaining courses
+        for (int i = 0; i < updatedCourses.size(); i++) {
+            Button courseButton = getCourseButtonDelete(updatedCourses, i);
+            buttonContainer.getChildren().add(courseButton);
+        }
+    }
+
     public void displaySectionsForCourse(Course course) {
         try {
             // Clear previous buttons
@@ -341,6 +427,8 @@ public class TutorPageViewController {
 
         sectionButton.setOnMouseClicked(_ -> {
             sectionLabel.setText("Section: " + section.getTitle());
+            titleField.setText(section.getTitle());
+            contentArea.setText(section.getDescription());
             currentSection = section;
             currentSectionButton = sectionButton;
             // Optional: also load the contents here if you'd like
@@ -407,7 +495,7 @@ public class TutorPageViewController {
                 viewScroll.getChildren().add(sectionButton);
 
                 // Increase Y position for next section button
-                currentY += sectionButton.getHeight() + 50; // Add some space between buttons
+                currentY += sectionButton.getHeight() + 100; // Add some space between buttons
             }
         });
 
@@ -418,7 +506,8 @@ public class TutorPageViewController {
     private Button getNewButton(Section section, double currentY) {
         Button sectionButton = new Button(section.getTitle()); // Section title as button text
         sectionButton.setPrefWidth(230); // Set width of section buttons
-        sectionButton.setPrefHeight(50); // Set height of section buttons
+        sectionButton.setPrefHeight(100); // Set height of section buttons
+        sectionButton.setWrapText(true);
 
         sectionButton.setStyle("-fx-background-color: #168fff; -fx-text-fill: white; -fx-border-color: lightgray; -fx-font-weight: bold;-fx-font-size: 20px;");
         sectionButton.setLayoutX(20); // Position the button on the left side
@@ -460,23 +549,75 @@ public class TutorPageViewController {
 
             contentVBox.getChildren().add(titleLabel);
 
-            if (content.getContentType().equals("text")) {
-                Text text = new Text(content.getContent());
-                text.setStyle("-fx-font-size: 20px;");
-                text.setWrappingWidth(700);
+            switch (content.getContentType()) {
+                case "text" -> {
+                    Text text = new Text(content.getContent());
+                    text.setStyle("-fx-font-size: 20px;");
+                    text.setWrappingWidth(700);
 
-                TextFlow textFlow = new TextFlow(text);
-                textFlow.setStyle("-fx-background-color: #f5f5f5; -fx-padding: 10px; -fx-border-color: lightgray;");
-                contentVBox.getChildren().add(textFlow);
-            } else if (content.getContentType().equals("video") || content.getContentType().equals("image")) {
-                Hyperlink link = new Hyperlink(content.getContent());
-                link.setStyle("-fx-font-size: 20px;");
-                contentVBox.getChildren().add(link);
+                    TextFlow textFlow = new TextFlow(text);
+                    textFlow.setStyle("-fx-background-color: #f5f5f5; -fx-padding: 10px; -fx-border-color: lightgray;");
+                    contentVBox.getChildren().add(textFlow);
+                }
+                case "video" -> {
+                    // If the content type is video, display it as a clickable link
+                    String youtubeUrl = content.getContent();
+
+                    // Create a Hyperlink for the YouTube video URL
+                    Hyperlink videoLink = new Hyperlink("Watch video: " + youtubeUrl);
+                    videoLink.setStyle("-fx-font-size: 20px; -fx-text-fill: blue;");
+
+                    // When clicked, open the video in the default web browser
+                    videoLink.setOnAction(_ -> openLinkInBrowser(youtubeUrl));
+
+                    contentVBox.getChildren().add(videoLink);
+                }
+                case "image" -> {
+                    try {
+                        Image image = new Image(content.getContent(), true); // 'true' loads in background
+                        ImageView imageView = new ImageView(image);
+                        imageView.setFitWidth(700); // Adjust as needed
+                        imageView.setPreserveRatio(true);
+                        imageView.setSmooth(true);
+
+                        contentVBox.getChildren().add(imageView);
+                    } catch (Exception ex) {
+                        Label errorLabel = new Label("Failed to load image.");
+                        errorLabel.setStyle("-fx-text-fill: red;");
+                        contentVBox.getChildren().add(errorLabel);
+                    }
+                }
             }
         }
         updateAnchorPaneHeight(viewScroll);
     }
 
+    private void openLinkInBrowser(String url) {
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+
+            ProcessBuilder processBuilder;
+
+            if (os.contains("win")) {
+                // Windows command to open URL in default browser
+                processBuilder = new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", url);
+            } else if (os.contains("mac")) {
+                // MacOS command to open URL in default browser
+                processBuilder = new ProcessBuilder("open", url);
+            } else if (os.contains("nix") || os.contains("nux")) {
+                // Linux/Unix command to open URL in default browser
+                processBuilder = new ProcessBuilder("xdg-open", url);
+            } else {
+                System.out.println("Unsupported OS for opening URL.");
+                return;
+            }
+
+            // Start the process and wait for it to execute
+            processBuilder.start();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred ", e);
+        }
+    }
 
 
     public void addNewSection(MouseEvent event) {
@@ -540,8 +681,8 @@ public class TutorPageViewController {
         double currentY = 10; // Starting Y position (space from top)
 
         // Add each content as a TextArea or Label to the content pane
-        for (SectionContent content : sectionContents) {
-            Button contentButton = new Button(content.getTitle()); // Set the button's title to the content's title
+        for (SectionContent content1 : sectionContents) {
+            Button contentButton = new Button(content1.getTitle()); // Set the button's title to the content's title
 
             // Optionally, style the Button
             contentButton.setStyle("-fx-padding: 10px; -fx-font-size: 14px; -fx-border-color: gray;");
@@ -555,10 +696,12 @@ public class TutorPageViewController {
 
             // When the button is clicked, set the content in the mainTextArea
             contentButton.setOnAction(_ -> {
-                titleField.setText(content.getTitle());
-                contentArea.setText(content.getContent()); // Display the content in the mainTextArea
+                titleField.setText(content1.getTitle());
+                contentArea.setText(content1.getContent()); // Display the content in the mainTextArea
+                choice.setValue(content1.getContentType());
+
                 contentScroll.setVisible(false);
-                currentSectionContent = content;
+                currentSectionContent = content1;
                 currentSectionContentButton = contentButton;
             });
 
@@ -615,8 +758,7 @@ public class TutorPageViewController {
         coursePane.setVisible(false);
         sectionScroll.setVisible(false);
 
-        CourseDao courseDao = new CourseDao(); // Create CourseDao instance
-        List<Course> courses = courseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
+        List<Course> courses = CourseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
 
         // Clear existing content in the AnchorPane before adding new courses
         vboxCourses.getChildren().clear(); // or AnchorPane, depending on your setup
@@ -636,7 +778,7 @@ public class TutorPageViewController {
     public void deleteClicked() {
         try {
             // Check if there is content displayed in the mainContentArea
-            String contentToDelete = contentArea.getText();
+            String contentToDelete = titleField.getText();
 
             if (contentToDelete.isEmpty()) {
                 System.out.println("No content to delete.");
@@ -650,6 +792,8 @@ public class TutorPageViewController {
                 System.out.println("Content not found.");
                 return;
             }
+            contentScroll.setVisible(false);
+
 
             // Call the DAO to delete the content
             SectionContentDao.deleteSectionContent(content.getId());
@@ -765,6 +909,8 @@ public class TutorPageViewController {
             return;
         }
 
+        contentScroll.setVisible(false);
+
         // Update the section in the database and UI
         if (currentSection != null) {
             try {
@@ -789,5 +935,27 @@ public class TutorPageViewController {
         } else {
             System.out.println("No section selected for update.");
         }
+    }
+
+    public void deleteCourseClicked() {
+        scrollPane.setVisible(true);
+        coursePane.setVisible(false);
+        sectionScroll.setVisible(false);
+
+        List<Course> courses = CourseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
+
+        // Clear existing content in the AnchorPane before adding new courses
+        vboxCourses.getChildren().clear(); // or AnchorPane, depending on your setup
+
+        // Loop through each course and create a button for it
+        for (int i = 0; i < courses.size(); i++) {
+            Button courseButton = getCourseButtonDelete(courses, i);
+
+            // Add the button to the AnchorPane
+            vboxCourses.getChildren().add(courseButton); // Replace with your AnchorPane variable
+        }
+
+        // Refresh the layout of the AnchorPane
+        vboxCourses.layout();
     }
 }

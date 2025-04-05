@@ -100,9 +100,6 @@ public class SectionContentDao {
                         rs.getInt("content_order")
                 );
                 sectionContents.add(content);
-
-                // Print to check if the content is being fetched
-                System.out.println("Fetched Content: " + content.title() + ", " + content.content());
             }
         }
 

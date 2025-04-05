@@ -66,7 +66,7 @@ public class CourseDao {
     }
 
     // Method to fetch all courses for a specific tutor
-    public List<Course> getCoursesByTutorId(int tutorId) {
+    public static List<Course> getCoursesByTutorId(int tutorId) {
         List<Course> courses = new ArrayList<>();
         String query = "SELECT * FROM course WHERE tutor_id = ?"; // SQL query to fetch courses by tutor_id
 
@@ -82,9 +82,24 @@ public class CourseDao {
                 courses.add(course); // Add the course to the list
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred while loading the login page", e);
+            LOGGER.log(Level.SEVERE, "An error occurred", e);
         }
 
         return courses; // Return the list of courses
     }
+
+    // Method to delete a course from the database
+    public boolean deleteCourse(int courseId) {
+        String sql = "DELETE FROM course WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = DatabaseUtil.getConnection().prepareStatement(sql)) {
+            preparedStatement.setInt(1, courseId);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred", e);
+            return false;
+        }
+    }
+
 }

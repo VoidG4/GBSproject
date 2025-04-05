@@ -17,6 +17,7 @@ module com.example.gbsproject {
     requires org.json;
     requires java.sql;
     requires org.postgresql.jdbc;
+    requires javafx.media;
 
     opens com.gbs.gbsproject to javafx.fxml;
     exports com.gbs.gbsproject;
