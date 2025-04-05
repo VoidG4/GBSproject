@@ -7,13 +7,23 @@ import com.gbs.gbsproject.dao.CourseDao;
 import com.gbs.gbsproject.model.Section;
 import com.gbs.gbsproject.model.SectionContent;
 import com.gbs.gbsproject.model.Tutor;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +32,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,11 +49,25 @@ public class TutorPageViewController {
     public ChoiceBox<String> choice;
     public Label sectionLabel;
     public TextArea contentArea;
+    public ScrollPane sectionScroll;
+    public AnchorPane contentPane;
+    public ScrollPane contentScroll;
+    public Button secButton;
+    public AnchorPane contentSecPane;
+    public AnchorPane viewScroll;
+    public ScrollPane viewScrollPane;
+    public AnchorPane content;
+    public AnchorPane mainAnchorPane;
+    private Button currentSectionContentButton;
+    @FXML
+    private VBox contentVBox;
     Tutor tutor;
     Course currentCourse;
     private final List<Section> sections = new ArrayList<>();
     private Section currentSection; // Set this when selecting the section
+    private Button currentSectionButton;
     private int contentOrder = 1; // You can count from DB or increase locally
+    private SectionContent currentSectionContent;
 
     private static final Logger LOGGER = Logger.getLogger(TutorPageViewController.class.getName());
 
@@ -52,15 +77,29 @@ public class TutorPageViewController {
 
     public void initialize() {
         scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        //scrollPane.setStyle("-fx-background-color: transparent;-fx-background: transparent;");
+
+        contentVBox.setSpacing(20);
+        contentVBox.setPadding(new Insets(20));
+        contentVBox.setPrefWidth(800); // Optional: set preferred width
+        content.getChildren().clear();
+        content.getChildren().add(contentVBox);
+
+        AnchorPane.setTopAnchor(contentVBox, 0.0);
+        AnchorPane.setLeftAnchor(contentVBox, 0.0);
+        AnchorPane.setRightAnchor(contentVBox, 0.0);
+
+
         // Adding items/choices to the ChoiceBox
         choice.getItems().addAll("text", "video", "image");
-
-        // You can also set a default selection
-        choice.setValue("Option 1");
+        choice.setValue("text");
+        choice.setStyle("-fx-font-size: 20px; -fx-background-color: white; -fx-border-color: gray;");
     }
 
     public void formClicked() {
         accountPane.setVisible(false);
+        contentScroll.setVisible(false);
     }
 
     public void accountClicked() {
@@ -75,24 +114,27 @@ public class TutorPageViewController {
         this.tutor = tutor;
     }
 
-    public void homeButtonClick(MouseEvent event) {
+    public void homeButtonClick() {
         try {
             // Load the FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/tutor-page-view.fxml"));
-            Parent root = loader.load();
+            FXMLLoader loader;
+            Parent nextPage;
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+            Scene nextScene;
+            loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/tutor-page-view.fxml"));
 
+            nextPage = loader.load();
+            TutorPageViewController tutorController = loader.getController();
+            tutorController.setTutor(tutor); // Pass Tutor object to the controller
 
-            // Get the current stage (window)
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            double width = stage.getWidth();
-            double height = stage.getHeight();
+            nextScene = new Scene(nextPage);
+            // Set the stage to the previous size and position
+            stage.setWidth(1600);
+            stage.setHeight(1000);
+            stage.centerOnScreen();
 
-            // Set the new scene
-            Scene scene = new Scene(root, width, height);
-            stage.setScene(scene);
-
-            stage.setWidth(width);
-            stage.setHeight(height);
+            // Set the new scene and show the stage
+            stage.setScene(nextScene);
             stage.show();
         } catch (IOException e) {
             // Log the exception using a logger instead of printStackTrace()
@@ -127,6 +169,7 @@ public class TutorPageViewController {
     }
 
     public void addCourse(){
+
         String name = nameTextField.getText();
         String description = textAreaDescription.getText();
         int tutorId = tutor.getId();
@@ -137,19 +180,27 @@ public class TutorPageViewController {
         // Create the course object
         Course course = new Course(id, name, description, tutorId);
 
-        // Try to insert the course using the DAO
-        boolean isInserted = courseDAO.insertCourse(course);
-
-        // Show alert based on the result
-        if (isInserted) {
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Course added successfully.");
+        if (name.isEmpty()) {
+            nameTextField.setStyle("-fx-border-color : red");
         } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to add the course.");
+            // Try to insert the course using the DAO
+            boolean isInserted = courseDAO.insertCourse(course);
+
+            // Show alert based on the result
+            if (isInserted) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Course added successfully.");
+                coursePane.setVisible(false);
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to add the course.");
+            }
         }
     }
 
     public void addCourseClicked() {
         coursePane.setVisible(true);
+        scrollPane.setVisible(false);
+        sectionScroll.setVisible(false);
+        viewScrollPane.setVisible(false);
     }
 
     // You might want to implement a method to generate the course ID.
@@ -178,6 +229,10 @@ public class TutorPageViewController {
 
 
     public void displayTutorCourses() {
+        coursePane.setVisible(false);
+        scrollPane.setVisible(true);
+        viewScrollPane.setVisible(false);
+
         CourseDao courseDao = new CourseDao(); // Create CourseDao instance
         List<Course> courses = courseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
 
@@ -198,121 +253,231 @@ public class TutorPageViewController {
 
     @NotNull
     private Button getCourseButton(List<Course> courses, int i) {
+        double buttonWidth = 500;
+        double buttonHeight = 100;
+
         Course course = courses.get(i);
         Button courseButton = new Button(course.getName()); // Create a button with the course name
-        courseButton.setStyle("-fx-font-size: 14px; -fx-pref-width: 200px; -fx-padding: 10px;"); // Optional styling
+        courseButton.setFont(new Font(20));
+        courseButton.setPrefSize(buttonWidth, buttonHeight);
+        courseButton.setStyle("-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray; -fx-font-weight: bold;");
+        courseButton.setAlignment(Pos.BASELINE_LEFT);
+        courseButton.setWrapText(true);
+
+        ImageView arrow = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/next.png"))));
+        arrow.setFitHeight(32);
+        arrow.setFitWidth(32);
+        arrow.setPreserveRatio(true);
+        courseButton.setGraphic(arrow);
+        courseButton.setGraphicTextGap(10);
+        courseButton.setOnMouseEntered(_ -> {
+            courseButton.setStyle("-fx-border-width: 3px;-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: #72B3FF; -fx-underline: true;-fx-font-weight: bold;");
+            courseButton.setCursor(Cursor.HAND);
+        });
+
+        courseButton.setOnMouseExited(_ -> {
+            courseButton.setStyle("-fx-border-width: 1px;-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color:  lightgray;-fx-font-weight: bold;");
+            courseButton.setCursor(Cursor.DEFAULT);
+        });
 
         // Manually position the button inside AnchorPane
         courseButton.setLayoutX(20); // Set horizontal position
-        courseButton.setLayoutY(i * 50 + 20); // Set vertical position with spacing between buttons
+        courseButton.setLayoutY(i * 110 + 20); // Set vertical position with spacing between buttons
 
         // Add an event handler to handle clicks on the button
-        courseButton.setOnAction(_ -> modifyCourse(course));
+        courseButton.setOnAction(_ -> {
+            scrollPane.setVisible(false);
+            sectionScroll.setVisible(true);
+            courseName.setText(course.getName());
+            currentCourse = course;
+            displaySectionsForCourse(course);
+        });
         return courseButton;
+    }
+
+    public void displaySectionsForCourse(Course course) {
+        try {
+            // Clear previous buttons
+            modifyPane.getChildren().clear();
+
+            // Load all sections for this course
+            List<Section> sectionList = SectionDao.getSectionsForCourse(course.getId());
+
+            double yOffset = 10; // starting vertical position
+
+            for (Section section : sectionList) {
+                Button sectionButton = getSectionButton(section, yOffset);
+
+                modifyPane.getChildren().add(sectionButton);
+                yOffset += sectionButton.getPrefHeight() + 20;
+            }
+
+            secButton.setText("section(+)");
+            secButton.setStyle("-fx-font-size: 20px; -fx-padding: 10px;-fx-background-color: #00CC00; -fx-text-fill: white;-fx-font-weight: bold;");
+            secButton.setPrefWidth(320);
+            secButton.setPrefHeight(40);
+            secButton.setLayoutX(10);
+            secButton.setLayoutY(yOffset);
+            modifyPane.getChildren().add(secButton);
+
+            secButton.setOnMouseClicked(this::addNewSection);
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred", e);
+        }
+    }
+
+    @NotNull
+    private Button getSectionButton(Section section, double yOffset) {
+        Button sectionButton = new Button(section.getTitle());
+
+        // Apply the same style as clickedButton
+        sectionButton.setStyle("-fx-font-size: 20px; -fx-padding: 10px;-fx-background-color: white; -fx-border-color: gray; -fx-text-fill: gray; -fx-alignment: CENTER_LEFT;");
+        sectionButton.setPrefWidth(320); // adjust as needed
+        sectionButton.setPrefHeight(40); // adjust as needed
+
+        sectionButton.setLayoutX(10); // or wherever you want it on X
+        sectionButton.setLayoutY(yOffset);
+
+        sectionButton.setOnMouseClicked(_ -> {
+            sectionLabel.setText("Section: " + section.getTitle());
+            currentSection = section;
+            currentSectionButton = sectionButton;
+            // Optional: also load the contents here if you'd like
+            List<Button> buttons = displaySectionContents(section.getId());
+
+            contentScroll.setVisible(!buttons.isEmpty());
+        });
+        return sectionButton;
     }
 
     @NotNull
     private Button getCourseViewButton(List<Course> courses, int i) {
+        double buttonWidth = 500;
+        double buttonHeight = 100;
+
         Course course = courses.get(i);
         Button courseButton = new Button(course.getName()); // Create a button with the course name
-        courseButton.setStyle("-fx-font-size: 14px; -fx-pref-width: 200px; -fx-padding: 10px;"); // Optional styling
+        courseButton.setFont(new Font(20));
+        courseButton.setPrefSize(buttonWidth, buttonHeight);
+        courseButton.setStyle("-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray; -fx-font-weight: bold;");
+        courseButton.setAlignment(Pos.BASELINE_LEFT);
+        courseButton.setWrapText(true);
+
+        ImageView arrow = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/next.png"))));
+        arrow.setFitHeight(32);
+        arrow.setFitWidth(32);
+        arrow.setPreserveRatio(true);
+        courseButton.setGraphic(arrow);
+        courseButton.setGraphicTextGap(10);
+        courseButton.setOnMouseEntered(_ -> {
+            courseButton.setStyle("-fx-border-width: 3px;-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: #72B3FF; -fx-underline: true;-fx-font-weight: bold;");
+            courseButton.setCursor(Cursor.HAND);
+        });
+
+        courseButton.setOnMouseExited(_ -> {
+            courseButton.setStyle("-fx-border-width: 1px;-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color:  lightgray;-fx-font-weight: bold;");
+            courseButton.setCursor(Cursor.DEFAULT);
+        });
 
         // Manually position the button inside AnchorPane
         courseButton.setLayoutX(20); // Set horizontal position
-        courseButton.setLayoutY(i * 50 + 20); // Set vertical position with spacing between buttons
-        class YPosition {
-            double value;
+        courseButton.setLayoutY(i * 110 + 20); // Set vertical position with spacing between buttons
 
-            public YPosition(double initialValue) {
-                this.value = initialValue;
-            }
-
-            public double getValue() {
-                return value;
-            }
-
-            public void setValue(double value) {
-                this.value = value;
-            }
-        }
-        // Add an event handler to handle clicks on the button
         courseButton.setOnAction(_ -> {
-            // Get the course name from the button's text
-            String courseName = courseButton.getText();
+            // Clear previous section buttons and content before displaying new ones
+            content.getChildren().clear();
+            viewScroll.getChildren().clear();
+            viewScrollPane.setVisible(true);
 
-            // Query for sections that belong to this course
-            // Assuming you have a method in your SectionDao to fetch sections by course name
-            List<Section> sectionsForCourse = SectionDao.getSectionsByCourseName(courseName);
+            // Fetch the sections for the selected course (you can use a method like getSectionsByCourseId(courseId))
+            List<Section> sections;
+            try {
+                sections = SectionDao.getSectionsForCourse(course.getId());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
 
-            // Clear any existing buttons in the display area (AnchorPane)
-            modifyPane.getChildren().clear(); // Assuming you're displaying sections in 'modifyPane'
+            // Add buttons for each section on the left side
+            double currentY = 20; // Starting Y position
+            for (Section section : sections) {
+                Button sectionButton = getNewButton(section, currentY);
 
-            // Initialize a YPosition object to hold the Y value
-            YPosition currentY = new YPosition(10); // Starting Y position (can be adjusted as needed)
-            double spacing = 20; // Space between buttons (in pixels)
+                // Add the section button to the left AnchorPane (sectionButtonsPane)
+                viewScroll.getChildren().add(sectionButton);
 
-            // Iterate through the sections and display them as buttons
-            for (Section section : sectionsForCourse) {
-                // Create a button for each section
-                Button sectionButton = new Button("Section ID: " + section.getId() + ", Title: " + section.getTitle());
-
-                // Set properties for the button (you can customize the appearance)
-                sectionButton.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
-
-                // Set the position for the button
-                sectionButton.setLayoutX(10); // X position (adjust as needed)
-                sectionButton.setLayoutY(currentY.getValue()); // Y position for stacking
-
-                // Add an action for when the button is clicked
-                sectionButton.setOnAction(_ -> {
-                    // Fetch content related to the clicked section from the database
-                    List<SectionContent> sectionContents;
-                    try {
-                        sectionContents = SectionContentDao.getContentBySectionId(section.getId());
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-
-                    // Assuming you have a TextArea for displaying the section content
-                    TextArea contentArea = new TextArea();
-                    contentArea.setEditable(false);  // Make the TextArea read-only
-                    contentArea.setPrefHeight(200);  // Set height to fit content
-                    contentArea.setPrefWidth(400);   // Set width for display purposes
-
-                    // Display the section title and content in the TextArea
-                    StringBuilder contentText = new StringBuilder("Title: " + section.getTitle() + "\n\n");
-
-                    // Loop through the content for this section and display it
-                    for (SectionContent content : sectionContents) {
-                        contentText.append("Content Type: ").append(content.contentType()).append("\n");
-                        contentText.append("Content: ").append(content.content()).append("\n\n");
-                    }
-
-                    // Set the content of the TextArea
-                    contentArea.setText(contentText.toString());
-
-                    // Clear any previous content and display the new TextArea
-                    modifyPane.getChildren().clear();  // Optional: clear existing buttons and content
-                    modifyPane.getChildren().add(contentArea);  // Add the new content area
-                });
-
-
-                // Add the button to the AnchorPane
-                modifyPane.getChildren().add(sectionButton);
-
-                // Update the Y position for the next button, ensuring a gap between them
-                currentY.setValue(currentY.getValue() + sectionButton.getHeight() + spacing); // Adding spacing between buttons
+                // Increase Y position for next section button
+                currentY += sectionButton.getHeight() + 50; // Add some space between buttons
             }
         });
-
 
         return courseButton;
     }
 
-    public void modifyCourse(Course course){
-        courseName.setText(course.getName());
-        currentCourse = course;
+    @NotNull
+    private Button getNewButton(Section section, double currentY) {
+        Button sectionButton = new Button(section.getTitle()); // Section title as button text
+        sectionButton.setPrefWidth(230); // Set width of section buttons
+        sectionButton.setPrefHeight(50); // Set height of section buttons
+
+        sectionButton.setStyle("-fx-background-color: #168fff; -fx-text-fill: white; -fx-border-color: lightgray; -fx-font-weight: bold;-fx-font-size: 20px;");
+        sectionButton.setLayoutX(20); // Position the button on the left side
+        sectionButton.setLayoutY(currentY);
+        sectionButton.setOnAction(_ -> {
+            // When a section button is clicked, fetch and display the content for that section
+            content.getChildren().clear();
+            displaySectionContents(section, contentVBox);
+
+            content.getChildren().add(contentVBox);
+            // Dynamically update the height of viewScroll based on contentVBox height
+            updateAnchorPaneHeight(viewScroll);
+
+        });
+        return sectionButton;
     }
+
+    private void updateAnchorPaneHeight(AnchorPane viewScroll) {
+        viewScroll.setPrefHeight(3500);  // Add some extra space (optional)
+    }
+
+    // Method to display the section contents in the content area (Right side)
+    private void displaySectionContents(Section section, VBox contentVBox) {
+        contentVBox.getChildren().clear();
+
+        List<SectionContent> sectionContents;
+        try {
+            sectionContents = SectionContentDao.getContentBySectionId(section.getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        for (SectionContent content : sectionContents) {
+            // Title
+            Label titleLabel = new Label(content.getTitle());
+            titleLabel.setStyle("-fx-font-size: 25px; -fx-font-weight: bold;");
+            titleLabel.setWrapText(true);
+            titleLabel.setMaxWidth(700);
+
+            contentVBox.getChildren().add(titleLabel);
+
+            if (content.getContentType().equals("text")) {
+                Text text = new Text(content.getContent());
+                text.setStyle("-fx-font-size: 20px;");
+                text.setWrappingWidth(700);
+
+                TextFlow textFlow = new TextFlow(text);
+                textFlow.setStyle("-fx-background-color: #f5f5f5; -fx-padding: 10px; -fx-border-color: lightgray;");
+                contentVBox.getChildren().add(textFlow);
+            } else if (content.getContentType().equals("video") || content.getContentType().equals("image")) {
+                Hyperlink link = new Hyperlink(content.getContent());
+                link.setStyle("-fx-font-size: 20px;");
+                contentVBox.getChildren().add(link);
+            }
+        }
+        updateAnchorPaneHeight(viewScroll);
+    }
+
+
 
     public void addNewSection(MouseEvent event) {
         // Get the clicked button (the "Add New Section" button)
@@ -344,25 +509,77 @@ public class TutorPageViewController {
         // Set the event handler for the current button to display the section info when clicked
         Section finalNewSection = newSection;
         clickedButton.setOnMouseClicked(_ -> {
-            // Display the section info, here we are just printing the section ID
-            sectionLabel.setText("Section ID: " + finalNewSection.getId() + ", Title: " + finalNewSection.getTitle());
+            // Display the section info, here we are just printing the section title and content
+            sectionLabel.setText("Section: " + finalNewSection.getTitle());
             currentSection = finalNewSection;
+
+            // Now load and display all the contents for the clicked section
+            List<Button> buttons = displaySectionContents(finalNewSection.getId());
+            contentScroll.setVisible(!buttons.isEmpty());
         });
 
         // Add the new button to the layout (e.g., AnchorPane or any layout you're using)
         modifyPane.getChildren().add(newSectionButton); // 'modifyPane' is your layout, like AnchorPane or VBox
     }
 
+
+    // Method to display all contents of a section
+    private List<Button> displaySectionContents(int sectionId) {
+        // Get the section contents from the database based on the section ID
+        List<SectionContent> sectionContents;
+        List<Button> buttons = new ArrayList<>();
+        try {
+            sectionContents = SectionContentDao.getContentsForSection(sectionId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Clear any previous content in the layout
+        contentPane.getChildren().clear(); // Assuming you have a content pane to display the section contents
+
+        double currentY = 10; // Starting Y position (space from top)
+
+        // Add each content as a TextArea or Label to the content pane
+        for (SectionContent content : sectionContents) {
+            Button contentButton = new Button(content.getTitle()); // Set the button's title to the content's title
+
+            // Optionally, style the Button
+            contentButton.setStyle("-fx-padding: 10px; -fx-font-size: 14px; -fx-border-color: gray;");
+            contentButton.setStyle("-fx-font-size: 20px; -fx-padding: 10px;-fx-background-color: white; -fx-border-color: gray; -fx-text-fill: gray; -fx-alignment: CENTER_LEFT;");
+            contentButton.setPrefWidth(200);
+            // Set the position of the button (with spacing)
+            contentButton.setLayoutY(currentY);
+            buttons.add(contentButton);
+            // Add the button to the content pane
+            contentPane.getChildren().add(contentButton);
+
+            // When the button is clicked, set the content in the mainTextArea
+            contentButton.setOnAction(_ -> {
+                titleField.setText(content.getTitle());
+                contentArea.setText(content.getContent()); // Display the content in the mainTextArea
+                contentScroll.setVisible(false);
+                currentSectionContent = content;
+                currentSectionContentButton = contentButton;
+            });
+
+            // Increment the Y position for the next button, including some spacing
+            currentY += contentButton.getHeight() + 50; // Add 10px of space between buttons
+        }
+
+        return buttons;
+    }
+
     @NotNull
     private Button getNewSectionButton(Button clickedButton) {
-        Button newSectionButton = new Button("Add New Section");
+        Button newSectionButton = new Button("section(+)");
 
         // Set the same size for the new button as the clicked button
         newSectionButton.setPrefWidth(clickedButton.getPrefWidth());
         newSectionButton.setPrefHeight(clickedButton.getPrefHeight());
 
+        clickedButton.setStyle("-fx-font-size: 20px; -fx-padding: 10px;-fx-background-color: white; -fx-border-color: gray; -fx-text-fill: gray; -fx-alignment: CENTER_LEFT;");
         // Optional: Style the new button (if needed)
-        newSectionButton.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
+        newSectionButton.setStyle("-fx-font-size: 20px; -fx-padding: 10px;-fx-background-color: #00CC00; -fx-text-fill: white;-fx-font-weight: bold;");
 
         // Position the new button below the clicked button
         double clickedButtonY = clickedButton.getLayoutY(); // Get the Y position of the clicked button
@@ -390,10 +607,14 @@ public class TutorPageViewController {
 
         titleField.clear();
         contentArea.clear();
-        choice.getSelectionModel().clearSelection();
+        choice.setValue("text");
     }
 
     public void viewCourses() {
+        scrollPane.setVisible(true);
+        coursePane.setVisible(false);
+        sectionScroll.setVisible(false);
+
         CourseDao courseDao = new CourseDao(); // Create CourseDao instance
         List<Course> courses = courseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
 
@@ -410,5 +631,163 @@ public class TutorPageViewController {
 
         // Refresh the layout of the AnchorPane
         vboxCourses.layout();
+    }
+
+    public void deleteClicked() {
+        try {
+            // Check if there is content displayed in the mainContentArea
+            String contentToDelete = contentArea.getText();
+
+            if (contentToDelete.isEmpty()) {
+                System.out.println("No content to delete.");
+                return;
+            }
+
+            // Find the SectionContent object (you might have it stored somewhere in the UI)
+            SectionContent content = SectionContentDao.getContentBySectionIdAndTitle(currentSection.getId(), contentToDelete);
+
+            if (content == null) {
+                System.out.println("Content not found.");
+                return;
+            }
+
+            // Call the DAO to delete the content
+            SectionContentDao.deleteSectionContent(content.getId());
+
+            // Optionally, clear the TextArea after deletion
+            contentArea.clear();
+            titleField.clear();
+            contentScroll.setVisible(false);
+            contentSecPane.getChildren().remove(currentSectionContentButton);
+
+
+            // Remove the corresponding button from the UI (if needed)
+            removeContentButton(content);
+
+            System.out.println("Content deleted successfully.");
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred", e);
+
+        }
+    }
+
+    private void removeContentButton(SectionContent content) {
+        // Loop through content buttons and find the one that matches the content's title
+        for (Node node : contentPane.getChildren()) {
+            if (node instanceof Button contentButton) {
+                if (contentButton.getText().equals(content.getTitle())) {
+                    contentPane.getChildren().remove(contentButton);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void updateClicked() {
+        try {
+            // Make sure we have the current content selected and that it's not empty
+            String updatedContent = contentArea.getText();
+            String updatedTitle = titleField.getText();
+
+            if (updatedContent.isEmpty() || updatedTitle.isEmpty()) {
+                System.out.println("Please fill in the content and title.");
+                return;
+            }
+
+            // Get the current section content ID from the currently selected content
+            SectionContent content = currentSectionContent;
+
+            if (content == null) {
+                System.out.println("No content selected to update.");
+                return;
+            }
+
+            // Create a new SectionContent record with updated information
+            SectionContent updatedContentRecord = new SectionContent(
+                    content.id(), // Use the existing ID for the updated record
+                    content.sectionId(), // Section ID remains the same
+                    updatedTitle,  // Updated title
+                    content.contentType(),  // Assume content type doesn't change, if needed you can change it
+                    updatedContent,  // New content
+                    content.contentOrder() // You may want to keep the order the same, or update it
+            );
+
+            // Update the section content in the database
+            SectionContentDao.updateSectionContent(updatedContentRecord);
+
+            // Optionally, clear the input fields after updating
+            titleField.clear();
+            contentArea.clear();
+
+            // Optionally, refresh the displayed content to reflect the update
+            displaySectionContents(content.sectionId());
+
+            System.out.println("Content updated successfully.");
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred", e);
+        }
+    }
+
+    public void deleteSection() {
+        try {
+            if (currentSection == null) {
+                System.out.println("No section selected to delete.");
+                return;
+            }
+
+            // Delete the section from the database
+            SectionDao.deleteSection(currentSection.getId());
+
+            // Optionally, refresh the UI after deletion (to display all sections again)
+            displaySectionsForCourse(currentCourse);
+            contentScroll.setVisible(false);
+
+            System.out.println("Section deleted successfully.");
+
+            // Optionally, reset currentSection to null after deleting it
+            currentSection = null;
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred", e);
+        }
+    }
+
+
+    public void updateButton() {
+        // Get the new title and description from the input fields
+        String newTitle = titleField.getText();
+        String newDescription = contentArea.getText();
+
+        if (newTitle.isEmpty() || newDescription.isEmpty()) {
+            System.out.println("Please provide new values for the section.");
+            return;
+        }
+
+        // Update the section in the database and UI
+        if (currentSection != null) {
+            try {
+                // Update section in the database
+                SectionDao.updateSection(currentSection.getId(), newTitle, newDescription);
+
+                // Update the currentSection object to reflect the new values
+                currentSection.setTitle(newTitle);
+                currentSection.setDescription(newDescription);
+
+                // Optionally, update the section button text to reflect the new title
+                currentSectionButton.setText(newTitle);
+
+                // Clear the input fields after updating
+                titleField.clear();
+                contentArea.clear();
+
+                System.out.println("Section updated successfully.");
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "An error occurred", ex);
+            }
+        } else {
+            System.out.println("No section selected for update.");
+        }
     }
 }

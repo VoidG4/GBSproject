@@ -171,7 +171,7 @@
         <Hyperlink layoutX="18.0" layoutY="46.0" text="Change password" />
         <Hyperlink layoutX="18.0" layoutY="75.0" onMouseClicked="#logOut" text="Log out" />
     </AnchorPane>
-    <AnchorPane layoutX="7.0" layoutY="180.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="-8.0" AnchorPane.topAnchor="180.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+    <AnchorPane fx:id="mainAnchorPane" layoutX="7.0" layoutY="180.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="-8.0" AnchorPane.topAnchor="180.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
 
         <!-- Left Menu -->
         <AnchorPane prefHeight="1001.0" prefWidth="279.0" style="-fx-background-color: rgba(0,0,0,0.05);">
@@ -229,23 +229,104 @@
         <AnchorPane style="-fx-background-color: transparent;">
             <!-- Content components go here -->
         </AnchorPane>
-        <AnchorPane fx:id="coursePane" layoutX="413.0" layoutY="41.0" prefHeight="349.0" prefWidth="358.0" style="-fx-background-color: white;">
-            <TextField fx:id="nameTextField" alignment="TOP_LEFT" layoutX="65.0" layoutY="73.0" prefHeight="24.0" prefWidth="162.0" />
-         <TextArea fx:id="textAreaDescription" layoutX="65.0" layoutY="141.0" prefHeight="200.0" prefWidth="200.0" />
-         <Button layoutX="234.0" layoutY="47.0" mnemonicParsing="false" onMouseClicked="#addCourse" prefHeight="52.0" prefWidth="101.0" text="Button" />
+        <AnchorPane fx:id="coursePane" layoutX="639.0" layoutY="114.0" prefHeight="570.0" prefWidth="535.0" style="-fx-background-color: white; -fx-border-radius: 15;" visible="false">
+            <TextField fx:id="nameTextField" alignment="TOP_LEFT" layoutX="51.0" layoutY="43.0" prefHeight="32.0" prefWidth="434.0" promptText="My new course">
+            <font>
+               <Font size="18.0" />
+            </font></TextField>
+         <TextArea fx:id="textAreaDescription" layoutX="51.0" layoutY="139.0" prefHeight="363.0" prefWidth="434.0" promptText="This is my new course ...">
+            <font>
+               <Font size="18.0" />
+            </font></TextArea>
+         <Button layoutX="420.0" layoutY="515.0" mnemonicParsing="false" onMouseClicked="#addCourse" prefHeight="34.0" prefWidth="101.0" style="-fx-background-color: #00CC00;" text="Create" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="19.0" />
+            </font></Button>
+         <Label layoutX="51.0" layoutY="14.0" text="Course Title:">
+            <font>
+               <Font size="18.0" />
+            </font>
+         </Label>
+         <Label layoutX="51.0" layoutY="112.0" text="Course Description:">
+            <font>
+               <Font size="18.0" />
+            </font>
+         </Label>
         </AnchorPane>
-        <ScrollPane fx:id="scrollPane" layoutX="876.0" layoutY="33.0" prefHeight="83.0" prefWidth="491.0">
-            <AnchorPane fx:id="vboxCourses" minHeight="0.0" minWidth="0.0" prefHeight="101.0" prefWidth="483.0" />
+        <ScrollPane fx:id="scrollPane" layoutX="465.0" layoutY="173.0" pannable="true" prefHeight="501.0" prefWidth="906.0" visible="false">
+            <AnchorPane fx:id="vboxCourses" minHeight="0.0" minWidth="0.0" prefHeight="1000.0" prefWidth="905.0" />
         </ScrollPane>
-        <ScrollPane layoutX="786.0" layoutY="399.0" pannable="true" prefHeight="559.0" prefWidth="482.0">
-            <AnchorPane fx:id="modifyPane" minHeight="0.0" minWidth="0.0" prefHeight="658.0" prefWidth="485.0">
-                <Label fx:id="courseName" layoutX="21.0" layoutY="22.0" text="Label" />
-                <Button layoutX="14.0" layoutY="40.0" mnemonicParsing="false" onMouseClicked="#addNewSection" prefHeight="34.0" prefWidth="105.0" text="new module +" />
-            <TextField fx:id="titleField" layoutX="161.0" layoutY="18.0" prefHeight="26.0" prefWidth="246.0" />
-            <TextArea fx:id="contentArea" layoutX="163.0" layoutY="81.0" prefHeight="200.0" prefWidth="242.0" />
-            <ChoiceBox fx:id="choice" layoutX="255.0" layoutY="48.0" prefWidth="150.0" />
-            <Label fx:id="sectionLabel" layoutX="163.0" layoutY="61.0" text="section" />
-            <Button layoutX="330.0" layoutY="242.0" mnemonicParsing="false" onMouseClicked="#addContent" text="Button" />
+        <ScrollPane fx:id="sectionScroll" layoutX="461.0" layoutY="53.0" pannable="true" prefHeight="692.0" prefWidth="915.0" visible="false">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="735.0" prefWidth="898.0" style="-fx-background-color: #dadada;">
+                <AnchorPane layoutX="348.0" layoutY="-5.0" prefHeight="742.0" prefWidth="550.0" style="-fx-background-color: white;">
+                    <TextField fx:id="titleField" layoutX="102.0" layoutY="27.0" prefHeight="40.0" prefWidth="377.0" promptText="My new section">
+                        <font>
+                            <Font size="19.0" />
+                        </font>
+                    </TextField>
+                    <TextArea fx:id="contentArea" layoutX="43.0" layoutY="193.0" prefHeight="425.0" prefWidth="473.0" promptText="Add content or description here...">
+                        <font>
+                            <Font size="20.0" />
+                        </font>
+                    </TextArea>
+                    <ChoiceBox fx:id="choice" layoutX="243.0" layoutY="95.0" prefHeight="34.0" prefWidth="233.0" />
+                    <Label fx:id="sectionLabel" layoutX="39.0" layoutY="152.0" text="Selected section">
+                        <font>
+                            <Font size="20.0" />
+                        </font>
+                    </Label>
+                    <Button layoutX="410.0" layoutY="636.0" mnemonicParsing="false" onMouseClicked="#addContent" prefHeight="43.0" prefWidth="101.0" style="-fx-background-color: #00CC00;" text="Add" textFill="WHITE">
+                        <font>
+                            <Font size="20.0" />
+                        </font>
+                    </Button>
+                    <Label layoutX="38.0" layoutY="33.0" text="Title:">
+                        <font>
+                            <Font size="20.0" />
+                        </font>
+                    </Label>
+                    <Label layoutX="38.0" layoutY="97.0" text="Type of content:">
+                        <font>
+                            <Font size="20.0" />
+                        </font>
+                    </Label>
+               <Button layoutX="304.0" layoutY="636.0" mnemonicParsing="false" onMouseClicked="#deleteClicked" prefHeight="24.0" prefWidth="89.0" style="-fx-background-color: red;" text="Delete" textFill="WHITE">
+                  <font>
+                     <Font size="20.0" />
+                  </font></Button>
+               <Button layoutX="185.0" layoutY="637.0" mnemonicParsing="false" onMouseClicked="#updateClicked" prefHeight="43.0" prefWidth="101.0" style="-fx-background-color: blue;" text="Update" textFill="WHITE">
+                  <font>
+                     <Font size="20.0" />
+                  </font>
+               </Button>
+                </AnchorPane>
+                <Label fx:id="courseName" layoutX="18.0" layoutY="12.0" text="Course name">
+               <font>
+                  <Font name="System Bold" size="25.0" />
+               </font>
+            </Label>
+            <Button layoutX="272.0" layoutY="17.0" mnemonicParsing="false" onMouseClicked="#deleteSection" text="Delete" />
+                <AnchorPane fx:id="modifyPane" layoutY="71.0" prefHeight="669.0" prefWidth="348.0">
+                    <Button fx:id="secButton" layoutX="14.0" mnemonicParsing="false" onMouseClicked="#addNewSection" prefHeight="58.0" prefWidth="318.0" style="-fx-background-color: #00CC00;" text="section (+)" textFill="#fff9f9" wrapText="true">
+                        <font>
+                            <Font name="System Bold" size="20.0" />
+                        </font>
+                    </Button>
+                </AnchorPane>
+            <Button layoutX="204.0" layoutY="17.0" mnemonicParsing="false" onMouseClicked="#updateButton" text="Button" />
+            </AnchorPane>
+        </ScrollPane>
+        <ScrollPane fx:id="contentScroll" layoutX="817.0" layoutY="137.0" prefHeight="215.0" prefWidth="212.0" visible="false">
+            <AnchorPane fx:id="contentSecPane" minHeight="0.0" minWidth="0.0" prefHeight="337.0" prefWidth="267.0">
+                <AnchorPane fx:id="contentPane" layoutY="-3.0" prefHeight="522.0" prefWidth="203.0" style="-fx-background-color: white;" />
+            </AnchorPane>
+        </ScrollPane>
+        <ScrollPane fx:id="viewScrollPane" layoutX="306.0" layoutY="28.0" prefHeight="742.0" prefWidth="1202.0" visible="false">
+            <AnchorPane prefHeight="820.0" prefWidth="1200.0">
+                <AnchorPane fx:id="viewScroll" layoutX="-13.0" prefHeight="1195.0" prefWidth="255.0" style="-fx-background-color: #168fff;" />
+                <AnchorPane fx:id="content" layoutX="260.0" layoutY="1.0" prefHeight="802.0" prefWidth="929.0">
+                    <VBox fx:id="contentVBox" layoutY="14.0" prefHeight="790.0" prefWidth="928.0" />
+                </AnchorPane>
             </AnchorPane>
         </ScrollPane>
 

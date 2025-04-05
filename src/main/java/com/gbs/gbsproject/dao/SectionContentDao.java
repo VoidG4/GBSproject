@@ -31,6 +31,56 @@ public class SectionContentDao {
         }
     }
 
+    public static void updateSectionContent(SectionContent content) throws SQLException {
+        String updateQuery = "UPDATE section_content SET title = ?, content = ?, content_type = ?, content_order = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(updateQuery)) {
+
+            // Set parameters for the update query
+            ps.setString(1, content.title());
+            ps.setString(2, content.content());
+            ps.setString(3, content.contentType());
+            ps.setInt(4, content.contentOrder());
+            ps.setInt(5, content.id());
+
+            // Execute the update
+            ps.executeUpdate();
+        }
+    }
+
+    // Assuming you have a method like this in your DAO class
+    public static void deleteSectionContent(int contentId) throws SQLException {
+        String deleteQuery = "DELETE FROM section_content WHERE id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(deleteQuery)) {
+
+            ps.setInt(1, contentId);
+            ps.executeUpdate();
+        }
+    }
+
+    // Method to fetch content by section ID and title
+    public static SectionContent getContentBySectionIdAndTitle(int sectionId, String title) throws SQLException {
+        String query = "SELECT * FROM section_content WHERE section_id = ? AND title = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, sectionId);
+            ps.setString(2, title);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new SectionContent(rs.getInt("id"), rs.getInt("section_id"),
+                        rs.getString("title"), rs.getString("content_type"),
+                        rs.getString("content"), rs.getInt("content_order"));
+            }
+        }
+        return null;
+    }
+    
     public static List<SectionContent> getContentBySectionId(int sectionId) throws SQLException {
         List<SectionContent> sectionContents = new ArrayList<>();
 
@@ -58,5 +108,30 @@ public class SectionContentDao {
 
         return sectionContents;
     }
+
+    public static List<SectionContent> getContentsForSection(int sectionId) throws SQLException {
+        List<SectionContent> contents = new ArrayList<>();
+        String query = "SELECT * FROM section_content WHERE section_id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, sectionId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String title = rs.getString("title");
+                    String contentType = rs.getString("content_type");
+                    String content = rs.getString("content");
+                    int contentOrder = rs.getInt("content_order");
+
+                    SectionContent sectionContent = new SectionContent(id, sectionId, title, contentType, content, contentOrder);
+                    contents.add(sectionContent);
+                }
+            }
+        }
+        return contents;
+    }
+
 
 }
