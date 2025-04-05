@@ -196,6 +196,8 @@ public class TutorPageViewController {
             if (isInserted) {
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Course added successfully.");
                 coursePane.setVisible(false);
+                nameTextField.clear();
+                textAreaDescription.clear();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Error", "Failed to add the course.");
             }
@@ -486,7 +488,19 @@ public class TutorPageViewController {
                 throw new RuntimeException(e);
             }
 
-            // Add buttons for each section on the left side
+            Label titleLabel = new Label(course.getName()); // Set the course title
+            titleLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;"); // Larger font size for the title
+            titleLabel.setWrapText(true);  // Allow the title to wrap if it's too long
+            titleLabel.setMaxWidth(700);   // Set maximum width for the title
+
+            // Create a TextFlow for the description with text styled at 20px
+            TextFlow descriptionFlow = getTextFlow(course);
+
+            // Add the title label and description flow to the VBox
+            contentVBox.getChildren().clear();
+            contentVBox.getChildren().addAll(titleLabel, descriptionFlow);
+            content.getChildren().add(contentVBox);
+
             double currentY = 20; // Starting Y position
             for (Section section : sections) {
                 Button sectionButton = getNewButton(section, currentY);
@@ -500,6 +514,18 @@ public class TutorPageViewController {
         });
 
         return courseButton;
+    }
+
+    @NotNull
+    private static TextFlow getTextFlow(Course course) {
+        Text descriptionText = new Text(course.getDescription());  // Use the course description
+        descriptionText.setStyle("-fx-font-size: 20px;"); // Set font size for the description
+
+        // Create a TextFlow to wrap the description text
+        TextFlow descriptionFlow = new TextFlow(descriptionText);
+        descriptionFlow.setStyle("-fx-background-color: #f5f5f5; -fx-padding: 10px; -fx-border-color: lightgray;");
+        descriptionFlow.setMaxWidth(700);  // Ensure it wraps properly within the max width
+        return descriptionFlow;
     }
 
     @NotNull
@@ -557,6 +583,7 @@ public class TutorPageViewController {
 
                     TextFlow textFlow = new TextFlow(text);
                     textFlow.setStyle("-fx-background-color: #f5f5f5; -fx-padding: 10px; -fx-border-color: lightgray;");
+                    textFlow.setMaxWidth(700);  // Ensure it wraps properly within the max width
                     contentVBox.getChildren().add(textFlow);
                 }
                 case "video" -> {
@@ -941,6 +968,7 @@ public class TutorPageViewController {
         scrollPane.setVisible(true);
         coursePane.setVisible(false);
         sectionScroll.setVisible(false);
+        viewScrollPane.setVisible(false);
 
         List<Course> courses = CourseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
 
