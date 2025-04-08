@@ -3,10 +3,7 @@ package com.gbs.gbsproject.dao;
 import com.gbs.gbsproject.model.Student;
 import com.gbs.gbsproject.util.DatabaseUtil;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,5 +31,24 @@ public class StudentDao {
             LOGGER.log(Level.SEVERE, "An error occurred ", e);
         }
         return students;
+    }
+
+    public String getFullNameByUsername(String username) {
+        String fullName = "Student Name"; // Default in case of failure
+
+        String query = "SELECT name, surname FROM student WHERE username = ?";
+        try (PreparedStatement stmt = DatabaseUtil.getConnection().prepareStatement(query)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    fullName = rs.getString("name") + " " + rs.getString("surname");
+                }
+            }
+        } catch (SQLException e) {
+            // Log error
+            Logger.getLogger(StudentDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return fullName;
     }
 }

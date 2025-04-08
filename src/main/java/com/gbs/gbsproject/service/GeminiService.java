@@ -1,5 +1,6 @@
 package com.gbs.gbsproject.service;
 
+import com.gbs.gbsproject.util.GeminiApiConfig;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,7 +38,7 @@ public class GeminiService {
         RequestBody body = RequestBody.create(createJsonBody(question).toString(), MediaType.get("application/json; charset=utf-8"));
 
         Request request = new Request.Builder()
-                .url(API_URL + "?key=" + ApiConfig.getApiKey())  // Use the API key from ApiConfig
+                .url(API_URL + "?key=" + GeminiApiConfig.getApiKey())  // Use the API key from GeminiApiConfig
                 .post(body)
                 .build();
 

@@ -19,6 +19,13 @@ module com.example.gbsproject {
     requires org.postgresql.jdbc;
     requires javafx.media;
 
+
+
+    requires unirest.java;
+    requires jlayer;
+
+
+
     opens com.gbs.gbsproject to javafx.fxml;
     exports com.gbs.gbsproject;
     exports com.gbs.gbsproject.controller;

@@ -1,12 +1,7 @@
 package com.gbs.gbsproject.controller;
 
-import com.gbs.gbsproject.dao.SectionContentDao;
-import com.gbs.gbsproject.dao.SectionDao;
-import com.gbs.gbsproject.model.Course;
-import com.gbs.gbsproject.dao.CourseDao;
-import com.gbs.gbsproject.model.Section;
-import com.gbs.gbsproject.model.SectionContent;
-import com.gbs.gbsproject.model.Tutor;
+import com.gbs.gbsproject.dao.*;
+import com.gbs.gbsproject.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,10 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,7 +56,13 @@ public class TutorPageViewController {
     public ScrollPane viewScrollPane;
     public AnchorPane content;
     public AnchorPane mainAnchorPane;
+    public VBox questionVBox;
+    public ScrollPane quizzesScrollPane;
+    public ScrollPane quizzesScroll;
     private Button currentSectionContentButton;
+    @FXML
+    private VBox quizListVBox;
+
     @FXML
     private VBox contentVBox;
     Tutor tutor;
@@ -119,6 +117,176 @@ public class TutorPageViewController {
     public void setTutor(Tutor tutor){
         this.tutor = tutor;
     }
+
+    private void loadQuizzes() {
+        QuizDao quizDao = new QuizDao();
+        List<Quiz> quizzes = quizDao.getQuizzesByTutor(tutor.getId());  // Get quizzes for the tutor
+        quizListVBox.getChildren().clear();
+        quizListVBox.setAlignment(Pos.CENTER);      // Center children horizontally
+        quizListVBox.setSpacing(20);
+        // For each quiz, create a button and add it to the VBox
+        for (Quiz quiz : quizzes) {
+            Button quizButton = new Button(quiz.getTitle());  // Use quiz title as the button label
+            quizButton.setStyle("""
+                -fx-background-color: linear-gradient(to right, #4facfe, #00f2fe);
+                -fx-text-fill: white;
+                -fx-font-size: 22px;
+                -fx-font-weight: bold;
+                -fx-padding: 10 20 10 20;
+                -fx-background-radius: 10;
+                -fx-cursor: hand;
+                -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+                -fx-border-radius: 10;
+            """);
+
+            // Add hover effect (optional)
+            quizButton.setOnMouseEntered(_ -> quizButton.setStyle("""
+                -fx-background-color: linear-gradient(to right, #43e97b, #38f9d7);
+                -fx-text-fill: white;
+                -fx-font-size: 22px;
+                -fx-font-weight: bold;
+                -fx-padding: 10 20 10 20;
+                -fx-background-radius: 10;
+                -fx-cursor: hand;
+                -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 3);
+                -fx-border-radius: 10;
+            """));
+
+            quizButton.setOnMouseExited(_ -> quizButton.setStyle("""
+                -fx-background-color: linear-gradient(to right, #4facfe, #00f2fe);
+                -fx-text-fill: white;
+                -fx-font-size: 22px;
+                -fx-font-weight: bold;
+                -fx-padding: 10 20 10 20;
+                -fx-background-radius: 10;
+                -fx-cursor: hand;
+                -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+                -fx-border-radius: 10;
+            """));
+
+            quizButton.setPrefWidth(300);
+
+            quizButton.setOnAction(_ -> {
+                try {
+                    viewQuiz(quiz, quizDao.getQuestionsByQuizId(quiz.getId()), questionVBox);
+                    quizzesScroll.setVisible(true);
+                    quizzesScrollPane.setVisible(false);
+                    scrollPane.setVisible(false);
+                    sectionScroll.setVisible(false);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });  // When the button is clicked, show the quiz
+            quizListVBox.getChildren().add(quizButton);
+        }
+    }
+
+    public void viewQuiz(Quiz quiz, List<Question> questions, VBox containerVBox) {
+        containerVBox.getChildren().clear();
+
+        Text quizTitle = new Text(quiz.getTitle());
+        quizTitle.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
+        containerVBox.getChildren().add(quizTitle);
+
+        Text quizDescription = new Text(quiz.getDescription());
+        quizDescription.setStyle("-fx-font-size: 20px;");
+        containerVBox.getChildren().add(quizDescription);
+
+        Map<Question, Object> userAnswers = new HashMap<>();
+
+        for (Question q : questions) {
+            VBox questionBox = new VBox(10);
+            questionBox.setStyle("-fx-padding: 10; -fx-border-color: #ccc; -fx-border-radius: 5;");
+
+            Label questionLabel = new Label(q.getQuestionText());
+            questionLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+            questionBox.getChildren().add(questionLabel);
+
+            switch (q.getType()) {
+                case "multiple_choice":
+                    ToggleGroup toggleGroup = new ToggleGroup();
+                    for (String option : q.getOptions()) {
+                        RadioButton rb = new RadioButton(option);
+                        rb.setFont(new Font(20));
+                        rb.setToggleGroup(toggleGroup);
+                        questionBox.getChildren().add(rb);
+
+                        // Save selected answer
+                        rb.setOnAction(_ -> userAnswers.put(q, option));
+                    }
+                    break;
+
+                case "true_false":
+                    ToggleGroup tfGroup = new ToggleGroup();
+                    RadioButton trueBtn = new RadioButton("True");
+                    RadioButton falseBtn = new RadioButton("False");
+
+                    trueBtn.setFont(new Font(20));
+                    falseBtn.setFont(new Font(20));
+
+                    trueBtn.setToggleGroup(tfGroup);
+                    falseBtn.setToggleGroup(tfGroup);
+
+                    questionBox.getChildren().addAll(trueBtn, falseBtn);
+
+                    trueBtn.setOnAction(_ -> userAnswers.put(q, "True"));
+                    falseBtn.setOnAction(_ -> userAnswers.put(q, "False"));
+                    break;
+
+                case "short_answer":
+                    TextField answerField = new TextField();
+                    answerField.setPromptText("Type your answer...");
+                    answerField.setFont(new Font(20));
+                    questionBox.getChildren().add(answerField);
+
+                    answerField.textProperty().addListener((_, _, newText) -> userAnswers.put(q, newText.trim()));
+                    break;
+            }
+
+            containerVBox.getChildren().add(questionBox);
+        }
+
+        // ✅ Submit Button
+        Button submitButton = getSubmitButton(questions, userAnswers);
+
+        containerVBox.setSpacing(20);
+        containerVBox.getChildren().add(submitButton);
+    }
+
+    @NotNull
+    private static Button getSubmitButton(List<Question> questions, Map<Question, Object> userAnswers) {
+        Button submitButton = new Button("Submit Quiz");
+        submitButton.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-font-size: 18px;");
+
+        submitButton.setOnAction(_ -> {
+            int correctCount = 0;
+
+            for (Question q : questions) {
+                Object userAnswer = userAnswers.get(q);
+                if (userAnswer == null) continue;
+
+                String correctAnswer = q.getCorrectAnswer().trim();
+                String userInput = userAnswer.toString().trim();
+
+                if (q.getType().equals("short_answer")) {
+                    if (userInput.equalsIgnoreCase(correctAnswer)) {
+                        correctCount++;
+                    }
+                } else {
+                    if (userInput.equals(correctAnswer)) {
+                        correctCount++;
+                    }
+                }
+            }
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Quiz Result");
+            alert.setHeaderText("You got " + correctCount + " out of " + questions.size() + " correct!");
+            alert.showAndWait();
+        });
+        return submitButton;
+    }
+
 
     public void homeButtonClick() {
         try {
@@ -985,5 +1153,179 @@ public class TutorPageViewController {
 
         // Refresh the layout of the AnchorPane
         vboxCourses.layout();
+    }
+
+    public void makeQuizClicked()  {
+        scrollPane.setVisible(true);
+        coursePane.setVisible(false);
+        sectionScroll.setVisible(false);
+
+        List<Course> courses = CourseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
+
+        // Clear existing content in the AnchorPane before adding new courses
+        vboxCourses.getChildren().clear(); // or AnchorPane, depending on your setup
+
+        // Loop through each course and create a button for it
+        for (int i = 0; i < courses.size(); i++) {
+            Button courseButton = getCourseQuizButton(courses, i);
+
+            // Add the button to the AnchorPane
+            vboxCourses.getChildren().add(courseButton); // Replace with your AnchorPane variable
+        }
+
+        // Refresh the layout of the AnchorPane
+        vboxCourses.layout();
+
+    }
+
+    @NotNull
+    private Button getCourseQuizButton(List<Course> courses, int i) {
+        double buttonWidth = 500;
+        double buttonHeight = 100;
+
+        Course course = courses.get(i);
+        Button courseButton = new Button(course.getName()); // Create a button with the course name
+        courseButton.setFont(new Font(20));
+        courseButton.setPrefSize(buttonWidth, buttonHeight);
+        courseButton.setStyle("-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray; -fx-font-weight: bold;");
+        courseButton.setAlignment(Pos.BASELINE_LEFT);
+        courseButton.setWrapText(true);
+
+        ImageView arrow = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/next.png"))));
+        arrow.setFitHeight(32);
+        arrow.setFitWidth(32);
+        arrow.setPreserveRatio(true);
+        courseButton.setGraphic(arrow);
+        courseButton.setGraphicTextGap(10);
+        courseButton.setOnMouseEntered(_ -> {
+            courseButton.setStyle("-fx-border-width: 3px;-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: #72B3FF; -fx-underline: true;-fx-font-weight: bold;");
+            courseButton.setCursor(Cursor.HAND);
+        });
+
+        courseButton.setOnMouseExited(_ -> {
+            courseButton.setStyle("-fx-border-width: 1px;-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color:  lightgray;-fx-font-weight: bold;");
+            courseButton.setCursor(Cursor.DEFAULT);
+        });
+
+        // Manually position the button inside AnchorPane
+        courseButton.setLayoutX(20); // Set horizontal position
+        courseButton.setLayoutY(i * 110 + 20); // Set vertical position with spacing between buttons
+
+        courseButton.setOnAction(_ -> {
+            // Clear previous section buttons and content before displaying new ones
+            FXMLLoader loader;
+            Parent nextPage;
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+            Scene nextScene;
+            loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/quiz-view.fxml"));
+
+            try {
+                nextPage = loader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            QuizViewController quizViewController= loader.getController();
+            quizViewController.setCourse(course);
+            quizViewController.setTutor(tutor);
+            nextScene = new Scene(nextPage);
+            // Set the stage to the previous size and position
+            stage.setWidth(1600);
+            stage.setHeight(1000);
+            stage.centerOnScreen();
+
+            // Set the new scene and show the stage
+            stage.setScene(nextScene);
+            stage.show();
+        });
+
+        return courseButton;
+    }
+
+
+    public void ViewQuizzes() {
+        quizzesScrollPane.setVisible(true);
+        loadQuizzes();
+    }
+
+    public void deleteQuizClicked() {
+        quizzesScrollPane.setVisible(true);
+        loadQuizzesForDelete();
+    }
+
+    private void loadQuizzesForDelete() {
+        QuizDao quizDao = new QuizDao();
+        List<Quiz> quizzes = quizDao.getQuizzesByTutor(tutor.getId());  // Get quizzes for the tutor
+
+        quizListVBox.getChildren().clear();
+        // When the button is clicked, show the quiz
+        quizListVBox.setAlignment(Pos.CENTER);      // Center children horizontally
+        quizListVBox.setSpacing(20);
+        // For each quiz, create a button and add it to the VBox
+        for (Quiz quiz : quizzes) {
+            Button quizButton = new Button(quiz.getTitle());  // Use quiz title as the button label
+            quizButton.setStyle("""
+                -fx-background-color: linear-gradient(to right, #4facfe, #00f2fe);
+                -fx-text-fill: white;
+                -fx-font-size: 22px;
+                -fx-font-weight: bold;
+                -fx-padding: 10 20 10 20;
+                -fx-background-radius: 10;
+                -fx-cursor: hand;
+                -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+                -fx-border-radius: 10;
+            """);
+
+            // Add hover effect (optional)
+            quizButton.setOnMouseEntered(_ -> quizButton.setStyle("""
+                -fx-background-color: linear-gradient(to right, #43e97b, #38f9d7);
+                -fx-text-fill: white;
+                -fx-font-size: 22px;
+                -fx-font-weight: bold;
+                -fx-padding: 10 20 10 20;
+                -fx-background-radius: 10;
+                -fx-cursor: hand;
+                -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 3);
+                -fx-border-radius: 10;
+            """));
+
+            quizButton.setOnMouseExited(_ -> quizButton.setStyle("""
+                -fx-background-color: linear-gradient(to right, #4facfe, #00f2fe);
+                -fx-text-fill: white;
+                -fx-font-size: 22px;
+                -fx-font-weight: bold;
+                -fx-padding: 10 20 10 20;
+                -fx-background-radius: 10;
+                -fx-cursor: hand;
+                -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+                -fx-border-radius: 10;
+            """));
+            quizButton.setPrefWidth(300);
+
+            quizButton.setOnAction(_ -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirm Deletion");
+                alert.setHeaderText("Are you sure you want to delete this quiz?");
+                alert.setContentText("Quiz: " + quiz.getTitle());
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    try {
+                        // Delete from database
+                        quizDao.deleteQuizById(quiz.getId());
+
+                        // Remove button from VBox
+                        quizListVBox.getChildren().remove(quizButton);
+                    } catch (SQLException ex) {
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                        errorAlert.setTitle("Error");
+                        errorAlert.setHeaderText("Failed to delete quiz");
+                        errorAlert.setContentText(ex.getMessage());
+                        errorAlert.showAndWait();
+                    }
+                }
+            });
+
+            quizListVBox.getChildren().add(quizButton);
+        }
     }
 }

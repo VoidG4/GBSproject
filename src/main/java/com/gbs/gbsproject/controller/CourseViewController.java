@@ -1,0 +1,480 @@
+package com.gbs.gbsproject.controller;
+
+import com.gbs.gbsproject.dao.SectionContentDao;
+import com.gbs.gbsproject.dao.SectionDao;
+import com.gbs.gbsproject.model.Course;
+import com.gbs.gbsproject.model.Section;
+import com.gbs.gbsproject.model.SectionContent;
+import com.gbs.gbsproject.service.TTSService;
+import com.itextpdf.text.*;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+public class CourseViewController {
+    private static final Logger LOGGER = Logger.getLogger(CourseViewController.class.getName());
+    public Button buttonMenuStudies;
+    public Button buttonMenuAccount;
+    public AnchorPane accountPane;
+    public AnchorPane helpPane;
+    public AnchorPane studiesPane;
+    public AnchorPane contentPane;
+    public VBox sectionsVBox;
+    public VBox contentVBox;
+    public ScrollPane scrollPane;
+    Course course;
+
+    @FXML
+    protected void formClicked() {
+        accountPane.setVisible(false);
+        helpPane.setVisible(false);
+        studiesPane.setVisible(false);
+    }
+
+    @NotNull
+    private static TextFlow getTextFlow(Course course) {
+        Text descriptionText = new Text(course.getDescription());  // Use the course description
+        descriptionText.setStyle("-fx-font-size: 20px;"); // Set font size for the description
+
+        // Create a TextFlow to wrap the description text
+        TextFlow descriptionFlow = new TextFlow(descriptionText);
+        descriptionFlow.setStyle("-fx-background-color: #f5f5f5; -fx-padding: 10px; -fx-border-color: lightgray;");
+        descriptionFlow.setMaxWidth(1000);  // Ensure it wraps properly within the max width
+        return descriptionFlow;
+    }
+
+    public void setCourse(Course course){
+        this.course = course;
+        Label titleLabel = new Label(course.getName()); // Set the course title
+        titleLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;"); // Larger font size for the title
+        titleLabel.setWrapText(true);  // Allow the title to wrap if it's too long
+        titleLabel.setMaxWidth(1000);   // Set maximum width for the title
+
+        // Create a TextFlow for the description with text styled at 20px
+        TextFlow descriptionFlow = getTextFlow(course);
+
+        // Add the title label and description flow to the VBox
+        contentVBox.getChildren().clear();
+        contentVBox.setSpacing(30);
+        contentVBox.getChildren().addAll(titleLabel, descriptionFlow);
+
+        loadSections();
+    }
+
+    private void loadSections() {
+        try {
+            List<Section> sections = SectionDao.getSectionsByCourseId(course.getId());
+
+            for (Section section : sections) {
+                Button sectionButton = new Button(section.getTitle());
+                sectionButton.setStyle(
+                        "-fx-background-color: transparent;" +
+                                "-fx-text-fill: white;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-font-size: 20px;" +
+                                "-fx-border-color : white"
+                );
+                sectionButton.setAlignment(Pos.BASELINE_LEFT);
+                sectionButton.setWrapText(true);
+
+                // Add click event if needed
+                sectionButton.setOnAction(_ ->
+                {
+                    displaySectionContents(section, contentVBox);
+                    scrollPane.setVvalue(0); // Set vertical position to the top (0)
+                });
+
+                sectionsVBox.getChildren().add(sectionButton);
+                sectionsVBox.setFillWidth(true);
+                contentPane.setPrefHeight(3000);
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred", e);
+        }
+    }
+
+    private void displaySectionContents(Section section, VBox contentVBox) {
+        contentVBox.getChildren().clear();
+        contentVBox.setSpacing(30);
+        List<SectionContent> sectionContents;
+        try {
+            sectionContents = SectionContentDao.getContentBySectionId(section.getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        for (SectionContent content : sectionContents) {
+            // Title
+            Label titleLabel = new Label(content.getTitle());
+            titleLabel.setStyle("-fx-font-size: 25px; -fx-font-weight: bold;");
+            titleLabel.setWrapText(true);
+            titleLabel.setMaxWidth(1000);
+
+            contentVBox.getChildren().add(titleLabel);
+
+            switch (content.getContentType()) {
+                case "text" -> {
+                    Button speechButton = getSpeechButton(content);
+
+                    // Add the button to the VBox (above the text)
+                    contentVBox.getChildren().add(speechButton);
+
+                    // Display the text content
+                    Text text = new Text(content.getContent());
+                    text.setStyle("-fx-font-size: 20px;");
+                    text.setWrappingWidth(1000);
+
+                    TextFlow textFlow = new TextFlow(text);
+                    textFlow.setStyle("-fx-background-color: #f5f5f5; -fx-padding: 10px; -fx-border-color: lightgray;");
+                    textFlow.setMaxWidth(1000);  // Ensure it wraps properly within the max width
+                    contentVBox.getChildren().add(textFlow);
+                }
+                case "video" -> {
+                    // If the content type is video, display it as a clickable link
+                    String youtubeUrl = content.getContent();
+
+                    // Create a Hyperlink for the YouTube video URL
+                    Hyperlink videoLink = new Hyperlink("Watch video: " + youtubeUrl);
+                    videoLink.setStyle("-fx-font-size: 20px; -fx-text-fill: blue;");
+
+                    // When clicked, open the video in the default web browser
+                    videoLink.setOnAction(_ -> openLinkInBrowser(youtubeUrl));
+
+                    contentVBox.getChildren().add(videoLink);
+                }
+                case "image" -> {
+                    try {
+                        javafx.scene.image.Image image = new Image(content.getContent(), true); // 'true' loads in background
+                        ImageView imageView = new ImageView(image);
+                        imageView.setFitWidth(1000); // Adjust as needed
+                        imageView.setPreserveRatio(true);
+                        imageView.setSmooth(true);
+
+                        contentVBox.getChildren().add(imageView);
+                    } catch (Exception ex) {
+                        Label errorLabel = new Label("Failed to load image.");
+                        errorLabel.setStyle("-fx-text-fill: red;");
+                        contentVBox.getChildren().add(errorLabel);
+                    }
+                }
+            }
+        }
+    }
+
+    @NotNull
+    private static Button getSpeechButton(SectionContent content) {
+        Button speechButton = new Button("");
+        speechButton.setStyle("-fx-font-size: 18px; -fx-background-color: #28a745;");
+
+        ImageView playIcon = new ImageView(new Image("/play_icon.png"));
+        playIcon.setFitWidth(20);
+        playIcon.setFitHeight(20);
+
+        speechButton.setGraphic(playIcon);
+
+        AtomicBoolean isPlaying = new AtomicBoolean(false); // This is a local variable for the button
+
+
+        speechButton.setOnAction(_ -> {
+            if (!isPlaying.get()) {
+                // If speech is not playing, generate and play speech
+                TTSService.generateSpeech(content.getContent());
+                speechButton.setText("Pause Speech");
+                isPlaying.set(true);  // Set isPlaying to true
+
+            } else {
+                // If speech is playing, pause it
+                TTSService.pauseSpeech();  // Pauses the speech
+                speechButton.setText("Resume Speech");
+                isPlaying.set(false);  // Set isPlaying to false
+            }
+        });
+        return speechButton;
+    }
+
+    private void openLinkInBrowser(String url) {
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+
+            ProcessBuilder processBuilder;
+
+            if (os.contains("win")) {
+                // Windows command to open URL in default browser
+                processBuilder = new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", url);
+            } else if (os.contains("mac")) {
+                // MacOS command to open URL in default browser
+                processBuilder = new ProcessBuilder("open", url);
+            } else if (os.contains("nix") || os.contains("nux")) {
+                // Linux/Unix command to open URL in default browser
+                processBuilder = new ProcessBuilder("xdg-open", url);
+            } else {
+                System.out.println("Unsupported OS for opening URL.");
+                return;
+            }
+
+            // Start the process and wait for it to execute
+            processBuilder.start();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred ", e);
+        }
+    }
+
+    @FXML
+    protected void accountClicked() {
+        if(accountPane.isVisible()){
+            accountPane.setVisible(false);
+        } else {
+            accountPane.setVisible(true);
+            accountPane.toFront();
+            helpPane.setVisible(false);
+            studiesPane.setVisible(false);
+        }
+    }
+
+    @FXML
+    protected void studiesClicked() {
+        if(studiesPane.isVisible()){
+            studiesPane.setVisible(false);
+        } else {
+            studiesPane.setVisible(true);
+            studiesPane.toFront();
+            helpPane.setVisible(false);
+            accountPane.setVisible(false);
+        }
+    }
+
+    @FXML
+    protected void helpClicked() {
+        if(helpPane.isVisible()){
+            helpPane.setVisible(false);
+        } else {
+            helpPane.setVisible(true);
+            helpPane.toFront();
+            accountPane.setVisible(false);
+            studiesPane.setVisible(false);
+        }
+    }
+
+    @FXML
+    protected void gpaClicked() {
+        try {
+            // Load the FXML file for the login page
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/gpa-view.fxml"));
+            Parent root = loader.load();
+
+            // Get the current stage (window) from the list of all windows
+            Stage stage = (Stage) Stage.getWindows().stream()
+                    .filter(Window::isShowing)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("No window found"));
+
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+
+            // Set the new scene with the same window size
+            Scene scene = new Scene(root, width, height);
+            stage.setScene(scene);
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.show();
+        } catch (IOException e) {
+            // Log the exception using a logger instead of printStackTrace()
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the login page", e);
+        }
+    }
+
+    @FXML
+    protected void logOut() {
+        try {
+            // Load the FXML file for the login page
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/login-page-view.fxml"));
+            Parent root = loader.load();
+
+            // Get the current stage (window) from the list of all windows
+            Stage stage = (Stage) Stage.getWindows().stream()
+                    .filter(Window::isShowing)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("No window found"));
+
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+
+            // Set the new scene with the same window size
+            Scene scene = new Scene(root, width, height);
+            stage.setScene(scene);
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.show();
+        } catch (IOException e) {
+            // Log the exception using a logger instead of printStackTrace()
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the login page", e);
+        }
+    }
+    private String savePdfToDownloads() {
+        try {
+            // Define the path where the PDF will be saved
+            String userHome = System.getProperty("user.home");
+            String downloadsPath = userHome + File.separator + "Downloads";
+            String pdfPath = downloadsPath + File.separator + "Certificate_of_Completion.pdf";
+
+            // Create the document in landscape orientation
+            Document document = new Document(PageSize.A4.rotate());
+            //PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
+
+            // Open the document for writing
+            document.open();
+
+            // Load the background image
+            String backgroundPath = "/home/gat/IdeaProjects/GBSproject/src/main/resources/background.jpg";
+            com.itextpdf.text.Image backgroundImage = com.itextpdf.text.Image.getInstance(backgroundPath);
+            backgroundImage.setAbsolutePosition(0, 90);
+            backgroundImage.scaleToFit(PageSize.A4.rotate().getWidth(), PageSize.A4.rotate().getHeight()); // Scale it to cover the whole page
+            document.add(backgroundImage);
+
+            // Add "Congratulations" heading in black font
+            com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 48, com.itextpdf.text.Font.BOLD, BaseColor.BLACK); // Black color
+            Paragraph title = new Paragraph("Congratulations!", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            title.setSpacingBefore(100); // Add space before title
+            document.add(title);
+
+            // Add certificate body text in black font
+            com.itextpdf.text.Font bodyFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 24, com.itextpdf.text.Font.NORMAL, BaseColor.BLACK); // Black color
+            Paragraph body = new Paragraph("This certificate is awarded to", bodyFont);
+            body.setAlignment(Element.ALIGN_CENTER);
+            body.setSpacingAfter(20);
+            document.add(body);
+
+            // Add recipient name placeholder (you can change this dynamically later)
+            com.itextpdf.text.Font nameFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 30, com.itextpdf.text.Font.BOLDITALIC, BaseColor.BLACK); // Black color
+            Paragraph recipient = new Paragraph("[Recipient Name]", nameFont);
+            recipient.setAlignment(Element.ALIGN_CENTER);
+            recipient.setSpacingAfter(40);
+            document.add(recipient);
+
+            // Add the certificate details
+            Paragraph details = new Paragraph("For successfully completing the course at\n" +
+                    "Greece Business School", bodyFont);
+            details.setAlignment(Element.ALIGN_CENTER);
+            details.setSpacingAfter(40);
+            document.add(details);
+
+            // Add a line (for separation)
+            Paragraph line = new Paragraph("------------------------------------------------------------");
+            line.setAlignment(Element.ALIGN_CENTER);
+            line.setSpacingAfter(40);
+            document.add(line);
+
+
+            // Add the date
+            Paragraph date = new Paragraph("Date: April 2025", bodyFont);
+            date.setAlignment(Element.ALIGN_CENTER);
+            document.add(date);
+
+            // Close the document
+            document.close();
+
+            return pdfPath;
+
+        } catch (Exception e) {
+            // Log the exception using a logger instead of printStackTrace()
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
+        }
+        return null;
+    }
+
+    @FXML
+    protected void certificateClicked(){
+        try {
+            // Create and save the PDF in the Downloads folder
+            String pdfPath = savePdfToDownloads();
+
+            String os = System.getProperty("os.name").toLowerCase();  // Get the OS name and convert to lowercase
+
+            try {
+                ProcessBuilder processBuilder;
+
+                if (os.contains("win")) {
+                    // Command to open Chrome (Windows example)
+                    processBuilder = new ProcessBuilder("cmd", "/c", "start", "chrome", pdfPath);
+
+                } else if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
+                    // Command for Linux or macOS (xdg-open on Linux, open on macOS)
+                    if (os.contains("mac")) {
+                        processBuilder = new ProcessBuilder("open", pdfPath);  // macOS-specific
+                    } else {
+                        processBuilder = new ProcessBuilder("xdg-open", pdfPath);  // Linux-specific
+                    }
+
+                } else {
+                    System.out.println("Unknown OS: " + os);
+                    return;
+                }
+
+                // Start the process
+                Process process = processBuilder.start();
+                process.waitFor();  // Optionally wait for the process to finish
+
+            } catch (IOException | InterruptedException e) {
+                System.out.println("Error opening URL or file: " + e.getMessage());
+            }
+
+        } catch (Exception e) {
+            // Log the exception using a logger instead of printStackTrace()
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the login page", e);
+        }
+    }
+
+    @FXML
+    protected  void homeButtonClick(ActionEvent event) {
+        try {
+            // Load the FXML file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/home-page-view.fxml"));
+            Parent root = loader.load();
+
+
+            // Get the current stage (window)
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+
+            // Set the new scene
+            Scene scene = new Scene(root, width, height);
+            stage.setScene(scene);
+
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.show();
+        } catch (IOException e) {
+            // Log the exception using a logger instead of printStackTrace()
+            LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
+        }
+    }
+}

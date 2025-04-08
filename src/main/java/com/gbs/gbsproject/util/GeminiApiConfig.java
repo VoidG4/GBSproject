@@ -1,13 +1,13 @@
-package com.gbs.gbsproject.service;
+package com.gbs.gbsproject.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-public class ApiConfig {
+public class GeminiApiConfig {
     private static final String API_KEY;
-    private static final Logger LOGGER = Logger.getLogger(ApiConfig.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GeminiApiConfig.class.getName());
     static {
         try {
             // Load properties file

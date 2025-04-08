@@ -1,10 +1,13 @@
 package com.gbs.gbsproject.controller;
 
+import com.gbs.gbsproject.dao.CourseDao;
+import com.gbs.gbsproject.dao.StudentDao;
+import com.gbs.gbsproject.model.Course;
 import com.gbs.gbsproject.model.Student;
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -25,8 +28,10 @@ import javafx.scene.text.Font;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -255,10 +260,6 @@ public class HomePageViewController {
         scrollPane.setPrefHeight(780);
         scrollPane.setStyle("-fx-background-color: transparent;-fx-background: transparent;");
 
-        // Stops the event from giving focus to the ScrollPane
-        scrollPane.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_PRESSED, Event::consume);
-
-
         AnchorPane.setTopAnchor(scrollPane, 180.0);
         AnchorPane.setLeftAnchor(scrollPane, 0.0);
         AnchorPane.setRightAnchor(scrollPane, 0.0);
@@ -278,10 +279,10 @@ public class HomePageViewController {
         AITutorLabel.setStyle("-fx-font-weight: bold;-fx-background-color: transparent;-fx-text-fill: black;");
         AITutorLabel.setAlignment(Pos.CENTER);
 
-        Label announcementLabel = new Label("ANNOUNCEMENTS");
-        announcementLabel.setFont(new Font("Arial", 30));
-        announcementLabel.setStyle("-fx-font-weight: bold;-fx-background-color: transparent; -fx-text-fill: black;");
-        announcementLabel.setAlignment(Pos.CENTER);
+        Label quizLabel = new Label("QUIZ AREA");
+        quizLabel.setFont(new Font("Arial", 30));
+        quizLabel.setStyle("-fx-font-weight: bold;-fx-background-color: transparent; -fx-text-fill: black;");
+        quizLabel.setAlignment(Pos.CENTER);
 
         ImageView courses = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/online-course.png"))));
         courses.setFitHeight(40);
@@ -293,10 +294,10 @@ public class HomePageViewController {
         aiTutor.setFitWidth(45);
         aiTutor.setPreserveRatio(true);
 
-        ImageView announcements = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/megaphone.png"))));
-        announcements.setFitHeight(45);
-        announcements.setFitWidth(45);
-        announcements.setPreserveRatio(true);
+        ImageView quiz = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/quiz.png"))));
+        quiz.setFitHeight(45);
+        quiz.setFitWidth(45);
+        quiz.setPreserveRatio(true);
 
         AnchorPane.setTopAnchor(coursesLabel, 50.0);
         AnchorPane.setLeftAnchor(coursesLabel, 250.0);
@@ -328,20 +329,16 @@ public class HomePageViewController {
         aiTutorSection.prefWidthProperty().bind(contentPane.widthProperty().subtract(400));
 
 
-        AnchorPane announcementPane = new AnchorPane();
-        announcementPane.setStyle("-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 10;");
+        AnchorPane quizPane = new AnchorPane();
+        quizPane.setStyle("-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 10;");
 
-        Label titleLabel = new Label("News");
+        Label titleLabel = new Label("Test");
         titleLabel.setFont(new Font("Arial", 24));
         titleLabel.setStyle("-fx-font-weight: bold;-fx-text-fill: black;");
 
-        Label descriptionLabel = getAnnouncementDescriptionLabel();
+        Label descriptionLabel = getQuizDescriptionLabel();
 
-        Button actionButton = new Button("Learn More");
-        actionButton.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;");
-        actionButton.setFont(new Font("Arial", 18));
-        actionButton.setPrefSize(200, 50);
-        actionButton.setAlignment(Pos.CENTER);
+        Button actionButton = getActionButton();
 
         AnchorPane.setTopAnchor(titleLabel, 20.0);
         AnchorPane.setLeftAnchor(titleLabel, 20.0);
@@ -351,8 +348,8 @@ public class HomePageViewController {
 
         AnchorPane.setTopAnchor(actionButton, 140.0);
         AnchorPane.setLeftAnchor(actionButton, 20.0);
-        announcementPane.getChildren().addAll(titleLabel, descriptionLabel, actionButton);
-        announcementPane.prefWidthProperty().bind(contentPane.widthProperty().subtract(400));
+        quizPane.getChildren().addAll(titleLabel, descriptionLabel, actionButton);
+        quizPane.prefWidthProperty().bind(contentPane.widthProperty().subtract(400));
 
 
 
@@ -364,9 +361,12 @@ public class HomePageViewController {
         double buttonWidth = 385;
         double buttonHeight = 100;
 
-        int i;
-        for (i = 1; i <= 6 ; i++) {
-            Button button = new Button("Course " + i);
+        List<Course> courses1 = CourseDao.getAllCourses(); // fetch from DB
+
+        int i = 0;
+        for (Course course : courses1) {
+            i+=1;
+            Button button = new Button(course.getName());
             button.setFont(new Font(20));
             button.setPrefSize(buttonWidth, buttonHeight);
             button.setStyle("-fx-background-color: white; -fx-text-fill: #4682B4; -fx-border-color: lightgray; -fx-font-weight: bold;");
@@ -390,6 +390,32 @@ public class HomePageViewController {
                 button.setCursor(Cursor.DEFAULT);
             });
 
+            // You can also define an action when student clicks the button
+            button.setOnAction(event -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/course-view.fxml"));
+                    Parent root = loader.load();
+
+                    // Pass the course to the controller
+                    CourseViewController controller = loader.getController();
+                    controller.setCourse(course); // Custom method to receive course info
+
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    double width = stage.getWidth();
+                    double height = stage.getHeight();
+
+                    // Set the new scene
+                    Scene scene = new Scene(root, width, height);
+                    stage.setScene(scene);
+
+                    stage.setWidth(width);
+                    stage.setHeight(height);
+                    stage.show();
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "An error occurred ", e);
+                }
+            });
+
             buttonContainer.getChildren().add(button);
         }
 
@@ -408,20 +434,58 @@ public class HomePageViewController {
         AnchorPane.setTopAnchor(aiTutorSection, topAnchor + buttonContainerHeight+ 150);
         AnchorPane.setLeftAnchor(aiTutorSection, 150.0);
 
-        AnchorPane.setTopAnchor(announcementLabel, topAnchor + buttonContainerHeight + 450);
-        AnchorPane.setLeftAnchor(announcementLabel, 235.0);
+        AnchorPane.setTopAnchor(quizLabel, topAnchor + buttonContainerHeight + 450);
+        AnchorPane.setLeftAnchor(quizLabel, 235.0);
 
-        AnchorPane.setTopAnchor(announcements, topAnchor + buttonContainerHeight+ 450);
-        AnchorPane.setLeftAnchor(announcements, 185.0);
+        AnchorPane.setTopAnchor(quiz, topAnchor + buttonContainerHeight+ 450);
+        AnchorPane.setLeftAnchor(quiz, 185.0);
 
-        AnchorPane.setTopAnchor(announcementPane, topAnchor + buttonContainerHeight+ 500);
-        AnchorPane.setLeftAnchor(announcementPane, 150.0);
+        AnchorPane.setTopAnchor(quizPane, topAnchor + buttonContainerHeight+ 500);
+        AnchorPane.setLeftAnchor(quizPane, 150.0);
 
-        contentPane.getChildren().addAll(courses, coursesLabel, buttonContainer, AITutorLabel, aiTutor, aiTutorSection, announcementLabel, announcements, announcementPane);
+        contentPane.getChildren().addAll(courses, coursesLabel, buttonContainer, AITutorLabel, aiTutor, aiTutorSection, quizLabel, quizPane, quiz);
         scrollPane.setContent(contentPane);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Ensure vertical scroll bar
 
         mainAnchorPane.getChildren().add(scrollPane);
+    }
+
+    @NotNull
+    private Button getActionButton() {
+        Button actionButton = new Button("Begin Now");
+        actionButton.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;");
+        actionButton.setFont(new Font("Arial", 18));
+        actionButton.setPrefSize(200, 50);
+        actionButton.setAlignment(Pos.CENTER);
+        actionButton.setOnMouseClicked(_ -> {
+            try {
+                // Load the FXML file for the login page
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/quiz-area-view.fxml"));
+                Parent root = loader.load();
+
+                // Get the current stage (window) from the list of all windows
+                Stage stage = (Stage) Stage.getWindows().stream()
+                        .filter(Window::isShowing)
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalStateException("No window found"));
+
+                double width = stage.getWidth();
+                double height = stage.getHeight();
+
+                // Set the new scene with the same window size
+                Scene scene = new Scene(root, width, height);
+                stage.setScene(scene);
+                stage.setWidth(width);
+                stage.setHeight(height);
+                stage.show();
+            } catch (IOException e) {
+                // Log the exception using a logger instead of printStackTrace()
+                LOGGER.log(Level.SEVERE, "An error occurred while loading the login page", e);
+                // Optionally, show a dialog to notify the user of the error
+                showErrorDialog();
+            }
+        });
+        return actionButton;
     }
 
     @NotNull
@@ -465,6 +529,9 @@ public class HomePageViewController {
     // Method to create PDF and save it in the Downloads folder
     private String savePdfToDownloads() {
         try {
+            StudentDao studentDAO = new StudentDao();
+            String fullName = studentDAO.getFullNameByUsername(student.getUsername());
+
             // Define the path where the PDF will be saved
             String userHome = System.getProperty("user.home");
             String downloadsPath = userHome + File.separator + "Downloads";
@@ -472,7 +539,7 @@ public class HomePageViewController {
 
             // Create the document in landscape orientation
             Document document = new Document(PageSize.A4.rotate());
-            //PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
+            PdfWriter _ = PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
 
             // Open the document for writing
             document.open();
@@ -500,7 +567,7 @@ public class HomePageViewController {
 
             // Add recipient name placeholder (you can change this dynamically later)
             com.itextpdf.text.Font nameFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 30, com.itextpdf.text.Font.BOLDITALIC, BaseColor.BLACK); // Black color
-            Paragraph recipient = new Paragraph("[Recipient Name]", nameFont);
+            Paragraph recipient = new Paragraph(fullName, nameFont);
             recipient.setAlignment(Element.ALIGN_CENTER);
             recipient.setSpacingAfter(40);
             document.add(recipient);
@@ -519,8 +586,8 @@ public class HomePageViewController {
             document.add(line);
 
 
-            // Add the date
-            Paragraph date = new Paragraph("Date: April 2025", bodyFont);
+            String currentDate = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("MMMM d, yyyy"));
+            Paragraph date = new Paragraph("Date: " + currentDate, bodyFont);
             date.setAlignment(Element.ALIGN_CENTER);
             document.add(date);
 
@@ -549,8 +616,8 @@ public class HomePageViewController {
     }
 
     @NotNull
-    private static Label getAnnouncementDescriptionLabel() {
-        Label descriptionLabel = new Label("Stay updated with the latest announcements and important updates here. Never miss out on crucial information!");
+    private static Label getQuizDescriptionLabel() {
+        Label descriptionLabel = new Label("Test your knowledge and never miss out on an exciting opportunity to learn and grow! Learn with the latest quizzes right here!");
         descriptionLabel.setFont(new Font("Arial", 18));
         descriptionLabel.setWrapText(true);
         descriptionLabel.setMaxWidth(600);

@@ -174,7 +174,7 @@ public class LoginPageViewController {
         }
     }
 
-    private void Login(Object user) {
+    private void Login(User user) {
         try {
             FXMLLoader loader;
             Parent nextPage;
@@ -195,7 +195,6 @@ public class LoginPageViewController {
                     nextPage = loader.load();
                     TutorPageViewController tutorController = loader.getController();
                     tutorController.setTutor(tutor); // Pass Tutor object to the controller
-
                     nextScene = new Scene(nextPage);
                 }
                 case Student student -> {
@@ -203,7 +202,6 @@ public class LoginPageViewController {
                     nextPage = loader.load();
                     HomePageViewController studentController = loader.getController();
                     studentController.setStudent(student); // Pass Student object to the controller
-
                     nextScene = new Scene(nextPage);
                 }
                 case null, default -> {

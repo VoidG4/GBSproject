@@ -10,7 +10,7 @@ public class Course {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.tutorId = tutorId;
+        setTutorId(tutorId);
     }
 
     // Getters
