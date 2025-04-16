@@ -3,6 +3,10 @@ package com.gbs.gbsproject.model;
 public class Tutor extends User {
     private String field;
 
+    public Tutor() {
+        super();
+    }
+
     // Constructor with id and name (inherited from User)
     public Tutor(int id, String name) {
         super(id, name, "",  "",  "",  "");

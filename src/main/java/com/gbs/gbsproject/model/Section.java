@@ -5,7 +5,7 @@ public class Section {
     private int courseId;
     private String title;
     private String description;
-    private int sectionOrder;
+    private final int sectionOrder;
 
     public Section(int courseId, String title, String description, int sectionOrder) {
         this.courseId = courseId;
@@ -36,5 +36,4 @@ public class Section {
     public void setDescription(String description) { this.description = description; }
 
     public int getSectionOrder() { return sectionOrder; }
-    public void setSectionOrder(int sectionOrder) { this.sectionOrder = sectionOrder; }
 }

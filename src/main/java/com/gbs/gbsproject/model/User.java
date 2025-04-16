@@ -8,6 +8,7 @@ public class User {
     private String password;
     private String email;
 
+    public User(){}
 
     // Constructor with id and name
     public User(int id, String name, String surname, String username, String password, String email) {

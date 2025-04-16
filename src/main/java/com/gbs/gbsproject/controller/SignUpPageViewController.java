@@ -1,5 +1,7 @@
 package com.gbs.gbsproject.controller;
 
+import com.gbs.gbsproject.dao.StudentDao;
+import com.gbs.gbsproject.model.Student;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -73,9 +75,6 @@ public class SignUpPageViewController {
         txtEmail.setFont(customFont);
         txtEmail.setPromptText("Email");
 
-        TextField txtPhone= new TextField();
-        txtPhone.setFont(customFont);
-        txtPhone.setPromptText("Phone");
 
         Button btnSignUp = new Button("Register");
         btnSignUp.setFont(customFont);
@@ -87,7 +86,6 @@ public class SignUpPageViewController {
         txtName.setPrefWidth(300);
         txtSurname.setPrefWidth(300);
         txtEmail.setPrefWidth(300);
-        txtPhone.setPrefWidth(300);
 
         // Add elements to GridPane
         gridPane.add(lblTitle, 0, 0, 2, 1); // Title spans across two columns
@@ -98,7 +96,7 @@ public class SignUpPageViewController {
         gridPane.add(txtName, 0, 5, 2, 1);
         gridPane.add(txtSurname, 0, 6, 2, 1);
         gridPane.add(txtEmail, 0, 7, 2, 1);
-        gridPane.add(txtPhone, 0, 8, 2, 1);
+
         gridPane.add(btnSignUp, 0, 11, 2, 1);
 
         // Wrap GridPane inside a StackPane to keep it centered horizontally and lower vertically
@@ -110,7 +108,7 @@ public class SignUpPageViewController {
 
         mainAnchorPane.getChildren().add(stackPane);
 
-        btnSignUp.setOnMouseClicked(_ ->SignUp());
+        btnSignUp.setOnMouseClicked(_ ->SignUp(txtName.getText(), txtSurname.getText(), txtUsername.getText(), txtPassword.getText(), txtEmail.getText()));
     }
 
     @FXML
@@ -119,7 +117,16 @@ public class SignUpPageViewController {
         mainAnchorPane.requestFocus();
     }
 
-    private void SignUp() {
+    private void SignUp(String name, String surname, String username, String password, String email) {
+        Student student = new Student();
+
+        student.setName(name);
+        student.setSurname(surname);
+        student.setUsername(username);
+        student.setPassword(password);
+        student.setEmail(email);
+
+        StudentDao.addStudent(student);
         try {
             // Get the current stage and save its position and size
             Stage currentStage = (Stage) mainAnchorPane.getScene().getWindow();

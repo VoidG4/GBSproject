@@ -2,18 +2,13 @@
 
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.paint.LinearGradient?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.paint.Stop?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.shape.CubicCurve?>
-<?import javafx.scene.shape.Rectangle?>
-<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.gbs.gbsproject.controller.GpaViewController" prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.GpaViewController">
     <Circle fill="#168fff" layoutX="132.0" layoutY="80.0" radius="170.0" strokeType="INSIDE" strokeWidth="0.0">
         <stroke>
             <LinearGradient>
@@ -216,4 +211,38 @@
         <Hyperlink layoutX="15.0" layoutY="40.0" text="View GPA" />
         <Hyperlink layoutX="15.0" layoutY="68.0" onMouseClicked="#certificateClicked" text="Print certificate" />
     </AnchorPane>
+
+    <VBox alignment="TOP_CENTER" layoutX="443.0" layoutY="221.0" spacing="30" style="-fx-background-color: rgba(0,0,0,0.05); -fx-border-radius: 15;">
+
+        <!-- GPA Circular Trackbar -->
+        <StackPane>
+            <Circle fx:id="gpaBackgroundCircle" fill="transparent" radius="80" stroke="#555" strokeWidth="15" />
+
+            <Arc fx:id="gpaArc" fill="transparent" length="180" radiusX="80" radiusY="80" startAngle="90" stroke="#00C9A7" strokeLineCap="ROUND" strokeWidth="15"/>
+
+            <Label fx:id="gpaLabel" style="-fx-font-size: 32px; -fx-text-fill: black;" text="5.0" />
+        </StackPane>
+
+        <!-- Course List -->
+        <VBox prefWidth="400" spacing="20">
+            <Label style="-fx-font-size: 20px; -fx-text-fill: black;" text="Completed Courses" />
+            <VBox spacing="15">
+                <!-- Sample Course -->
+                <VBox spacing="5" style="-fx-background-color: #383856; -fx-background-radius: 10; -fx-padding: 10;">
+                    <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="Mathematics" />
+                    <ProgressBar progress="0.8" style="-fx-accent: #00C9A7;" />
+                </VBox>
+
+                <VBox spacing="5" style="-fx-background-color: #383856; -fx-background-radius: 10; -fx-padding: 10;">
+                    <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="Computer Science" />
+                    <ProgressBar progress="0.9" style="-fx-accent: #FFD166;" />
+                </VBox>
+
+                <VBox spacing="5" style="-fx-background-color: #383856; -fx-background-radius: 10; -fx-padding: 10;">
+                    <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="History" />
+                    <ProgressBar progress="0.6" style="-fx-accent: #EF476F;" />
+                </VBox>
+            </VBox>
+        </VBox>
+    </VBox>
 </AnchorPane>

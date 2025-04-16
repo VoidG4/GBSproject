@@ -1,5 +1,6 @@
 package com.gbs.gbsproject.controller;
 
+import com.gbs.gbsproject.dao.AdminDao;
 import com.gbs.gbsproject.dao.CourseDao;
 import com.gbs.gbsproject.model.Admin;
 import com.gbs.gbsproject.model.Course;
@@ -22,16 +23,32 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AdminPageViewController {
+    public AnchorPane deleteTutorPane;
+    public TextField deleteUserField;
+    public AnchorPane addPane;
+    public TextField name;
+    public TextField surname;
+    public TextField username;
+    public TextField password;
+    public TextField email;
+    public TextField field;
+    public AnchorPane passwordPane;
+    public TextField passwordField;
+    public TextField oldPasswordField;
+    public AnchorPane emailPane;
+    public TextField emailField;
     Admin admin;
     private static final Logger LOGGER = Logger.getLogger(AdminPageViewController.class.getName());
     public AnchorPane accountPane;
     public Button buttonMenuAccount;
     public ScrollPane userScrollPane;
+    String role;
 
     @FXML
     protected void formClicked() {
@@ -194,5 +211,62 @@ public class AdminPageViewController {
         VBox tablesContainer = new VBox(20, new Label("Courses"), courseTable);
         tablesContainer.setPadding(new Insets(10));
         userScrollPane.setContent(tablesContainer);
+    }
+
+    public void deleteUserClicked() {
+        deleteTutorPane.setVisible(true);
+        role = "tutor";
+    }
+
+    public void deleteTutor() {
+        if(!deleteUserField.getText().isEmpty()) {
+            TutorDao.deleteUser(deleteUserField.getText(), role);
+            deleteUserField.setText("");
+        }
+    }
+
+    public void deleteStudent() {
+        deleteTutorPane.setVisible(true);
+        role = "student";
+    }
+
+    public void addPane() {
+        addPane.setVisible(true);
+    }
+
+    public void addButtonClicked() {
+        Tutor newTutor = new Tutor();
+        newTutor.setName(name.getText());
+        newTutor.setSurname(surname.getText());
+        newTutor.setUsername(username.getText());
+        newTutor.setPassword(password.getText());
+        newTutor.setEmail(email.getText());
+        newTutor.setField(field.getText());
+
+        TutorDao.addTutor(newTutor);
+    }
+
+    public void changePasswordClicked() {
+        passwordPane.setVisible(true);
+    }
+
+    public void updatePassword() {
+        try {
+            AdminDao.updatePassword(admin, passwordField.getText(), oldPasswordField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void UpdateEmail() {
+        try {
+            AdminDao.updateEmail(admin, emailField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void ChangePasswordClicked() {
+        emailPane.setVisible(true);
     }
 }

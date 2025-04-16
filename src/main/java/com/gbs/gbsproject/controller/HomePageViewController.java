@@ -497,25 +497,24 @@ public class HomePageViewController {
         beginWithAITutorButton.setAlignment(Pos.CENTER);
         beginWithAITutorButton.setOnMouseClicked(_ -> {
             try {
-                // Load the FXML file for the login page
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/gemini-view.fxml"));
-                Parent root = loader.load();
 
-                // Get the current stage (window) from the list of all windows
-                Stage stage = (Stage) Stage.getWindows().stream()
-                        .filter(Window::isShowing)
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalStateException("No window found"));
+                FXMLLoader loader;
+                Parent nextPage;
+                Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+                Scene nextScene;
 
-                double width = stage.getWidth();
-                double height = stage.getHeight();
+                loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/gemini-view.fxml"));
+                nextPage = loader.load();
+                GeminiController geminiController = loader.getController();
+                geminiController.setStudent(student); // Pass Student object to the controller
+                nextScene = new Scene(nextPage);
 
-                // Set the new scene with the same window size
-                Scene scene = new Scene(root, width, height);
-                stage.setScene(scene);
-                stage.setWidth(width);
-                stage.setHeight(height);
+                stage.centerOnScreen();
+
+                // Set the new scene and show the stage
+                stage.setScene(nextScene);
                 stage.show();
+
             } catch (IOException e) {
                 // Log the exception using a logger instead of printStackTrace()
                 LOGGER.log(Level.SEVERE, "An error occurred while loading the login page", e);

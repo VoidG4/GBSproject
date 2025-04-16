@@ -1,84 +1,88 @@
 package com.gbs.gbsproject.service;
 
-import com.gbs.gbsproject.util.ElevenApiConfig;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import javazoom.jl.player.Player;
-import org.jetbrains.annotations.NotNull;
-
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.io.*;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TTSService {
     private static final Logger LOGGER = Logger.getLogger(TTSService.class.getName());
 
-    private static Player currentPlayer;  // Track the player instance
-    private static final AtomicBoolean isPlaying = new AtomicBoolean(false);
+    private static Process vlcProcess = null;  // VLC process for controlling playback
+    private static boolean isPlaying = false;  // Track playback status
+    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();  // Executor for background thread
+    private static OutputStream vlcOutputStream = null;  // To send commands to VLC process
 
-    // Generate Speech
+    // Start the audio generation and play it using VLC in a background thread
     public static void generateSpeech(String text) {
-        if (isPlaying.get()) {
-            System.out.println("Speech is already playing.");
+        if (isPlaying) {
+            System.out.println("Audio is already playing.");
             return;
         }
 
-        text = text.replaceAll("[^\\w\\s.,!]", "");
+        // Escape quotes in the input to prevent breaking the command
+        String safeInput = text.replace("\"", "\\\"");
 
+        // Execute the task in a background thread
+        executorService.submit(() -> {
+            // Construct the terminal command to generate speech
+            String command = String.format("source pyenv/bin/activate && python3 tts_service.py \"%s\"", safeInput);
 
-        try {
-            HttpResponse<InputStream> response = Unirest.post(ElevenApiConfig.getApiUrl())
-                    .header("xi-api-key", ElevenApiConfig.getApiKey())
-                    .header("Content-Type", "application/json")
-                    .body("{\n" +
-                            "  \"text\": \"" + text + "\",\n" +
-                            "  \"model_id\": \"eleven_multilingual_v2\"\n" +
-                            "}")
-                    .asBinary(); // Use asBinary to get MP3 file
+            // ProcessBuilder to execute the command in a shell
+            ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
 
-            if (response.getStatus() == 200) {
-                byte[] audioData = response.getBody().readAllBytes();
-                Thread playerThread = getPlayerThread(audioData);
+            // Optional: set working directory to where your Python script lives
+            processBuilder.directory(new File("."));
 
-                playerThread.start(); // Start the player in a separate thread
-                isPlaying.set(true); // Set isPlaying flag to true
-            } else {
-                System.out.println("Failed with status: " + response.getStatus());
-                System.out.println("Response: " + response.getBody());
-            }
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An error occurred ", e);
-        }
-    }
-
-    @NotNull
-    private static Thread getPlayerThread(byte[] audioData) {
-        ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
-
-        return new Thread(() -> {
             try {
-                currentPlayer = new Player(bais);
-                currentPlayer.play(); // Play the MP3 in a separate thread
+                // Start the Python process that generates the speech
+                Process process = processBuilder.start();
+                process.waitFor();  // Wait for the Python script to finish generating the speech
 
-                isPlaying.set(false);
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "An error occurred ", e);
-                isPlaying.set(false); // Make sure to reset if error occurs too
+                // After the speech is generated, play it using VLC (in dummy mode)
+                String vlcCommand = "vlc --intf rc --rc-host=localhost:1234 --play-and-exit speech.mp3";
+                vlcProcess = new ProcessBuilder("bash", "-c", vlcCommand).start();
+                vlcOutputStream = vlcProcess.getOutputStream();  // Get output stream for sending commands to VLC
 
+                isPlaying = true;
+                System.out.println("Audio started playing.");
+
+                // Monitor the VLC process to detect when it finishes
+                vlcProcess.waitFor();  // Wait for VLC to finish playing the MP3
+                isPlaying = false;
+
+                System.out.println("Audio finished playing.");
+
+                // Once VLC finishes, we can clean up and shut down the background thread
+
+            } catch (IOException | InterruptedException e) {
+                LOGGER.log(Level.SEVERE, "An error occurred", e);
             }
         });
     }
 
-    // Pause the speech
-    public static void pauseSpeech() {
-        if (currentPlayer != null && isPlaying.get()) {
-            // Closing the player effectively stops it.
-            currentPlayer.close();
-            isPlaying.set(false);
-            System.out.println("Speech paused.");
+    public static synchronized void stopAudio() {
+        if (vlcProcess != null && vlcProcess.isAlive()) {
+            try {
+                // Stop the VLC process
+                vlcProcess.destroy();  // This will stop the VLC playback and kill the process
+                isPlaying = false;
+                System.out.println("Audio stopped.");
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "An error occurred", e);
+            }
+        } else {
+            System.out.println("No audio is currently playing.");
         }
+    }
+
+    // Shutdown the ExecutorService when done
+    public static void shutdown() {
+        executorService.shutdown();
+        System.out.println("Background thread and ExecutorService shut down.");
+    }
+
+    public static boolean getIsPlaying() {
+        return isPlaying;
     }
 }

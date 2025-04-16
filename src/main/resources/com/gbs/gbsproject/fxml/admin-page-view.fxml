@@ -167,8 +167,8 @@
         </font>
     </Label>
     <AnchorPane fx:id="accountPane" layoutX="1925.0" layoutY="153.0" onMouseClicked="#accountClicked" prefHeight="116.0" prefWidth="180.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="14.0">
-        <Hyperlink layoutX="18.0" layoutY="18.0" text="Update contact details" />
-        <Hyperlink layoutX="18.0" layoutY="46.0" text="Change password" />
+        <Hyperlink layoutX="18.0" layoutY="18.0" onMouseClicked="#ChangePasswordClicked" text="Update contact details" />
+        <Hyperlink layoutX="18.0" layoutY="46.0" onMouseClicked="#changePasswordClicked" text="Change password" />
         <Hyperlink layoutX="18.0" layoutY="75.0" onMouseClicked="#logOut" text="Log out" />
     </AnchorPane>
     <AnchorPane layoutX="7.0" layoutY="180.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="-8.0" AnchorPane.topAnchor="180.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
@@ -191,7 +191,7 @@
                     <Cursor fx:constant="HAND" />
                 </cursor>
             </Button>
-            <Button layoutX="12.0" layoutY="222.0" mnemonicParsing="false" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="Delete Tutor">
+            <Button layoutX="12.0" layoutY="222.0" mnemonicParsing="false" onMouseClicked="#deleteUserClicked" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="Delete Tutor">
                 <font>
                     <Font size="22.0" />
                 </font>
@@ -199,7 +199,7 @@
                     <Cursor fx:constant="HAND" />
                 </cursor>
             </Button>
-            <Button layoutX="12.0" layoutY="296.0" mnemonicParsing="false" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="Delete Student">
+            <Button layoutX="12.0" layoutY="296.0" mnemonicParsing="false" onMouseClicked="#deleteStudent" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="Delete Student">
                 <font>
                     <Font size="22.0" />
                 </font>
@@ -207,15 +207,47 @@
                     <Cursor fx:constant="HAND" />
                 </cursor>
             </Button>
+         <Button layoutX="14.0" layoutY="370.0" mnemonicParsing="false" onMouseClicked="#addPane" prefHeight="76.0" prefWidth="255.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 2 0 2 0;" text="Add Tutor">
+            <font>
+               <Font size="22.0" />
+            </font>
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+         </Button>
         </AnchorPane>
 
         <!-- Right Content -->
         <AnchorPane style="-fx-background-color: transparent;">
             <!-- Content components go here -->
         </AnchorPane>
-        <ScrollPane fx:id="userScrollPane" layoutX="460.0" layoutY="89.0" prefHeight="464.0" prefWidth="654.0">
+        <ScrollPane fx:id="userScrollPane" layoutX="1229.0" layoutY="380.0" prefHeight="464.0" prefWidth="325.0">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
         </ScrollPane>
+        <AnchorPane fx:id="deleteTutorPane" layoutX="1219.0" layoutY="14.0" prefHeight="353.0" prefWidth="454.0" style="-fx-background-color: white;">
+            <TextField fx:id="deleteUserField" layoutX="56.0" layoutY="95.0" prefHeight="26.0" prefWidth="255.0" />
+            <Button layoutX="251.0" layoutY="137.0" mnemonicParsing="false" onMouseClicked="#deleteTutor" text="Delete" />
+            <Label layoutX="56.0" layoutY="59.0" text="Put username" />
+        </AnchorPane>
+        <AnchorPane fx:id="addPane" layoutX="473.0" layoutY="113.0" prefHeight="452.0" prefWidth="478.0" style="-fx-background-color: white;">
+            <TextField fx:id="name" layoutX="81.0" layoutY="92.0" prefHeight="26.0" prefWidth="238.0" promptText="Name" />
+            <TextField fx:id="surname" layoutX="81.0" layoutY="138.0" prefHeight="26.0" prefWidth="238.0" promptText="Surname" />
+            <TextField fx:id="username" layoutX="81.0" layoutY="187.0" prefHeight="26.0" prefWidth="238.0" promptText="Username" />
+            <TextField fx:id="password" layoutX="81.0" layoutY="236.0" prefHeight="26.0" prefWidth="238.0" promptText="Password" />
+            <TextField fx:id="email" layoutX="81.0" layoutY="286.0" prefHeight="26.0" prefWidth="238.0" promptText="Email" />
+            <TextField fx:id="field" layoutX="81.0" layoutY="335.0" prefHeight="26.0" prefWidth="238.0" promptText="Field" />
+            <Button layoutX="259.0" layoutY="381.0" mnemonicParsing="false" onMouseClicked="#addButtonClicked" prefHeight="26.0" prefWidth="58.0" text="Add" />
+         <Label layoutX="81.0" layoutY="49.0" text="Fill the information" />
+        </AnchorPane>
+        <AnchorPane fx:id="passwordPane" layoutX="982.0" layoutY="159.0" prefHeight="221.0" prefWidth="218.0" style="-fx-background-color: white;">
+            <TextField fx:id="passwordField" layoutX="14.0" layoutY="57.0" prefHeight="26.0" prefWidth="192.0" promptText="New password" />
+            <Button layoutX="76.0" layoutY="111.0" mnemonicParsing="false" onMouseClicked="#updatePassword" text="Change Password" />
+         <TextField fx:id="oldPasswordField" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="192.0" promptText="Old password" />
+        </AnchorPane>
+        <AnchorPane fx:id="emailPane" layoutX="982.0" layoutY="427.0" prefHeight="221.0" prefWidth="218.0" style="-fx-background-color: white;">
+            <TextField fx:id="emailField" layoutX="13.0" layoutY="22.0" prefHeight="26.0" prefWidth="186.0" promptText="New email" />
+            <Button layoutX="84.0" layoutY="67.0" mnemonicParsing="false" onMouseClicked="#UpdateEmail" prefHeight="26.0" prefWidth="109.0" text="Change Email" />
+        </AnchorPane>
 
     </AnchorPane>
 </AnchorPane>

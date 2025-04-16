@@ -2,6 +2,10 @@ package com.gbs.gbsproject.model;
 
 public class Student extends User {
 
+    public Student() {
+        super();
+    }
+
     // Constructor with id and name (inherited from User)
     public Student(int id, String name) {
         super(id, name, "",  "",  "",  "");

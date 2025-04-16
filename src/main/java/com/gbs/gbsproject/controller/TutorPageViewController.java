@@ -59,6 +59,11 @@ public class TutorPageViewController {
     public VBox questionVBox;
     public ScrollPane quizzesScrollPane;
     public ScrollPane quizzesScroll;
+    public TextField newPasswordField;
+    public TextField oldPasswordField;
+    public AnchorPane passwordPane;
+    public AnchorPane emailPane;
+    public TextField emailField;
     private Button currentSectionContentButton;
     @FXML
     private VBox quizListVBox;
@@ -1326,6 +1331,30 @@ public class TutorPageViewController {
             });
 
             quizListVBox.getChildren().add(quizButton);
+        }
+    }
+
+    public void changePasswordClicked() {
+        passwordPane.setVisible(true);
+    }
+
+    public void changeEmailClicked() {
+        emailPane.setVisible(true);
+    }
+
+    public void updatePassword() {
+        try {
+            TutorDao.updatePassword(tutor, newPasswordField.getText(), oldPasswordField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateEmail() {
+        try {
+            TutorDao.updateEmail(tutor, emailField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

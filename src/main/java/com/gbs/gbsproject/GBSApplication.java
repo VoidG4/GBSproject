@@ -28,7 +28,6 @@ public class GBSApplication extends Application {
             System.out.println("Failed to connect to database.");
         }
 
-        //TTSService.generateAndPlaySpeech();
         FXMLLoader fxmlLoader = new FXMLLoader(GBSApplication.class.getResource("/com/gbs/gbsproject/fxml/login-page-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1300, 800);
         stage.setTitle("GBS");

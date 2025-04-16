@@ -9,7 +9,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -25,7 +28,18 @@ public class GpaViewController {
     public AnchorPane accountPane;
     public Button buttonMenuStudies;
     public Button buttonMenuAccount;
+    public Circle gpaBackgroundCircle;
+    @FXML private Arc gpaArc;
+    @FXML private Label gpaLabel;
 
+    @FXML
+    public void initialize() {
+        double gpa = 7.2; // Example GPA
+        double angle = (gpa / 10.0) * 360.0;
+
+        gpaArc.setLength(-angle); // Negative for clockwise
+        gpaLabel.setText(String.format("%.1f", gpa));
+    }
 
     @FXML
     protected void accountClicked() {

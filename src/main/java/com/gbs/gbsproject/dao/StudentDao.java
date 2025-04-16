@@ -51,4 +51,22 @@ public class StudentDao {
 
         return fullName;
     }
+
+    public static void addStudent(Student student) {
+        String sql = "INSERT INTO student (name, surname, username, password, email) VALUES (?, ?, ?, ?, ?);";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, student.getName());
+            pstmt.setString(2, student.getSurname());
+            pstmt.setString(3, student.getUsername());
+            pstmt.setString(4, student.getPassword());
+            pstmt.setString(5, student.getEmail());
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred while adding tutor", e);
+        }
+    }
 }

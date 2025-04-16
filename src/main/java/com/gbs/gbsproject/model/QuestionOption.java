@@ -4,7 +4,6 @@ import javafx.scene.control.*;
 
 public class QuestionOption {
     private TextField textField;
-    CheckBox correctCheckbox;
     RadioButton radioButton;
     private boolean isCorrect;
 
@@ -28,10 +27,6 @@ public class QuestionOption {
         this.isCorrect = isCorrect;
     }
 
-    // Setter for the checkbox (we don't need it directly, but we use it to bind the state)
-    public void setCorrectCheckbox(CheckBox correctCheckbox) {
-        this.correctCheckbox = correctCheckbox;
-    }
     public void setRadioButton(RadioButton radioButton){
         this.radioButton = radioButton;
     }

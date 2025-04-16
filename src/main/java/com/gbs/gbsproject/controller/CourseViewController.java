@@ -7,10 +7,12 @@ import com.gbs.gbsproject.model.Section;
 import com.gbs.gbsproject.model.SectionContent;
 import com.gbs.gbsproject.service.TTSService;
 import com.itextpdf.text.*;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -21,18 +23,19 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -138,13 +141,26 @@ public class CourseViewController {
             titleLabel.setMaxWidth(1000);
 
             contentVBox.getChildren().add(titleLabel);
-
             switch (content.getContentType()) {
                 case "text" -> {
                     Button speechButton = getSpeechButton(content);
 
-                    // Add the button to the VBox (above the text)
-                    contentVBox.getChildren().add(speechButton);
+                    Button stopButton = new Button("");
+                    stopButton.setStyle("-fx-font-size: 18px; -fx-background-color: red;");
+                    stopButton.setCursor(Cursor.HAND);
+                    ImageView stopIcon = new ImageView(new Image("/stop_icon.png"));
+                    stopIcon.setFitWidth(15);
+                    stopIcon.setFitHeight(15);
+
+                    stopButton.setGraphic(stopIcon);
+                    stopButton.setOnAction(_ -> TTSService.stopAudio());
+
+                    HBox hBox = new HBox();
+                    hBox.setSpacing(10);
+                    hBox.getChildren().add(speechButton);
+                    hBox.getChildren().add(stopButton);
+
+                    contentVBox.getChildren().add(hBox);
 
                     // Display the text content
                     Text text = new Text(content.getContent());
@@ -192,28 +208,22 @@ public class CourseViewController {
     private static Button getSpeechButton(SectionContent content) {
         Button speechButton = new Button("");
         speechButton.setStyle("-fx-font-size: 18px; -fx-background-color: #28a745;");
+        speechButton.setCursor(Cursor.HAND);
 
         ImageView playIcon = new ImageView(new Image("/play_icon.png"));
-        playIcon.setFitWidth(20);
-        playIcon.setFitHeight(20);
+        playIcon.setFitWidth(15);
+        playIcon.setFitHeight(15);
 
         speechButton.setGraphic(playIcon);
 
-        AtomicBoolean isPlaying = new AtomicBoolean(false); // This is a local variable for the button
-
-
         speechButton.setOnAction(_ -> {
-            if (!isPlaying.get()) {
-                // If speech is not playing, generate and play speech
-                TTSService.generateSpeech(content.getContent());
-                speechButton.setText("Pause Speech");
-                isPlaying.set(true);  // Set isPlaying to true
+            TTSService.generateSpeech(content.getContent());
+            if(!TTSService.getIsPlaying()){
+                speechButton.setText("Please wait...");
 
-            } else {
-                // If speech is playing, pause it
-                TTSService.pauseSpeech();  // Pauses the speech
-                speechButton.setText("Resume Speech");
-                isPlaying.set(false);  // Set isPlaying to false
+                PauseTransition pause = new PauseTransition(Duration.seconds(7));
+                pause.setOnFinished(_ -> speechButton.setText(""));
+                pause.play();
             }
         });
         return speechButton;
