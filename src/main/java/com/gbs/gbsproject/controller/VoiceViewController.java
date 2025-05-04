@@ -7,7 +7,6 @@ import com.gbs.gbsproject.service.TTSService;
 import javafx.animation.Animation;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
