@@ -198,18 +198,17 @@
     </Circle>
     <Circle fill="DODGERBLUE" layoutX="751.0" layoutY="1029.0" radius="151.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
     <AnchorPane fx:id="accountPane" layoutX="1003.0" layoutY="149.0" onMouseClicked="#accountClicked" prefHeight="116.0" prefWidth="180.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="91.0">
-        <Hyperlink layoutX="18.0" layoutY="18.0" text="Update contact details" />
-        <Hyperlink layoutX="18.0" layoutY="46.0" text="Change password" />
+        <Hyperlink layoutX="18.0" layoutY="18.0" onMouseClicked="#changeEmailClicked" text="Update contact details" />
+        <Hyperlink layoutX="18.0" layoutY="46.0" onMouseClicked="#changePasswordClicked" text="Change password" />
         <Hyperlink layoutX="18.0" layoutY="75.0" onMouseClicked="#logOut" text="Log out" />
     </AnchorPane>
     <AnchorPane fx:id="helpPane" layoutX="1000.0" layoutY="149.0" prefHeight="98.0" prefWidth="151.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="1.0">
         <Label layoutX="14.0" layoutY="14.0" prefHeight="72.0" prefWidth="259.0" text="Need Help?&#10;For help with any of your studies,&#10;please contact the Student Engagement&#10;team at " />
         <Hyperlink layoutX="62.0" layoutY="65.0" text="enquiries@gbs.gr" />
     </AnchorPane>
-    <AnchorPane fx:id="studiesPane" layoutX="911.0" layoutY="148.0" prefHeight="109.0" prefWidth="145.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="218.0">
-        <Hyperlink layoutX="14.0" layoutY="14.0" text="Enrol for a course" />
-        <Hyperlink layoutX="15.0" layoutY="40.0" onMouseClicked="#gpaClicked" text="View GPA" />
-        <Hyperlink layoutX="15.0" layoutY="68.0" onMouseClicked="#certificateClicked" text="Print certificate" />
+    <AnchorPane fx:id="studiesPane" layoutX="911.0" layoutY="148.0" prefHeight="72.0" prefWidth="145.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="218.0">
+        <Hyperlink layoutX="15.0" layoutY="9.0" onMouseClicked="#gpaClicked" text="View GPA" />
+        <Hyperlink layoutX="15.0" layoutY="37.0" onMouseClicked="#certificateClicked" text="Print certificate" />
     </AnchorPane>
    <TextField fx:id="userInputField" layoutX="604.0" layoutY="856.0" prefHeight="45.0" prefWidth="925.0" promptText="Ask a question..." AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="400.0">
       <font>
@@ -245,4 +244,14 @@
          <Cursor fx:constant="HAND" />
       </cursor>
    </Button>
+    <AnchorPane fx:id="passwordPane" layoutX="1013.0" layoutY="186.0" prefHeight="149.0" prefWidth="247.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="91.0">
+        <TextField fx:id="oldPasswordField" layoutX="13.0" layoutY="13.0" prefHeight="31.0" prefWidth="218.0" promptText="Old password" />
+        <TextField fx:id="newPasswordField" layoutX="13.0" layoutY="51.0" prefHeight="31.0" prefWidth="218.0" promptText="New password" />
+        <Button layoutX="64.0" layoutY="95.0" mnemonicParsing="false" onMouseClicked="#updatePassword" prefHeight="31.0" prefWidth="167.0" text="Change password" />
+    </AnchorPane>
+    <AnchorPane fx:id="emailPane" layoutX="1023.0" layoutY="188.0" prefHeight="116.0" prefWidth="237.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="91.0">
+        <TextField fx:id="emailField" layoutX="9.0" layoutY="16.0" prefHeight="31.0" prefWidth="218.0" promptText="New email" />
+        <Button layoutX="98.0" layoutY="59.0" mnemonicParsing="false" onMouseClicked="#updateEmail" prefHeight="31.0" prefWidth="128.0" text="Change email" />
+    </AnchorPane>
+   <Button fx:id="microphone" layoutX="1668.5" layoutY="1091.0" mnemonicParsing="false" onMouseClicked="#microphoneClicked" prefHeight="45.0" prefWidth="50.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="68.0" AnchorPane.rightAnchor="400.0" />
 </AnchorPane>

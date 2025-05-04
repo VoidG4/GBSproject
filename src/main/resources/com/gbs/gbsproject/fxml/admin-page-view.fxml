@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane onMouseClicked="#formClicked" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.AdminPageViewController">
+<AnchorPane fx:id="mainAnchorPane" onMouseClicked="#formClicked" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.AdminPageViewController">
     <Circle fill="#168fff" layoutX="132.0" layoutY="80.0" radius="170.0" strokeType="INSIDE" strokeWidth="0.0">
         <stroke>
             <LinearGradient>
@@ -221,33 +221,66 @@
         <AnchorPane style="-fx-background-color: transparent;">
             <!-- Content components go here -->
         </AnchorPane>
-        <ScrollPane fx:id="userScrollPane" layoutX="1229.0" layoutY="380.0" prefHeight="464.0" prefWidth="325.0">
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+        <ScrollPane fx:id="userScrollPane" layoutX="551.0" layoutY="116.0" prefHeight="499.0" prefWidth="811.0" visible="false">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="488.0" prefWidth="791.0" />
         </ScrollPane>
-        <AnchorPane fx:id="deleteTutorPane" layoutX="1219.0" layoutY="14.0" prefHeight="353.0" prefWidth="454.0" style="-fx-background-color: white;">
-            <TextField fx:id="deleteUserField" layoutX="56.0" layoutY="95.0" prefHeight="26.0" prefWidth="255.0" />
-            <Button layoutX="251.0" layoutY="137.0" mnemonicParsing="false" onMouseClicked="#deleteTutor" text="Delete" />
-            <Label layoutX="56.0" layoutY="59.0" text="Put username" />
+        <AnchorPane fx:id="deleteTutorPane" layoutX="1330.0" layoutY="248.0" prefHeight="253.0" prefWidth="340.0" style="-fx-background-color: white;" visible="false" AnchorPane.rightAnchor="550.0">
+            <TextField fx:id="deleteUserField" layoutX="56.0" layoutY="95.0" prefHeight="26.0" prefWidth="255.0" promptText="Username">
+            <font>
+               <Font size="15.0" />
+            </font></TextField>
+            <Button layoutX="202.0" layoutY="152.0" mnemonicParsing="false" onMouseClicked="#deleteTutor" prefHeight="32.0" prefWidth="109.0" style="-fx-background-color: red;" text="Delete" textFill="WHITE">
+            <font>
+               <Font size="16.0" />
+            </font></Button>
+            <Label layoutX="56.0" layoutY="43.0" text="Put username">
+            <font>
+               <Font size="15.0" />
+            </font></Label>
         </AnchorPane>
-        <AnchorPane fx:id="addPane" layoutX="473.0" layoutY="113.0" prefHeight="452.0" prefWidth="478.0" style="-fx-background-color: white;">
-            <TextField fx:id="name" layoutX="81.0" layoutY="92.0" prefHeight="26.0" prefWidth="238.0" promptText="Name" />
-            <TextField fx:id="surname" layoutX="81.0" layoutY="138.0" prefHeight="26.0" prefWidth="238.0" promptText="Surname" />
-            <TextField fx:id="username" layoutX="81.0" layoutY="187.0" prefHeight="26.0" prefWidth="238.0" promptText="Username" />
-            <TextField fx:id="password" layoutX="81.0" layoutY="236.0" prefHeight="26.0" prefWidth="238.0" promptText="Password" />
-            <TextField fx:id="email" layoutX="81.0" layoutY="286.0" prefHeight="26.0" prefWidth="238.0" promptText="Email" />
-            <TextField fx:id="field" layoutX="81.0" layoutY="335.0" prefHeight="26.0" prefWidth="238.0" promptText="Field" />
-            <Button layoutX="259.0" layoutY="381.0" mnemonicParsing="false" onMouseClicked="#addButtonClicked" prefHeight="26.0" prefWidth="58.0" text="Add" />
-         <Label layoutX="81.0" layoutY="49.0" text="Fill the information" />
-        </AnchorPane>
-        <AnchorPane fx:id="passwordPane" layoutX="982.0" layoutY="159.0" prefHeight="221.0" prefWidth="218.0" style="-fx-background-color: white;">
-            <TextField fx:id="passwordField" layoutX="14.0" layoutY="57.0" prefHeight="26.0" prefWidth="192.0" promptText="New password" />
-            <Button layoutX="76.0" layoutY="111.0" mnemonicParsing="false" onMouseClicked="#updatePassword" text="Change Password" />
-         <TextField fx:id="oldPasswordField" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="192.0" promptText="Old password" />
-        </AnchorPane>
-        <AnchorPane fx:id="emailPane" layoutX="982.0" layoutY="427.0" prefHeight="221.0" prefWidth="218.0" style="-fx-background-color: white;">
-            <TextField fx:id="emailField" layoutX="13.0" layoutY="22.0" prefHeight="26.0" prefWidth="186.0" promptText="New email" />
-            <Button layoutX="84.0" layoutY="67.0" mnemonicParsing="false" onMouseClicked="#UpdateEmail" prefHeight="26.0" prefWidth="109.0" text="Change Email" />
+        <AnchorPane fx:id="addPane" layoutX="473.0" layoutY="113.0" prefHeight="480.0" prefWidth="478.0" style="-fx-background-color: white;" visible="false" AnchorPane.rightAnchor="500.0">
+            <TextField fx:id="name" layoutX="81.0" layoutY="92.0" prefHeight="26.0" prefWidth="302.0" promptText="Name">
+            <font>
+               <Font size="16.0" />
+            </font></TextField>
+            <TextField fx:id="surname" layoutX="81.0" layoutY="138.0" prefHeight="26.0" prefWidth="302.0" promptText="Surname">
+            <font>
+               <Font size="16.0" />
+            </font></TextField>
+            <TextField fx:id="username" layoutX="81.0" layoutY="187.0" prefHeight="26.0" prefWidth="302.0" promptText="Username">
+            <font>
+               <Font size="16.0" />
+            </font></TextField>
+            <TextField fx:id="password" layoutX="81.0" layoutY="236.0" prefHeight="26.0" prefWidth="302.0" promptText="Password">
+            <font>
+               <Font size="16.0" />
+            </font></TextField>
+            <TextField fx:id="email" layoutX="81.0" layoutY="286.0" prefHeight="26.0" prefWidth="302.0" promptText="Email">
+            <font>
+               <Font size="16.0" />
+            </font></TextField>
+            <TextField fx:id="field" layoutX="81.0" layoutY="335.0" prefHeight="26.0" prefWidth="302.0" promptText="Field">
+            <font>
+               <Font size="16.0" />
+            </font></TextField>
+            <Button layoutX="240.0" layoutY="398.0" mnemonicParsing="false" onMouseClicked="#addButtonClicked" prefHeight="32.0" prefWidth="143.0" style="-fx-background-color: green;" text="Add" textFill="WHITE">
+            <font>
+               <Font size="16.0" />
+            </font></Button>
+         <Label layoutX="81.0" layoutY="49.0" text="Fill the information">
+            <font>
+               <Font size="16.0" />
+            </font></Label>
         </AnchorPane>
 
     </AnchorPane>
+     <AnchorPane fx:id="passwordPane" layoutX="1890.0" layoutY="189.0" prefHeight="129.0" prefWidth="218.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="11.0">
+         <TextField fx:id="passwordField" layoutX="14.0" layoutY="49.0" prefHeight="26.0" prefWidth="192.0" promptText="New password" />
+         <Button layoutX="76.0" layoutY="87.0" mnemonicParsing="false" onMouseClicked="#updatePassword" text="Change Password" />
+      <TextField fx:id="oldPasswordField" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="192.0" promptText="Old password" />
+     </AnchorPane>
+     <AnchorPane fx:id="emailPane" layoutX="1887.0" layoutY="191.0" prefHeight="109.0" prefWidth="218.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="14.0">
+         <TextField fx:id="emailField" layoutX="13.0" layoutY="22.0" prefHeight="26.0" prefWidth="186.0" promptText="New email" />
+         <Button layoutX="84.0" layoutY="67.0" mnemonicParsing="false" onMouseClicked="#UpdateEmail" prefHeight="26.0" prefWidth="109.0" text="Change Email" />
+     </AnchorPane>
 </AnchorPane>

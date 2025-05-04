@@ -29,30 +29,35 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AdminPageViewController {
-    public AnchorPane deleteTutorPane;
-    public TextField deleteUserField;
     public AnchorPane addPane;
+    public AnchorPane deleteTutorPane;
+    public AnchorPane passwordPane;
+    public AnchorPane emailPane;
+    public ScrollPane userScrollPane;
+
+    public TextField deleteUserField;
     public TextField name;
     public TextField surname;
     public TextField username;
     public TextField password;
     public TextField email;
     public TextField field;
-    public AnchorPane passwordPane;
     public TextField passwordField;
     public TextField oldPasswordField;
-    public AnchorPane emailPane;
     public TextField emailField;
+    public AnchorPane mainAnchorPane;
     Admin admin;
     private static final Logger LOGGER = Logger.getLogger(AdminPageViewController.class.getName());
     public AnchorPane accountPane;
     public Button buttonMenuAccount;
-    public ScrollPane userScrollPane;
+
     String role;
 
     @FXML
     protected void formClicked() {
         accountPane.setVisible(false);
+        emailPane.setVisible(false);
+        passwordPane.setVisible(false);
     }
 
     @FXML
@@ -121,6 +126,11 @@ public class AdminPageViewController {
     }
 
     public void viewUsersClicked() {
+        addPane.setVisible(false);
+        deleteTutorPane.setVisible(false);
+        passwordPane.setVisible(false);
+        emailPane.setVisible(false);
+        userScrollPane.setVisible(true);
         List<Tutor> tutors = TutorDao.getAllTutors();
         List<Student> students = StudentDao.getAllStudents();
 
@@ -187,6 +197,11 @@ public class AdminPageViewController {
     }
 
     public void viewCoursesClick() {
+        addPane.setVisible(false);
+        deleteTutorPane.setVisible(false);
+        passwordPane.setVisible(false);
+        emailPane.setVisible(false);
+        userScrollPane.setVisible(true);
         List<Course> courses = CourseDao.getAllCourses();
         TableView<Course> courseTable = new TableView<>();
 
@@ -214,7 +229,11 @@ public class AdminPageViewController {
     }
 
     public void deleteUserClicked() {
+        addPane.setVisible(false);
         deleteTutorPane.setVisible(true);
+        passwordPane.setVisible(false);
+        emailPane.setVisible(false);
+        userScrollPane.setVisible(false);
         role = "tutor";
     }
 
@@ -226,12 +245,20 @@ public class AdminPageViewController {
     }
 
     public void deleteStudent() {
+        addPane.setVisible(false);
         deleteTutorPane.setVisible(true);
+        passwordPane.setVisible(false);
+        emailPane.setVisible(false);
+        userScrollPane.setVisible(false);
         role = "student";
     }
 
     public void addPane() {
         addPane.setVisible(true);
+        deleteTutorPane.setVisible(false);
+        passwordPane.setVisible(false);
+        emailPane.setVisible(false);
+        userScrollPane.setVisible(false);
     }
 
     public void addButtonClicked() {
@@ -248,6 +275,7 @@ public class AdminPageViewController {
 
     public void changePasswordClicked() {
         passwordPane.setVisible(true);
+        accountPane.setVisible(false);
     }
 
     public void updatePassword() {
@@ -268,5 +296,6 @@ public class AdminPageViewController {
 
     public void ChangePasswordClicked() {
         emailPane.setVisible(true);
+        accountPane.setVisible(false);
     }
 }

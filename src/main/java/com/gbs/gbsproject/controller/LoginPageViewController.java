@@ -58,7 +58,6 @@ public class LoginPageViewController {
 
         // Create UI elements
         Font customFont = Font.font("Droid Sans Mono Dotted", 16);
-        Font customFont2 = Font.font("Droid Sans Mono Dotted", 14);
         Font titleFont = Font.font("Droid Sans Mono Dotted", 25);
 
         Label lblTitle = new Label("Log in");
@@ -66,7 +65,7 @@ public class LoginPageViewController {
         Label lblText2 = new Label("Don't have an account yet? Click below to");
         lblTitle.setFont(titleFont);
         lblText.setFont(customFont);
-        lblText2.setFont(customFont2);
+        lblText2.setFont(customFont);
 
         TextField txtUsername = new TextField();
         txtUsername.setFont(customFont);
@@ -81,10 +80,6 @@ public class LoginPageViewController {
         btnLogin.setStyle("-fx-background-color: rgba(2,93,11,0.8); -fx-text-fill: white;-fx-font-size: 16px; -fx-padding: 10px 15px;"); // Light green with white text
 
         Hyperlink signUpText= new Hyperlink("Sign up");
-        Hyperlink link = new Hyperlink("Forgotten your username?");
-        Hyperlink link2 = new Hyperlink("Forgotten your password?");
-        link2.setStyle(" -fx-font-size: 14px; -fx-underline: true");
-        link.setStyle(" -fx-font-size: 14px; -fx-underline: true");
         signUpText.setStyle(" -fx-font-size: 14px; -fx-underline: true");
 
         // Add elements to GridPane
@@ -93,10 +88,8 @@ public class LoginPageViewController {
         gridPane.add(txtUsername, 0, 2, 2, 1);
         gridPane.add(txtPassword, 0, 3, 2, 1);
         gridPane.add(btnLogin, 0, 4, 2, 1);
-        gridPane.add(link, 0, 5, 2, 1);
-        gridPane.add(link2, 0, 6, 2, 1);
-        gridPane.add(lblText2, 0, 8, 2, 1);
-        gridPane.add(signUpText, 0, 9, 2, 1);
+        gridPane.add(lblText2, 0, 6, 2, 1);
+        gridPane.add(signUpText, 0, 7, 2, 1);
 
         // Wrap GridPane inside a StackPane to keep it centered horizontally and lower vertically
         StackPane stackPane = new StackPane(gridPane);
@@ -124,7 +117,7 @@ public class LoginPageViewController {
                 User user = UserDao.checkLogin(username, password); // Get the logged-in user object
 
                 if (user != null) {
-                    Login(user); // Pass the user object to the Login method
+                    UserLogin(user); // Pass the user object to the Login method
                 } else {
                     System.out.println("login failed: invalid credentials.");
                 }
@@ -174,7 +167,7 @@ public class LoginPageViewController {
         }
     }
 
-    private void Login(User user) {
+    private void UserLogin(User user) {
         try {
             FXMLLoader loader;
             Parent nextPage;

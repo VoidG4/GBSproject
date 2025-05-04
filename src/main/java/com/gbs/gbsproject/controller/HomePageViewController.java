@@ -7,7 +7,6 @@ import com.gbs.gbsproject.model.Student;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -15,10 +14,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -31,12 +27,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class HomePageViewController {
+    public AnchorPane passwordPane;
+    public TextField oldPasswordField;
+    public TextField newPasswordField;
+    public AnchorPane emailPane;
+    public TextField emailField;
     Student student;
     private static final Logger LOGGER = Logger.getLogger(HomePageViewController.class.getName());
     public Button buttonMenuAccount;
@@ -69,6 +71,8 @@ public class HomePageViewController {
         accountPane.setVisible(false);
         helpPane.setVisible(false);
         studiesPane.setVisible(false);
+        passwordPane.setVisible(false);
+        emailPane.setVisible(false);
     }
 
     public void setStudent(Student student){
@@ -114,24 +118,23 @@ public class HomePageViewController {
     @FXML
     protected void gpaClicked() {
         try {
-            // Load the FXML file for the login page
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/gpa-view.fxml"));
-            Parent root = loader.load();
+            FXMLLoader loader;
+            Parent nextPage;
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+            Scene nextScene;
 
-            // Get the current stage (window) from the list of all windows
-            Stage stage = (Stage) Stage.getWindows().stream()
-                    .filter(Window::isShowing)
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("No window found"));
+            loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/gpa-view.fxml"));
+            nextPage = loader.load();
+            GpaViewController gpaViewController = loader.getController();
+            gpaViewController.setStudent(student); // Pass Student object to the controller
+            nextScene = new Scene(nextPage);
+            // Set the stage to the previous size and position
+            stage.setWidth(1600);
+            stage.setHeight(1000);
+            stage.centerOnScreen();
 
-            double width = stage.getWidth();
-            double height = stage.getHeight();
-
-            // Set the new scene with the same window size
-            Scene scene = new Scene(root, width, height);
-            stage.setScene(scene);
-            stage.setWidth(width);
-            stage.setHeight(height);
+            // Set the new scene and show the stage
+            stage.setScene(nextScene);
             stage.show();
         } catch (IOException e) {
             // Log the exception using a logger instead of printStackTrace()
@@ -216,25 +219,27 @@ public class HomePageViewController {
     }
 
     @FXML
-    protected  void homeButtonClick(ActionEvent event) {
+    protected  void homeButtonClick() {
         try {
-            // Load the FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/home-page-view.fxml"));
-            Parent root = loader.load();
+            FXMLLoader loader;
+            Parent nextPage;
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+            Scene nextScene;
 
+            loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/home-page-view.fxml"));
+            nextPage = loader.load();
+            HomePageViewController homePageViewController = loader.getController();
+            homePageViewController.setStudent(student); // Pass Student object to the controller
+            nextScene = new Scene(nextPage);
+            // Set the stage to the previous size and position
+            stage.setWidth(1600);
+            stage.setHeight(1000);
+            stage.centerOnScreen();
 
-            // Get the current stage (window)
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            double width = stage.getWidth();
-            double height = stage.getHeight();
-
-            // Set the new scene
-            Scene scene = new Scene(root, width, height);
-            stage.setScene(scene);
-
-            stage.setWidth(width);
-            stage.setHeight(height);
+            // Set the new scene and show the stage
+            stage.setScene(nextScene);
             stage.show();
+
         } catch (IOException e) {
             // Log the exception using a logger instead of printStackTrace()
             LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
@@ -399,6 +404,7 @@ public class HomePageViewController {
                     // Pass the course to the controller
                     CourseViewController controller = loader.getController();
                     controller.setCourse(course); // Custom method to receive course info
+                    controller.setStudent(student);
 
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     double width = stage.getWidth();
@@ -459,24 +465,23 @@ public class HomePageViewController {
         actionButton.setAlignment(Pos.CENTER);
         actionButton.setOnMouseClicked(_ -> {
             try {
-                // Load the FXML file for the login page
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/quiz-area-view.fxml"));
-                Parent root = loader.load();
+                FXMLLoader loader;
+                Parent nextPage;
+                Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+                Scene nextScene;
 
-                // Get the current stage (window) from the list of all windows
-                Stage stage = (Stage) Stage.getWindows().stream()
-                        .filter(Window::isShowing)
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalStateException("No window found"));
+                loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/quiz-area-view.fxml"));
+                nextPage = loader.load();
+                QuizAreaViewController quizAreaViewController = loader.getController();
+                quizAreaViewController.setStudent(student); // Pass Student object to the controller
+                nextScene = new Scene(nextPage);
+                // Set the stage to the previous size and position
+                stage.setWidth(1600);
+                stage.setHeight(1000);
+                stage.centerOnScreen();
 
-                double width = stage.getWidth();
-                double height = stage.getHeight();
-
-                // Set the new scene with the same window size
-                Scene scene = new Scene(root, width, height);
-                stage.setScene(scene);
-                stage.setWidth(width);
-                stage.setHeight(height);
+                // Set the new scene and show the stage
+                stage.setScene(nextScene);
                 stage.show();
             } catch (IOException e) {
                 // Log the exception using a logger instead of printStackTrace()
@@ -622,5 +627,33 @@ public class HomePageViewController {
         descriptionLabel.setMaxWidth(600);
         descriptionLabel.setStyle("-fx-text-fill: #333;");
         return descriptionLabel;
+    }
+
+    public void updatePassword() {
+        try {
+            StudentDao.updatePassword(student, newPasswordField.getText(), oldPasswordField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateEmail() {
+        try {
+            StudentDao.updateEmail(student, emailField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void changePasswordClicked() {
+        passwordPane.setVisible(true);
+        accountPane.setVisible(false);
+        passwordPane.toFront();
+    }
+
+    public void changeEmailClicked() {
+        emailPane.setVisible(true);
+        accountPane.setVisible(false);
+        emailPane.toFront();
     }
 }

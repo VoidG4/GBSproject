@@ -16,7 +16,7 @@ public class TTSService {
     // Start the audio generation and play it using VLC in a background thread
     public static void generateSpeech(String text) {
         if (isPlaying) {
-            System.out.println("Audio is already playing.");
+            System.out.println("Audio is already playing." + vlcOutputStream);
             return;
         }
 

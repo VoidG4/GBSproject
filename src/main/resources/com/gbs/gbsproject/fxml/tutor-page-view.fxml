@@ -353,13 +353,13 @@
         </ScrollPane>
 
     </AnchorPane>
-    <AnchorPane fx:id="passwordPane" layoutX="1073.0" layoutY="48.0" prefHeight="123.0" prefWidth="193.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;">
+    <AnchorPane fx:id="passwordPane" layoutX="1912.0" layoutY="192.0" prefHeight="123.0" prefWidth="193.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="14.0">
         <TextField fx:id="newPasswordField" layoutX="16.0" layoutY="52.0" promptText="New Password" />
         <TextField fx:id="oldPasswordField" layoutX="15.0" layoutY="17.0" promptText="Old Password" />
         <Button layoutX="49.0" layoutY="86.0" mnemonicParsing="false" onMouseClicked="#updatePassword" text="Change Password" />
     </AnchorPane>
-    <AnchorPane fx:id="emailPane" layoutX="867.0" layoutY="47.0" prefHeight="123.0" prefWidth="193.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;">
+    <AnchorPane fx:id="emailPane" layoutX="1912.0" layoutY="192.0" prefHeight="98.0" prefWidth="193.0" style="-fx-background-color: white; -fx-border-color: #72B3FF;" visible="false" AnchorPane.rightAnchor="14.0">
         <TextField fx:id="emailField" layoutX="15.0" layoutY="17.0" promptText="New email" />
-        <Button layoutX="75.0" layoutY="83.0" mnemonicParsing="false" onMouseClicked="#updateEmail" text="Change Email" />
+        <Button layoutX="75.0" layoutY="57.0" mnemonicParsing="false" onMouseClicked="#updateEmail" text="Change Email" />
     </AnchorPane>
 </AnchorPane>

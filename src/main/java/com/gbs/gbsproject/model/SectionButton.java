@@ -7,7 +7,7 @@ public class SectionButton extends Button {
 
     public SectionButton(String text, int sectionId) {
         super(text); // Set button text
-        this.sectionId = sectionId; // Store the associated Section's ID
+        this.sectionId = sectionId;
     }
 
     public int getSectionId() {

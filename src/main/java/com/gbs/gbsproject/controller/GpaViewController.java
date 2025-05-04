@@ -1,16 +1,16 @@
 package com.gbs.gbsproject.controller;
 
+import com.gbs.gbsproject.dao.StudentDao;
+import com.gbs.gbsproject.model.Course;
+import com.gbs.gbsproject.model.Student;
 import com.itextpdf.text.*;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -18,10 +18,23 @@ import javafx.stage.Window;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.gbs.gbsproject.dao.CourseDao.getAllCourses;
+
 public class GpaViewController {
+    public ScrollPane scrollPane;
+    public AnchorPane mainAnchorPane;
+    public AnchorPane passwordPane;
+    public TextField oldPasswordField;
+    public TextField newPasswordField;
+    public AnchorPane emailPane;
+    public TextField emailField;
+    Student student;
+
     private static final Logger LOGGER = Logger.getLogger(GpaViewController.class.getName());
     public AnchorPane studiesPane;
     public AnchorPane helpPane;
@@ -29,16 +42,51 @@ public class GpaViewController {
     public Button buttonMenuStudies;
     public Button buttonMenuAccount;
     public Circle gpaBackgroundCircle;
+    public VBox courseContainer;
     @FXML private Arc gpaArc;
     @FXML private Label gpaLabel;
 
     @FXML
-    public void initialize() {
-        double gpa = 7.2; // Example GPA
-        double angle = (gpa / 10.0) * 360.0;
+    public void initialize() {}
 
-        gpaArc.setLength(-angle); // Negative for clockwise
+    public void loadStudentData() {
+        List<Course> courseList = getAllCourses();
+
+        double sum = 0;
+        for (Course course : courseList) {
+            VBox courseBox = new VBox(5);
+            courseBox.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 10;");
+            courseBox.setFillWidth(true);
+
+            Label nameLabel = new Label(course.getName());
+            nameLabel.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
+
+            double grade = StudentDao.getGrade(course.getId(), student.getId());
+            sum += grade;
+
+            ProgressBar progressBar = new ProgressBar(0.5);
+            progressBar.setVisible(true);
+            progressBar.setStyle("-fx-accent: #00C9A7;");
+
+            courseBox.getChildren().add(nameLabel);
+            courseBox.getChildren().add(progressBar);
+            courseContainer.getChildren().add(courseBox);
+            scrollPane.setContent(courseContainer);
+        }
+
+        int number0fCourses = courseList.size();
+
+        double gpa = sum / number0fCourses;
+        double angle = gpa * 36.0; // 10 GPA → 360 degrees
+
+        gpaArc.setStartAngle(90);     // Start at the bottom
+        gpaArc.setLength(-angle);     // NEGATIVE makes it draw clockwise!
         gpaLabel.setText(String.format("%.1f", gpa));
+    }
+
+    public void setStudent(Student student){
+        this.student = student;
+        loadStudentData();
     }
 
     @FXML
@@ -152,24 +200,25 @@ public class GpaViewController {
     }
 
     @FXML
-    protected  void homeButtonClick(ActionEvent event) {
+    protected  void homeButtonClick() {
         try {
-            // Load the FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/home-page-view.fxml"));
-            Parent root = loader.load();
+            FXMLLoader loader;
+            Parent nextPage;
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+            Scene nextScene;
 
+            loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/home-page-view.fxml"));
+            nextPage = loader.load();
+            HomePageViewController homePageViewController = loader.getController();
+            homePageViewController.setStudent(student); // Pass Student object to the controller
+            nextScene = new Scene(nextPage);
+            // Set the stage to the previous size and position
+            stage.setWidth(1600);
+            stage.setHeight(1000);
+            stage.centerOnScreen();
 
-            // Get the current stage (window)
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            double width = stage.getWidth();
-            double height = stage.getHeight();
-
-            // Set the new scene
-            Scene scene = new Scene(root, width, height);
-            stage.setScene(scene);
-
-            stage.setWidth(width);
-            stage.setHeight(height);
+            // Set the new scene and show the stage
+            stage.setScene(nextScene);
             stage.show();
         } catch (IOException e) {
             // Log the exception using a logger instead of printStackTrace()
@@ -262,4 +311,39 @@ public class GpaViewController {
         return null;
     }
 
+    public void updatePassword() {
+        try {
+            StudentDao.updatePassword(student, newPasswordField.getText(), oldPasswordField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateEmail() {
+        try {
+            StudentDao.updateEmail(student, emailField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void changePasswordClicked() {
+        passwordPane.setVisible(true);
+        accountPane.setVisible(false);
+        passwordPane.toFront();
+    }
+
+    public void changeEmailClicked() {
+        emailPane.setVisible(true);
+        accountPane.setVisible(false);
+        emailPane.toFront();
+    }
+
+    public void formClicked() {
+        accountPane.setVisible(false);
+        helpPane.setVisible(false);
+        studiesPane.setVisible(false);
+        passwordPane.setVisible(false);
+        emailPane.setVisible(false);
+    }
 }

@@ -109,6 +109,8 @@ public class TutorPageViewController {
     public void formClicked() {
         accountPane.setVisible(false);
         contentScroll.setVisible(false);
+        emailPane.setVisible(false);
+        passwordPane.setVisible(false);
     }
 
     public void accountClicked() {
@@ -381,7 +383,10 @@ public class TutorPageViewController {
         coursePane.setVisible(true);
         scrollPane.setVisible(false);
         sectionScroll.setVisible(false);
+        contentScroll.setVisible(false);
         viewScrollPane.setVisible(false);
+        quizzesScrollPane.setVisible(false);
+        quizzesScroll.setVisible(false);
     }
 
     // You might want to implement a method to generate the course ID.
@@ -412,7 +417,11 @@ public class TutorPageViewController {
     public void displayTutorCourses() {
         coursePane.setVisible(false);
         scrollPane.setVisible(true);
+        sectionScroll.setVisible(false);
+        contentScroll.setVisible(false);
         viewScrollPane.setVisible(false);
+        quizzesScrollPane.setVisible(false);
+        quizzesScroll.setVisible(false);
 
         List<Course> courses = CourseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
 
@@ -954,9 +963,13 @@ public class TutorPageViewController {
     }
 
     public void viewCourses() {
-        scrollPane.setVisible(true);
         coursePane.setVisible(false);
+        scrollPane.setVisible(true);
         sectionScroll.setVisible(false);
+        contentScroll.setVisible(false);
+        viewScrollPane.setVisible(false);
+        quizzesScrollPane.setVisible(false);
+        quizzesScroll.setVisible(false);
 
         List<Course> courses = CourseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
 
@@ -1138,10 +1151,13 @@ public class TutorPageViewController {
     }
 
     public void deleteCourseClicked() {
-        scrollPane.setVisible(true);
         coursePane.setVisible(false);
+        scrollPane.setVisible(true);
         sectionScroll.setVisible(false);
+        contentScroll.setVisible(false);
         viewScrollPane.setVisible(false);
+        quizzesScrollPane.setVisible(false);
+        quizzesScroll.setVisible(false);
 
         List<Course> courses = CourseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
 
@@ -1161,9 +1177,13 @@ public class TutorPageViewController {
     }
 
     public void makeQuizClicked()  {
-        scrollPane.setVisible(true);
         coursePane.setVisible(false);
+        scrollPane.setVisible(true);
         sectionScroll.setVisible(false);
+        contentScroll.setVisible(false);
+        viewScrollPane.setVisible(false);
+        quizzesScrollPane.setVisible(false);
+        quizzesScroll.setVisible(false);
 
         List<Course> courses = CourseDao.getCoursesByTutorId(tutor.getId()); // Get courses by tutor ID
 
@@ -1242,18 +1262,29 @@ public class TutorPageViewController {
             stage.setScene(nextScene);
             stage.show();
         });
-
         return courseButton;
     }
 
 
     public void ViewQuizzes() {
+        coursePane.setVisible(false);
+        scrollPane.setVisible(false);
+        sectionScroll.setVisible(false);
+        contentScroll.setVisible(false);
+        viewScrollPane.setVisible(false);
         quizzesScrollPane.setVisible(true);
+        quizzesScroll.setVisible(false);
         loadQuizzes();
     }
 
     public void deleteQuizClicked() {
+        coursePane.setVisible(false);
+        scrollPane.setVisible(false);
+        sectionScroll.setVisible(false);
+        contentScroll.setVisible(false);
+        viewScrollPane.setVisible(false);
         quizzesScrollPane.setVisible(true);
+        quizzesScroll.setVisible(false);
         loadQuizzesForDelete();
     }
 
@@ -1336,10 +1367,12 @@ public class TutorPageViewController {
 
     public void changePasswordClicked() {
         passwordPane.setVisible(true);
+        accountPane.setVisible(false);
     }
 
     public void changeEmailClicked() {
         emailPane.setVisible(true);
+        accountPane.setVisible(false);
     }
 
     public void updatePassword() {

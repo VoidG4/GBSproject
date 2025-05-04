@@ -8,7 +8,7 @@ public class Section {
     private final int sectionOrder;
 
     public Section(int courseId, String title, String description, int sectionOrder) {
-        this.courseId = courseId;
+        setCourseId(courseId);
         this.title = title;
         this.description = description;
         this.sectionOrder = sectionOrder;

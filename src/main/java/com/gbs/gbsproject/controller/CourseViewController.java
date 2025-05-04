@@ -2,24 +2,21 @@ package com.gbs.gbsproject.controller;
 
 import com.gbs.gbsproject.dao.SectionContentDao;
 import com.gbs.gbsproject.dao.SectionDao;
+import com.gbs.gbsproject.dao.StudentDao;
 import com.gbs.gbsproject.model.Course;
 import com.gbs.gbsproject.model.Section;
 import com.gbs.gbsproject.model.SectionContent;
+import com.gbs.gbsproject.model.Student;
 import com.gbs.gbsproject.service.TTSService;
 import com.itextpdf.text.*;
 import javafx.animation.PauseTransition;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -41,6 +38,12 @@ import java.util.logging.Logger;
 
 
 public class CourseViewController {
+    public AnchorPane passwordPane;
+    public TextField oldPasswordField;
+    public TextField newPasswordField;
+    public AnchorPane emailPane;
+    public TextField emailField;
+    Student student;
     private static final Logger LOGGER = Logger.getLogger(CourseViewController.class.getName());
     public Button buttonMenuStudies;
     public Button buttonMenuAccount;
@@ -51,6 +54,7 @@ public class CourseViewController {
     public VBox sectionsVBox;
     public VBox contentVBox;
     public ScrollPane scrollPane;
+    public AnchorPane mainAnchorPane;
     Course course;
 
     @FXML
@@ -58,6 +62,24 @@ public class CourseViewController {
         accountPane.setVisible(false);
         helpPane.setVisible(false);
         studiesPane.setVisible(false);
+        passwordPane.setVisible(false);
+        emailPane.setVisible(false);
+    }
+
+    public void changePasswordClicked() {
+        passwordPane.setVisible(true);
+        accountPane.setVisible(false);
+        passwordPane.toFront();
+    }
+
+    public void changeEmailClicked() {
+        emailPane.setVisible(true);
+        accountPane.setVisible(false);
+        emailPane.toFront();
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
     @NotNull
@@ -295,24 +317,23 @@ public class CourseViewController {
     @FXML
     protected void gpaClicked() {
         try {
-            // Load the FXML file for the login page
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/gpa-view.fxml"));
-            Parent root = loader.load();
+            FXMLLoader loader;
+            Parent nextPage;
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+            Scene nextScene;
 
-            // Get the current stage (window) from the list of all windows
-            Stage stage = (Stage) Stage.getWindows().stream()
-                    .filter(Window::isShowing)
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("No window found"));
+            loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/gpa-view.fxml"));
+            nextPage = loader.load();
+            GpaViewController gpaViewController = loader.getController();
+            gpaViewController.setStudent(student); // Pass Student object to the controller
+            nextScene = new Scene(nextPage);
+            // Set the stage to the previous size and position
+            stage.setWidth(1600);
+            stage.setHeight(1000);
+            stage.centerOnScreen();
 
-            double width = stage.getWidth();
-            double height = stage.getHeight();
-
-            // Set the new scene with the same window size
-            Scene scene = new Scene(root, width, height);
-            stage.setScene(scene);
-            stage.setWidth(width);
-            stage.setHeight(height);
+            // Set the new scene and show the stage
+            stage.setScene(nextScene);
             stage.show();
         } catch (IOException e) {
             // Log the exception using a logger instead of printStackTrace()
@@ -463,28 +484,45 @@ public class CourseViewController {
     }
 
     @FXML
-    protected  void homeButtonClick(ActionEvent event) {
+    protected  void homeButtonClick() {
         try {
-            // Load the FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/home-page-view.fxml"));
-            Parent root = loader.load();
+            FXMLLoader loader;
+            Parent nextPage;
+            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+            Scene nextScene;
 
+            loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/home-page-view.fxml"));
+            nextPage = loader.load();
+            HomePageViewController homePageViewController = loader.getController();
+            homePageViewController.setStudent(student); // Pass Student object to the controller
+            nextScene = new Scene(nextPage);
+            // Set the stage to the previous size and position
+            stage.setWidth(1600);
+            stage.setHeight(1000);
+            stage.centerOnScreen();
 
-            // Get the current stage (window)
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            double width = stage.getWidth();
-            double height = stage.getHeight();
-
-            // Set the new scene
-            Scene scene = new Scene(root, width, height);
-            stage.setScene(scene);
-
-            stage.setWidth(width);
-            stage.setHeight(height);
+            // Set the new scene and show the stage
+            stage.setScene(nextScene);
             stage.show();
         } catch (IOException e) {
             // Log the exception using a logger instead of printStackTrace()
             LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
+        }
+    }
+
+    public void updatePassword() {
+        try {
+            StudentDao.updatePassword(student, newPasswordField.getText(), oldPasswordField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateEmail() {
+        try {
+            StudentDao.updateEmail(student, emailField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
