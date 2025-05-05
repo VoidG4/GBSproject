@@ -33,7 +33,7 @@ public class StudentDao {
         return students;
     }
 
-    public String getFullNameByUsername(String username) {
+    public static String getFullNameByUsername(String username) {
         String fullName = "Student Name"; // Default in case of failure
 
         String query = "SELECT name, surname FROM student WHERE username = ?";
