@@ -2,6 +2,7 @@ package com.gbs.gbsproject.controller;
 
 import com.gbs.gbsproject.dao.StudentDao;
 import com.gbs.gbsproject.model.Student;
+import com.gbs.gbsproject.util.PasswordUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -118,45 +119,52 @@ public class SignUpPageViewController {
     }
 
     private void SignUp(String name, String surname, String username, String password, String email) {
-        Student student = new Student();
-
-        student.setName(name);
-        student.setSurname(surname);
-        student.setUsername(username);
-        student.setPassword(password);
-        student.setEmail(email);
-
-        StudentDao.addStudent(student);
         try {
-            // Get the current stage and save its position and size
-            Stage currentStage = (Stage) mainAnchorPane.getScene().getWindow();
-            double currentWidth = currentStage.getWidth();
-            double currentHeight = currentStage.getHeight();
-            double currentX = currentStage.getX();
-            double currentY = currentStage.getY();
+            // Hash the password and generate the salt
+            String[] hashedAndSalted = PasswordUtil.createPasswordHashAndSalt(password);
+            String hashedPassword = hashedAndSalted[0];
+            String salt = hashedAndSalted[1];
 
-            // Load the new FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/login-page-view.fxml")); // Replace with the actual path to the new FXML file
-            Parent nextPage = loader.load();
+            // Create a new Student object and set its fields
+            Student student = new Student();
+            student.setName(name);
+            student.setSurname(surname);
+            student.setUsername(username);
+            student.setPassword(hashedPassword);  // Store hashed password, not plain text
+            student.setEmail(email);
+            student.setSalt(salt);
 
-            // Create a new scene with the loaded FXML
-            Scene nextScene = new Scene(nextPage);
+            // Add the student to the database (or wherever you're storing the student data)
+            StudentDao.addStudent(student);
 
-            // Set the stage to the previous size and position
-            Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
-            stage.setWidth(currentWidth);
-            stage.setHeight(currentHeight);
-            stage.setX(currentX);
-            stage.setY(currentY);
+            // Code to handle switching to the next page in the GUI (unchanged)
+            try {
+                Stage currentStage = (Stage) mainAnchorPane.getScene().getWindow();
+                double currentWidth = currentStage.getWidth();
+                double currentHeight = currentStage.getHeight();
+                double currentX = currentStage.getX();
+                double currentY = currentStage.getY();
 
-            // Set the new scene and show the stage
-            stage.setScene(nextScene);
-            stage.show();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/login-page-view.fxml"));
+                Parent nextPage = loader.load();
 
-        } catch (IOException e) {
-            // Log the exception using a logger instead of printStackTrace()
-            LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
-            // Optionally, show a dialog to notify the user of the error
+                Scene nextScene = new Scene(nextPage);
+
+                Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+                stage.setWidth(currentWidth);
+                stage.setHeight(currentHeight);
+                stage.setX(currentX);
+                stage.setY(currentY);
+
+                stage.setScene(nextScene);
+                stage.show();
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
+                showErrorDialog();
+            }
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error during password hashing", e);
             showErrorDialog();
         }
     }

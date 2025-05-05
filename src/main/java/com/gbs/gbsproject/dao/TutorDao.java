@@ -2,9 +2,11 @@ package com.gbs.gbsproject.dao;
 
 import com.gbs.gbsproject.model.Tutor;
 import com.gbs.gbsproject.util.DatabaseUtil;
+import com.gbs.gbsproject.util.PasswordUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,41 +54,83 @@ public class TutorDao {
     }
 
     public static void addTutor(Tutor tutor) {
-        String sql = "INSERT INTO tutor (name, surname, username, password, email, field) VALUES (?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO tutor (name, surname, username, password, email, field, salt) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
+            byte[] salt = PasswordUtil.generateSalt();
+            String saltBase64 = Base64.getEncoder().encodeToString(salt);
+
+            String hashedPassword = PasswordUtil.hashPassword(tutor.getPassword(), salt);
+
             pstmt.setString(1, tutor.getName());
             pstmt.setString(2, tutor.getSurname());
             pstmt.setString(3, tutor.getUsername());
-            pstmt.setString(4, tutor.getPassword());
+            pstmt.setString(4, hashedPassword);  // Store hashed password
             pstmt.setString(5, tutor.getEmail());
             pstmt.setString(6, tutor.getField());
+            pstmt.setString(7, saltBase64);  // Store the salt
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "An error occurred while adding tutor", e);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "An error occurred while hashing password", e);
         }
     }
 
     public static void updatePassword(Tutor tutor, String newPassword, String oldPassword) throws SQLException {
-        String updateSQL = "UPDATE tutor SET password = ? WHERE id = ? AND password = ?";
+        String selectSQL = "SELECT password, salt FROM tutor WHERE id = ?";
+        String updateSQL = "UPDATE tutor SET password = ?, salt = ? WHERE id = ?";
 
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(updateSQL)) {
+        try (Connection conn = DatabaseUtil.getConnection()) {
 
-            stmt.setString(1, newPassword);
-            stmt.setInt(2, tutor.getId());
-            stmt.setString(3, oldPassword);
+            // Step 1: Retrieve the old password hash and salt from the database
+            try (PreparedStatement selectStmt = conn.prepareStatement(selectSQL)) {
+                selectStmt.setInt(1, tutor.getId());
+                ResultSet rs = selectStmt.executeQuery();
 
-            int rowsAffected = stmt.executeUpdate();
+                if (rs.next()) {
+                    String storedPasswordHash = rs.getString("password");
+                    String storedSalt = rs.getString("salt");
 
-            if (rowsAffected > 0) {
-                System.out.println("Password updated successfully in database.");
-            } else {
-                System.out.println("No admin found with the given ID.");
+                    // Step 2: Verify the old password
+                    try {
+                        if (PasswordUtil.verifyPassword(oldPassword, storedPasswordHash, storedSalt)) {
+
+                            // Step 3: Generate a new salt and hash the new password
+                            byte[] newSalt = PasswordUtil.generateSalt();
+                            String newSaltBase64 = Base64.getEncoder().encodeToString(newSalt);
+                            String newHashedPassword = PasswordUtil.hashPassword(newPassword, newSalt);
+
+                            // Step 4: Update the password and salt in the database
+                            try (PreparedStatement updateStmt = conn.prepareStatement(updateSQL)) {
+                                updateStmt.setString(1, newHashedPassword);  // New hashed password
+                                updateStmt.setString(2, newSaltBase64);      // New salt
+                                updateStmt.setInt(3, tutor.getId());         // Tutor ID
+
+                                int rowsAffected = updateStmt.executeUpdate();
+
+                                if (rowsAffected > 0) {
+                                    System.out.println("Password updated successfully in database.");
+                                } else {
+                                    System.out.println("No tutor found with the given ID.");
+                                }
+                            }
+                        } else {
+                            System.out.println("Old password is incorrect.");
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    System.out.println("No tutor found with the given ID.");
+                }
             }
+
+        } catch (SQLException e) {
+            System.err.println("Error updating password: " + e.getMessage());
         }
     }
 

@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -244,6 +245,26 @@ public class HomePageViewController {
         scrollPane.setPrefHeight(780);
         scrollPane.setStyle("-fx-background-color: transparent;-fx-background: transparent;");
 
+        scrollPane.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            Object target = event.getTarget();
+
+            if (target instanceof javafx.scene.control.ScrollBar) {
+                // Allow scrollbar interaction
+                return;
+            }
+
+            // Allow interaction with actual controls
+            if (target instanceof Button || target instanceof Label || target instanceof TextField || target instanceof ProgressBar) {
+                return;
+            }
+
+            // Otherwise consume the event to block background-based scrolling
+            event.consume();
+        });
+
+
+
+
         AnchorPane.setTopAnchor(scrollPane, 180.0);
         AnchorPane.setLeftAnchor(scrollPane, 0.0);
         AnchorPane.setRightAnchor(scrollPane, 0.0);
@@ -334,7 +355,6 @@ public class HomePageViewController {
         AnchorPane.setLeftAnchor(actionButton, 20.0);
         quizPane.getChildren().addAll(titleLabel, descriptionLabel, actionButton);
         quizPane.prefWidthProperty().bind(contentPane.widthProperty().subtract(400));
-
 
 
         FlowPane buttonContainer = new FlowPane(10, 10);

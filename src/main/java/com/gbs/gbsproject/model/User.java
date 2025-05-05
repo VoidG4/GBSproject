@@ -7,6 +7,7 @@ public class User {
     private String username;
     private String password;
     private String email;
+    private String salt;
 
     public User(){}
 
@@ -68,5 +69,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public String getSalt() {
+        return salt;
     }
 }

@@ -2,9 +2,11 @@ package com.gbs.gbsproject.dao;
 
 import com.gbs.gbsproject.model.Student;
 import com.gbs.gbsproject.util.DatabaseUtil;
+import com.gbs.gbsproject.util.PasswordUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,7 +55,7 @@ public class StudentDao {
     }
 
     public static void addStudent(Student student) {
-        String sql = "INSERT INTO student (name, surname, username, password, email) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO student (name, surname, username, password, email, salt) VALUES (?, ?, ?, ?, ?, ?);";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -63,6 +65,7 @@ public class StudentDao {
             pstmt.setString(3, student.getUsername());
             pstmt.setString(4, student.getPassword());
             pstmt.setString(5, student.getEmail());
+            pstmt.setString(6, student.getSalt());
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -187,24 +190,59 @@ public class StudentDao {
     }
 
     public static void updatePassword(Student student, String newPassword, String oldPassword) throws SQLException {
-        String updateSQL = "UPDATE student SET password = ? WHERE id = ? AND password = ?";
+        String selectSQL = "SELECT password, salt FROM student WHERE id = ?";
+        String updateSQL = "UPDATE student SET password = ?, salt = ? WHERE id = ?";
 
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(updateSQL)) {
+        try (Connection conn = DatabaseUtil.getConnection()) {
 
-            stmt.setString(1, newPassword);
-            stmt.setInt(2, student.getId());
-            stmt.setString(3, oldPassword);
+            // Step 1: Retrieve the old password hash and salt from the database
+            try (PreparedStatement selectStmt = conn.prepareStatement(selectSQL)) {
+                selectStmt.setInt(1, student.getId());
+                ResultSet rs = selectStmt.executeQuery();
 
-            int rowsAffected = stmt.executeUpdate();
+                if (rs.next()) {
+                    String storedPasswordHash = rs.getString("password");
+                    String storedSalt = rs.getString("salt");
 
-            if (rowsAffected > 0) {
-                System.out.println("Password updated successfully in database.");
-            } else {
-                System.out.println("No student found with the given ID.");
+                    // Step 2: Verify the old password
+                    try {
+                        if (PasswordUtil.verifyPassword(oldPassword, storedPasswordHash, storedSalt)) {
+
+                            // Step 3: Generate a new salt and hash the new password
+                            byte[] newSalt = PasswordUtil.generateSalt();
+                            String newSaltBase64 = Base64.getEncoder().encodeToString(newSalt);
+                            String newHashedPassword = PasswordUtil.hashPassword(newPassword, newSalt);
+
+                            // Step 4: Update the password and salt in the database
+                            try (PreparedStatement updateStmt = conn.prepareStatement(updateSQL)) {
+                                updateStmt.setString(1, newHashedPassword);  // New hashed password
+                                updateStmt.setString(2, newSaltBase64);      // New salt
+                                updateStmt.setInt(3, student.getId());       // Student ID
+
+                                int rowsAffected = updateStmt.executeUpdate();
+
+                                if (rowsAffected > 0) {
+                                    System.out.println("Password updated successfully in database.");
+                                } else {
+                                    System.out.println("No student found with the given ID.");
+                                }
+                            }
+                        } else {
+                            System.out.println("Old password is incorrect.");
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    System.out.println("No student found with the given ID.");
+                }
             }
+
+        } catch (SQLException e) {
+            System.err.println("Error updating password: " + e.getMessage());
         }
     }
+
 
     public static void updateEmail(Student student, String newEmail) throws SQLException {
         String updateSQL = "UPDATE student SET email = ? WHERE id = ?";

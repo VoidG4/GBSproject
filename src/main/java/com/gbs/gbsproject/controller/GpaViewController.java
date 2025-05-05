@@ -5,6 +5,11 @@ import com.gbs.gbsproject.model.Certificate;
 import com.gbs.gbsproject.model.Course;
 import com.gbs.gbsproject.model.Student;
 import com.gbs.gbsproject.service.CertificateService;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.*;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -51,18 +57,37 @@ public class GpaViewController {
     public void initialize() {}
 
     private void updateGPAArc(double gpa) {
-        double progress = gpa / 10.0; // GPA from 0.0 to 10.0
+        double targetProgress = gpa / 10.0; // GPA from 0.0 to 10.0
         double radius = 80;
         double circumference = 2 * Math.PI * radius;
 
-        // Circle stroke draws centered, so we use dash array to simulate arc
-        Circle circle = gpaProgressCircle; // fx:id
+        Circle circle = gpaProgressCircle;
         circle.getStrokeDashArray().setAll(circumference, circumference);
-        circle.setStrokeDashOffset(circumference * (1 - progress));
+        circle.setStrokeDashOffset(circumference); // Start at 0.0
 
-        gpaLabel.setText(String.format("%.1f", gpa));
+        // Animate strokeDashOffset from full circumference to the target offset
+        Timeline circleTimeline = new Timeline(
+                new KeyFrame(
+                        Duration.seconds(1.5),
+                        new KeyValue(circle.strokeDashOffsetProperty(), circumference * (1 - targetProgress))
+                )
+        );
+        circleTimeline.play();
+
+        // Animate GPA label from 0.0 to actual GPA
+        DoubleProperty animatedGpa = new SimpleDoubleProperty(0);
+        animatedGpa.addListener((obs, oldVal, newVal) ->
+                gpaLabel.setText(String.format("%.1f", newVal.doubleValue()))
+        );
+
+        Timeline gpaNumberTimeline = new Timeline(
+                new KeyFrame(
+                        Duration.seconds(1.5),
+                        new KeyValue(animatedGpa, gpa)
+                )
+        );
+        gpaNumberTimeline.play();
     }
-
 
     public void loadStudentData() {
         List<Course> courseList = getAllCourses();
@@ -78,8 +103,17 @@ public class GpaViewController {
             Label nameLabel = new Label(course.getName() + ": " + grade);
             nameLabel.setStyle("-fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 18px;");
 
-            ProgressBar progressBar = new ProgressBar(grade/10);
+            ProgressBar progressBar = new ProgressBar(0); // Start at 0
             progressBar.setVisible(true);
+
+            // Animate progress bar from 0 to grade/10
+            Timeline progressBarTimeline = new Timeline(
+                    new KeyFrame(
+                            Duration.seconds(1.0),
+                            new KeyValue(progressBar.progressProperty(), grade / 10)
+                    )
+            );
+            progressBarTimeline.play();
 
             String color;
             if (grade <= 4) {
