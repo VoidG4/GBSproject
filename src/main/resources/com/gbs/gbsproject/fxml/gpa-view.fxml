@@ -211,21 +211,38 @@
         <Hyperlink layoutX="15.0" layoutY="38.0" onMouseClicked="#certificateClicked" text="Print certificate" />
     </AnchorPane>
 
-    <VBox alignment="TOP_CENTER" layoutX="443.0" layoutY="221.0" prefHeight="510.0" prefWidth="464.0" spacing="30" style="-fx-background-color: rgba(0,0,0,0.05); -fx-border-radius: 15;">
+    <VBox fx:id="mainVBox" alignment="TOP_CENTER" layoutX="443.0" layoutY="221.0" prefHeight="510.0" prefWidth="464.0" spacing="30" style="-fx-background-color: rgba(0,0,0,0.05); -fx-border-radius: 15;">
 
         <!-- GPA Circular Trackbar -->
-        <StackPane>
-            <Circle fx:id="gpaBackgroundCircle" fill="transparent" radius="80" stroke="#555" strokeWidth="15" />
+        <StackPane prefWidth="200" prefHeight="200">
+            <!-- Background Track -->
+            <Circle fx:id="gpaBackgroundCircle"
+                    radius="80"
+                    stroke="#ccc"
+                    strokeWidth="15"
+                    fill="transparent"/>
 
-            <Arc fx:id="gpaArc" fill="transparent" length="180" radiusX="80" radiusY="80" startAngle="90" stroke="#00C9A7" strokeLineCap="ROUND" strokeWidth="15" />
+            <!-- GPA Arc using strokeDashArray -->
+            <Circle fx:id="gpaProgressCircle"
+                    radius="80"
+                    stroke="#00C9A7"
+                    strokeWidth="15"
+                    fill="transparent"
+                    strokeLineCap="round"
+                    rotate="-90" />
 
-            <Label fx:id="gpaLabel" style="-fx-font-size: 32px; -fx-text-fill: black;" text="5.0" />
+            <!-- GPA Label -->
+            <Label fx:id="gpaLabel"
+                   text="0.0"
+                   style="-fx-font-size: 32px; -fx-text-fill: black;" />
         </StackPane>
+
+
         <ScrollPane fx:id="scrollPane" prefHeight="303.0" prefWidth="464.0"
                     style="-fx-background-color: transparent; -fx-background: transparent;"><!-- Course List -->
-            <VBox fx:id="courseContainer" prefHeight="49.0" prefWidth="394.0" spacing="20">
+            <VBox prefHeight="49.0" prefWidth="394.0" spacing="20">
                 <Label style="-fx-font-size: 20px; -fx-text-fill: black;" text="Completed Courses"/>
-                <VBox spacing="15">
+                <VBox fx:id="courseContainer" spacing="25">
 
                 </VBox>
             </VBox>

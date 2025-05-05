@@ -11,8 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Arc;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.*;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -33,6 +32,8 @@ public class GpaViewController {
     public TextField newPasswordField;
     public AnchorPane emailPane;
     public TextField emailField;
+    public VBox mainVBox;
+    public Circle gpaProgressCircle;
     Student student;
 
     private static final Logger LOGGER = Logger.getLogger(GpaViewController.class.getName());
@@ -43,11 +44,24 @@ public class GpaViewController {
     public Button buttonMenuAccount;
     public Circle gpaBackgroundCircle;
     public VBox courseContainer;
-    @FXML private Arc gpaArc;
     @FXML private Label gpaLabel;
 
     @FXML
     public void initialize() {}
+
+    private void updateGPAArc(double gpa) {
+        double progress = gpa / 10.0; // GPA from 0.0 to 10.0
+        double radius = 80;
+        double circumference = 2 * Math.PI * radius;
+
+        // Circle stroke draws centered, so we use dash array to simulate arc
+        Circle circle = gpaProgressCircle; // fx:id
+        circle.getStrokeDashArray().setAll(circumference, circumference);
+        circle.setStrokeDashOffset(circumference * (1 - progress));
+
+        gpaLabel.setText(String.format("%.1f", gpa));
+    }
+
 
     public void loadStudentData() {
         List<Course> courseList = getAllCourses();
@@ -58,30 +72,41 @@ public class GpaViewController {
             courseBox.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 10;");
             courseBox.setFillWidth(true);
 
-            Label nameLabel = new Label(course.getName());
-            nameLabel.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
-
             double grade = StudentDao.getGrade(course.getId(), student.getId());
             sum += grade;
+            Label nameLabel = new Label(course.getName() + ": " + grade);
+            nameLabel.setStyle("-fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 18px;");
 
-            ProgressBar progressBar = new ProgressBar(0.5);
+            ProgressBar progressBar = new ProgressBar(grade/10);
             progressBar.setVisible(true);
-            progressBar.setStyle("-fx-accent: #00C9A7;");
+
+            String color;
+            if (grade <= 4) {
+                color = "#FF4C4C"; // Red
+            } else if (grade <= 7) {
+                color = "#FFD700"; // Yellow
+            } else {
+                color = "#00C9A7"; // Green/Teal
+            }
+            progressBar.setStyle("-fx-accent: " + color + "; -fx-pref-width: 200px;");
 
             courseBox.getChildren().add(nameLabel);
             courseBox.getChildren().add(progressBar);
             courseContainer.getChildren().add(courseBox);
             scrollPane.setContent(courseContainer);
+            courseContainer.setPrefWidth(500); // Set to your desired width in pixels
+            mainVBox.setPrefWidth(550);
+            mainVBox.setPrefHeight(700);
+            scrollPane.setPrefHeight(700);
+
+            AnchorPane.setLeftAnchor(mainVBox, 490.0);
         }
 
         int number0fCourses = courseList.size();
 
         double gpa = sum / number0fCourses;
-        double angle = gpa * 36.0; // 10 GPA → 360 degrees
 
-        gpaArc.setStartAngle(90);     // Start at the bottom
-        gpaArc.setLength(-angle);     // NEGATIVE makes it draw clockwise!
-        gpaLabel.setText(String.format("%.1f", gpa));
+        updateGPAArc(gpa);
     }
 
     public void setStudent(Student student){
