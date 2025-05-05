@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -7,7 +8,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane fx:id="rootPane" style="-fx-background-color: rgb(240,240,240);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.VoiceViewController">
+<AnchorPane fx:id="mainAnchorPane" style="-fx-background-color: rgb(240,240,240);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gbs.gbsproject.controller.VoiceViewController">
     <Circle fill="#168fff" layoutX="132.0" layoutY="80.0" radius="170.0" strokeType="INSIDE" strokeWidth="0.0">
         <stroke>
             <LinearGradient>
@@ -66,14 +67,41 @@
     </Circle>
     <Circle fill="DODGERBLUE" layoutX="434.0" layoutY="3.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
     <!-- Outer Circle -->
-    <Circle fx:id="outerCircle" fill="linear-gradient(from 0% 0% to 100% 100%, #D0F0FF, #B0D9FF)" radius="180" />
+    <Circle fx:id="outerCircle" fill="linear-gradient(from 0% 0% to 100% 100%, #D0F0FF, #B0D9FF)" layoutX="814.0" layoutY="466.0" radius="180" />
 
     <!-- Mid Circle -->
-    <Circle fx:id="midCircle" fill="linear-gradient(from 0% 0% to 100% 100%, #E0F7FA, #BBDEFB)" radius="140" />
+    <Circle fx:id="midCircle" fill="linear-gradient(from 0% 0% to 100% 100%, #E0F7FA, #BBDEFB)" layoutX="814.0" layoutY="466.0" radius="140" />
 
     <!-- Inner Circle -->
-    <Circle fx:id="innerCircle" fill="linear-gradient(from 0% 0% to 100% 100%, #FFFFFF, #D0E9FF)" radius="100" />
+    <Circle fx:id="innerCircle" fill="linear-gradient(from 0% 0% to 100% 100%, #FFFFFF, #D0E9FF)" layoutX="814.0" layoutY="466.0" radius="100" />
 
     <!-- Center Label -->
-    <Text fx:id="centerLabel" style="-fx-font-size: 24px; -fx-fill: #0f1115; -fx-font-weight: bold;" text="Click to talk." />
-</StackPane>
+    <Text fx:id="centerLabel" layoutX="740.0" layoutY="478.0" style="-fx-font-size: 24px; -fx-fill: #0f1115; -fx-font-weight: bold;" text="Click to talk." />
+    <Circle fill="#23c2d763" layoutX="133.0" layoutY="829.0" radius="327.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+    <Circle layoutX="487.0" layoutY="948.0" radius="232.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0">
+        <fill>
+            <LinearGradient>
+                <stops>
+                    <Stop>
+                        <color>
+                            <Color red="0.48233431577682495" green="0.8917925357818604" blue="0.9736841917037964" />
+                        </color>
+                    </Stop>
+                    <Stop offset="1.0">
+                        <color>
+                            <Color red="0.08442982286214828" green="0.20202851295471191" blue="0.8684210777282715" />
+                        </color>
+                    </Stop>
+                </stops>
+            </LinearGradient>
+        </fill>
+    </Circle>
+    <Circle fill="DODGERBLUE" layoutX="751.0" layoutY="1029.0" radius="151.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+   <Button layoutX="721.0" layoutY="704.0" mnemonicParsing="false" onMouseClicked="#endConversationClicked" prefHeight="59.0" prefWidth="189.0" style="-fx-background-color: white; -fx-border-color: blue;" text="End conversation">
+      <font>
+         <Font size="16.0" />
+      </font>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></Button>
+</AnchorPane>

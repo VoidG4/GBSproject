@@ -7,12 +7,16 @@ import com.gbs.gbsproject.service.TTSService;
 import javafx.animation.Animation;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -20,8 +24,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class VoiceViewController {
+    public AnchorPane mainAnchorPane;
     Student student;
-    public StackPane rootPane;
     @FXML private Circle outerCircle;
     @FXML private Circle midCircle;
     @FXML private Circle innerCircle;
@@ -83,7 +87,7 @@ public class VoiceViewController {
             outerCircle.setFill(Color.web("#0D47A1"));  // Deep blue
             midCircle.setFill(Color.web("#1565C0"));
             innerCircle.setFill(Color.web("#1E88E5"));
-            centerLabel.setText("Click if you \n heard the answer.");
+            centerLabel.setText("");
             centerLabel.setTextAlignment(TextAlignment.CENTER); // Aligns multi-line text
         } else {
             outerCircle.setFill(Color.web("#D0F0FF"));
@@ -91,5 +95,30 @@ public class VoiceViewController {
             innerCircle.setFill(Color.web("#FFFFFF"));
             centerLabel.setText("Click to talk.");
         }
+    }
+
+    public void endConversationClicked() {
+        FXMLLoader loader;
+        Parent nextPage;
+        Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+        Scene nextScene;
+
+        loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/gemini-view.fxml"));
+        try {
+            nextPage = loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        GeminiController geminiController = loader.getController();
+        geminiController.setStudent(student); // Pass Student object to the controller
+        nextScene = new Scene(nextPage);
+        // Set the stage to the previous size and position
+        stage.setWidth(1600);
+        stage.setHeight(1000);
+        stage.centerOnScreen();
+
+        // Set the new scene and show the stage
+        stage.setScene(nextScene);
+        stage.show();
     }
 }
