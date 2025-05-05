@@ -76,7 +76,7 @@ public class GpaViewController {
 
         // Animate GPA label from 0.0 to actual GPA
         DoubleProperty animatedGpa = new SimpleDoubleProperty(0);
-        animatedGpa.addListener((obs, oldVal, newVal) ->
+        animatedGpa.addListener((_, _, newVal) ->
                 gpaLabel.setText(String.format("%.1f", newVal.doubleValue()))
         );
 
