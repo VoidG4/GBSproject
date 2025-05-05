@@ -1,6 +1,7 @@
 package com.gbs.gbsproject.controller;
 
 import com.gbs.gbsproject.dao.CourseDao;
+import com.gbs.gbsproject.dao.StudentCourseDao;
 import com.gbs.gbsproject.dao.StudentDao;
 import com.gbs.gbsproject.model.Certificate;
 import com.gbs.gbsproject.model.Course;
@@ -177,6 +178,12 @@ public class HomePageViewController {
     @FXML
     protected void certificateClicked() {
         try {
+            int studentId = student.getId(); // Ensure `getId()` method exists
+
+            if (!StudentCourseDao.hasPassedAllCourses(studentId)) {
+                return;
+            }
+
             Certificate certificate = new Certificate(
                     StudentDao.getFullNameByUsername(student.getUsername()),
                     LocalDate.now()
