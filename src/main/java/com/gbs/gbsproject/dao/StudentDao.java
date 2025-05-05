@@ -55,21 +55,44 @@ public class StudentDao {
     }
 
     public static void addStudent(Student student) {
-        String sql = "INSERT INTO student (name, surname, username, password, email, salt) VALUES (?, ?, ?, ?, ?, ?);";
+        String checkSQL = "SELECT COUNT(*) FROM student WHERE username = ? OR email = ?";
+        String insertSQL = "INSERT INTO student (name, surname, username, password, email, salt) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseUtil.getConnection()) {
 
-            pstmt.setString(1, student.getName());
-            pstmt.setString(2, student.getSurname());
-            pstmt.setString(3, student.getUsername());
-            pstmt.setString(4, student.getPassword());
-            pstmt.setString(5, student.getEmail());
-            pstmt.setString(6, student.getSalt());
+            // Step 1: Check if username or email already exists
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSQL)) {
+                checkStmt.setString(1, student.getUsername());
+                checkStmt.setString(2, student.getEmail());
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    System.out.println("Username or email already exists. Student not added.");
+                    return; // Skip insert
+                }
+            }
 
-            pstmt.executeUpdate();
+            // Step 2: Generate salt and hash password
+            byte[] salt = PasswordUtil.generateSalt();
+            String saltBase64 = Base64.getEncoder().encodeToString(salt);
+            String hashedPassword = PasswordUtil.hashPassword(student.getPassword(), salt);
+
+            // Step 3: Insert student with hashed password and salt
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertSQL)) {
+                insertStmt.setString(1, student.getName());
+                insertStmt.setString(2, student.getSurname());
+                insertStmt.setString(3, student.getUsername());
+                insertStmt.setString(4, hashedPassword);
+                insertStmt.setString(5, student.getEmail());
+                insertStmt.setString(6, saltBase64);
+
+                insertStmt.executeUpdate();
+                System.out.println("Student added successfully.");
+            }
+
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred while adding tutor", e);
+            LOGGER.log(Level.SEVERE, "An error occurred while adding student", e);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "An error occurred while hashing password", e);
         }
     }
 
@@ -243,23 +266,37 @@ public class StudentDao {
         }
     }
 
-
     public static void updateEmail(Student student, String newEmail) throws SQLException {
+        String checkSQL = "SELECT COUNT(*) FROM student WHERE email = ?";
         String updateSQL = "UPDATE student SET email = ? WHERE id = ?";
 
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(updateSQL)) {
+        try (Connection conn = DatabaseUtil.getConnection()) {
 
-            stmt.setString(1, newEmail);
-            stmt.setInt(2, student.getId());
-
-            int rowsAffected = stmt.executeUpdate();
-
-            if (rowsAffected > 0) {
-                System.out.println("Email updated successfully in database.");
-            } else {
-                System.out.println("No student found with the given ID.");
+            // Step 1: Check if the new email is already in use
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSQL)) {
+                checkStmt.setString(1, newEmail);
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    System.out.println("Email already in use. Update aborted.");
+                    return;
+                }
             }
+
+            // Step 2: Proceed with the email update
+            try (PreparedStatement updateStmt = conn.prepareStatement(updateSQL)) {
+                updateStmt.setString(1, newEmail);
+                updateStmt.setInt(2, student.getId());
+
+                int rowsAffected = updateStmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    System.out.println("Email updated successfully in database.");
+                } else {
+                    System.out.println("No student found with the given ID.");
+                }
+            }
+
         }
     }
+
 }

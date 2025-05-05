@@ -68,21 +68,36 @@ public class AdminDao {
 
 
     public static void updateEmail(Admin admin, String newEmail) throws SQLException {
+        String checkSQL = "SELECT COUNT(*) FROM admin WHERE email = ?";
         String updateSQL = "UPDATE admin SET email = ? WHERE id = ?";
 
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(updateSQL)) {
+        try (Connection conn = DatabaseUtil.getConnection()) {
 
-            stmt.setString(1, newEmail);
-            stmt.setInt(2, admin.getId());
-
-            int rowsAffected = stmt.executeUpdate();
-
-            if (rowsAffected > 0) {
-                System.out.println("Email updated successfully in database.");
-            } else {
-                System.out.println("No admin found with the given ID.");
+            // Step 1: Check if new email already exists
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSQL)) {
+                checkStmt.setString(1, newEmail);
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    System.out.println("Email already in use. Update aborted.");
+                    return;
+                }
             }
+
+            // Step 2: Proceed with email update
+            try (PreparedStatement updateStmt = conn.prepareStatement(updateSQL)) {
+                updateStmt.setString(1, newEmail);
+                updateStmt.setInt(2, admin.getId());
+
+                int rowsAffected = updateStmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    System.out.println("Email updated successfully in database.");
+                } else {
+                    System.out.println("No admin found with the given ID.");
+                }
+            }
+
         }
     }
+
 }

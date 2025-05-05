@@ -54,25 +54,41 @@ public class TutorDao {
     }
 
     public static void addTutor(Tutor tutor) {
-        String sql = "INSERT INTO tutor (name, surname, username, password, email, field, salt) VALUES (?, ?, ?, ?, ?, ?, ?);";
+        String checkSQL = "SELECT COUNT(*) FROM tutor WHERE username = ? OR email = ?";
+        String insertSQL = "INSERT INTO tutor (name, surname, username, password, email, field, salt) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseUtil.getConnection()) {
 
+            // Step 1: Check if username or email already exists
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSQL)) {
+                checkStmt.setString(1, tutor.getUsername());
+                checkStmt.setString(2, tutor.getEmail());
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    System.out.println("Username or email already exists. Tutor not added.");
+                    return; // Exit early
+                }
+            }
+
+            // Step 2: Generate salt and hash password
             byte[] salt = PasswordUtil.generateSalt();
             String saltBase64 = Base64.getEncoder().encodeToString(salt);
-
             String hashedPassword = PasswordUtil.hashPassword(tutor.getPassword(), salt);
 
-            pstmt.setString(1, tutor.getName());
-            pstmt.setString(2, tutor.getSurname());
-            pstmt.setString(3, tutor.getUsername());
-            pstmt.setString(4, hashedPassword);  // Store hashed password
-            pstmt.setString(5, tutor.getEmail());
-            pstmt.setString(6, tutor.getField());
-            pstmt.setString(7, saltBase64);  // Store the salt
+            // Step 3: Insert the new tutor
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertSQL)) {
+                insertStmt.setString(1, tutor.getName());
+                insertStmt.setString(2, tutor.getSurname());
+                insertStmt.setString(3, tutor.getUsername());
+                insertStmt.setString(4, hashedPassword);
+                insertStmt.setString(5, tutor.getEmail());
+                insertStmt.setString(6, tutor.getField());
+                insertStmt.setString(7, saltBase64);
 
-            pstmt.executeUpdate();
+                insertStmt.executeUpdate();
+                System.out.println("Tutor added successfully.");
+            }
+
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "An error occurred while adding tutor", e);
         } catch (Exception e) {
@@ -135,21 +151,36 @@ public class TutorDao {
     }
 
     public static void updateEmail(Tutor tutor, String newEmail) throws SQLException {
+        String checkSQL = "SELECT COUNT(*) FROM tutor WHERE email = ?";
         String updateSQL = "UPDATE tutor SET email = ? WHERE id = ?";
 
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(updateSQL)) {
+        try (Connection conn = DatabaseUtil.getConnection()) {
 
-            stmt.setString(1, newEmail);
-            stmt.setInt(2, tutor.getId());
-
-            int rowsAffected = stmt.executeUpdate();
-
-            if (rowsAffected > 0) {
-                System.out.println("Email updated successfully in database.");
-            } else {
-                System.out.println("No admin found with the given ID.");
+            // Step 1: Check if new email already exists
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSQL)) {
+                checkStmt.setString(1, newEmail);
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    System.out.println("Email already in use. Update aborted.");
+                    return;
+                }
             }
+
+            // Step 2: Update email
+            try (PreparedStatement updateStmt = conn.prepareStatement(updateSQL)) {
+                updateStmt.setString(1, newEmail);
+                updateStmt.setInt(2, tutor.getId());
+
+                int rowsAffected = updateStmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    System.out.println("Email updated successfully in database.");
+                } else {
+                    System.out.println("No tutor found with the given ID.");
+                }
+            }
+
         }
     }
+
 }

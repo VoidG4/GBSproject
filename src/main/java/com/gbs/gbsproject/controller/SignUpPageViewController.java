@@ -109,7 +109,7 @@ public class SignUpPageViewController {
 
         mainAnchorPane.getChildren().add(stackPane);
 
-        btnSignUp.setOnMouseClicked(_ ->SignUp(txtName.getText(), txtSurname.getText(), txtUsername.getText(), txtPassword.getText(), txtEmail.getText()));
+        btnSignUp.setOnMouseClicked(_ ->SignUp(txtName.getText(), txtSurname.getText(), txtUsername.getText(), txtPassword.getText(), txtPasswordConfirm.getText(), txtEmail.getText()));
     }
 
     @FXML
@@ -118,54 +118,56 @@ public class SignUpPageViewController {
         mainAnchorPane.requestFocus();
     }
 
-    private void SignUp(String name, String surname, String username, String password, String email) {
-        try {
-            // Hash the password and generate the salt
-            String[] hashedAndSalted = PasswordUtil.createPasswordHashAndSalt(password);
-            String hashedPassword = hashedAndSalted[0];
-            String salt = hashedAndSalted[1];
-
-            // Create a new Student object and set its fields
-            Student student = new Student();
-            student.setName(name);
-            student.setSurname(surname);
-            student.setUsername(username);
-            student.setPassword(hashedPassword);  // Store hashed password, not plain text
-            student.setEmail(email);
-            student.setSalt(salt);
-
-            // Add the student to the database (or wherever you're storing the student data)
-            StudentDao.addStudent(student);
-
-            // Code to handle switching to the next page in the GUI (unchanged)
+    private void SignUp(String name, String surname, String username, String password, String passwordConfirm, String email) {
+        if (passwordConfirm.equals(password)) {
             try {
-                Stage currentStage = (Stage) mainAnchorPane.getScene().getWindow();
-                double currentWidth = currentStage.getWidth();
-                double currentHeight = currentStage.getHeight();
-                double currentX = currentStage.getX();
-                double currentY = currentStage.getY();
+                // Hash the password and generate the salt
+                String[] hashedAndSalted = PasswordUtil.createPasswordHashAndSalt(password);
+                String hashedPassword = hashedAndSalted[0];
+                String salt = hashedAndSalted[1];
 
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/login-page-view.fxml"));
-                Parent nextPage = loader.load();
+                // Create a new Student object and set its fields
+                Student student = new Student();
+                student.setName(name);
+                student.setSurname(surname);
+                student.setUsername(username);
+                student.setPassword(hashedPassword);  // Store hashed password, not plain text
+                student.setEmail(email);
+                student.setSalt(salt);
 
-                Scene nextScene = new Scene(nextPage);
+                // Add the student to the database (or wherever you're storing the student data)
+                StudentDao.addStudent(student);
 
-                Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
-                stage.setWidth(currentWidth);
-                stage.setHeight(currentHeight);
-                stage.setX(currentX);
-                stage.setY(currentY);
+                // Code to handle switching to the next page in the GUI (unchanged)
+                try {
+                    Stage currentStage = (Stage) mainAnchorPane.getScene().getWindow();
+                    double currentWidth = currentStage.getWidth();
+                    double currentHeight = currentStage.getHeight();
+                    double currentX = currentStage.getX();
+                    double currentY = currentStage.getY();
 
-                stage.setScene(nextScene);
-                stage.show();
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/gbs/gbsproject/fxml/login-page-view.fxml"));
+                    Parent nextPage = loader.load();
+
+                    Scene nextScene = new Scene(nextPage);
+
+                    Stage stage = (Stage) mainAnchorPane.getScene().getWindow();
+                    stage.setWidth(currentWidth);
+                    stage.setHeight(currentHeight);
+                    stage.setX(currentX);
+                    stage.setY(currentY);
+
+                    stage.setScene(nextScene);
+                    stage.show();
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "An error occurred while loading the next FXML", e);
+                    showErrorDialog();
+                }
+
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error during password hashing", e);
                 showErrorDialog();
             }
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error during password hashing", e);
-            showErrorDialog();
         }
     }
 
