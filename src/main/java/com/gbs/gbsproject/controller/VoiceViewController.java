@@ -79,7 +79,8 @@ public class VoiceViewController {
 
             try {
                 String response = GeminiService.askGemini(recognizedText);
-                TTSService.generateSpeech(response);
+                String cleanedText = response.replaceAll("[^a-zA-Z\\s,.]", "");
+                TTSService.generateSpeech(cleanedText);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -87,7 +88,7 @@ public class VoiceViewController {
             outerCircle.setFill(Color.web("#0D47A1"));  // Deep blue
             midCircle.setFill(Color.web("#1565C0"));
             innerCircle.setFill(Color.web("#1E88E5"));
-            centerLabel.setText("");
+            centerLabel.setText("AI speaking.");
             centerLabel.setTextAlignment(TextAlignment.CENTER); // Aligns multi-line text
         } else {
             outerCircle.setFill(Color.web("#D0F0FF"));

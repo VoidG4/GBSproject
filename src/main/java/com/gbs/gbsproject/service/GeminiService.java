@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class GeminiService {
-    private static final String API_URL;
+    private static String API_URL;
 
     static {
         // Load API_URL from config.properties file
@@ -61,5 +61,9 @@ public class GeminiService {
         JSONArray partsArray = new JSONArray().put(new JSONObject().put("text", question));
         JSONArray contentsArray = new JSONArray().put(new JSONObject().put("parts", partsArray));
         return new JSONObject().put("contents", contentsArray);
+    }
+
+    public static void setApiUrl(String API_URL) {
+        GeminiService.API_URL = API_URL;
     }
 }
