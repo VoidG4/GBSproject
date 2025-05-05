@@ -658,6 +658,7 @@ public class GeminiController {
     public void updatePassword() {
         try {
             StudentDao.updatePassword(student, newPasswordField.getText(), oldPasswordField.getText());
+            passwordPane.setVisible(false);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -666,6 +667,7 @@ public class GeminiController {
     public void updateEmail() {
         try {
             StudentDao.updateEmail(student, emailField.getText());
+            emailPane.setVisible(false);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -1378,6 +1378,7 @@ public class TutorPageViewController {
     public void updatePassword() {
         try {
             TutorDao.updatePassword(tutor, newPasswordField.getText(), oldPasswordField.getText());
+            passwordPane.setVisible(false);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -1386,6 +1387,7 @@ public class TutorPageViewController {
     public void updateEmail() {
         try {
             TutorDao.updateEmail(tutor, emailField.getText());
+            emailPane.setVisible(false);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

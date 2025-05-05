@@ -281,6 +281,7 @@ public class AdminPageViewController {
     public void updatePassword() {
         try {
             AdminDao.updatePassword(admin, passwordField.getText(), oldPasswordField.getText());
+            passwordPane.setVisible(false);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -289,6 +290,7 @@ public class AdminPageViewController {
     public void UpdateEmail() {
         try {
             AdminDao.updateEmail(admin, emailField.getText());
+            emailPane.setVisible(false);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
