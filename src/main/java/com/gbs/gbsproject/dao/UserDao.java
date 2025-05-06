@@ -59,9 +59,6 @@ public class UserDao {
                 String storedPasswordHash = rsStudent.getString("password");
                 String storedSalt = rsStudent.getString("salt");
 
-                System.out.println("Generated salt: " + storedSalt);
-                System.out.println("Generated hashed password: " + storedPasswordHash);
-
                 // Verify the password by hashing the entered password with the stored salt
                 try {
                     if (PasswordUtil.verifyPassword(password, storedPasswordHash, storedSalt)) {
