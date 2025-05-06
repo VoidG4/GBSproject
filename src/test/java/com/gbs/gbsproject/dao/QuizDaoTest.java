@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QuizDaoTest {
 
     private static QuizDao quizDao;
-    private static int createdQuizId;
+    private static final int createdQuizId = 1;
     private static final int TEST_COURSE_ID = 1;  // Ensure this exists in test DB
     private static final int TEST_TUTOR_ID = 1;   // Ensure this exists and owns TEST_COURSE_ID
 
