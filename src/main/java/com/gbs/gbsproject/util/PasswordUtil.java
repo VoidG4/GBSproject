@@ -36,8 +36,12 @@ public class PasswordUtil {
 
     // Method to verify a password against a hash
     public static boolean verifyPassword(String password, String storedHash, String storedSalt) throws Exception {
-        byte[] salt = Base64.getDecoder().decode(storedSalt);
-        String hashedPassword = hashPassword(password, salt);
-        return hashedPassword.equals(storedHash);
+        byte[] salt = Base64.getDecoder().decode(storedSalt); // Decode the stored salt
+        String hashedPassword = hashPassword(password, salt); // Hash the input password with the salt
+
+        System.out.println(hashedPassword);
+        System.out.println(storedSalt);
+
+        return hashedPassword.equals(storedHash); // Compare the hashed password with the stored hash
     }
 }

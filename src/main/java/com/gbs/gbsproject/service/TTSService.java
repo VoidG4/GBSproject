@@ -10,7 +10,7 @@ public class TTSService {
 
     private static Process vlcProcess = null;  // VLC process for controlling playback
     private static boolean isPlaying = false;  // Track playback status
-    private static ExecutorService executorService = Executors.newSingleThreadExecutor();  // Executor for background thread
+    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();  // Executor for background thread
     private static OutputStream vlcOutputStream = null;  // To send commands to VLC process
 
     // Start the audio generation and play it using VLC in a background thread
@@ -86,15 +86,8 @@ public class TTSService {
         return isPlaying;
     }
 
-    public static void setExecutorService (ExecutorService executorService) {
-        TTSService.executorService = executorService;
-    }
 
     public static void setVlcProcess(Process vlcProcess) {
         TTSService.vlcProcess = vlcProcess;
-    }
-
-    public static void setIsPlaying(boolean isPlaying) {
-        TTSService.isPlaying = isPlaying;
     }
 }

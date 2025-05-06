@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -78,6 +79,7 @@ public class LoginPageViewController {
         Button btnLogin = new Button("Login");
         btnLogin.setFont(customFont);
         btnLogin.setStyle("-fx-background-color: rgba(2,93,11,0.8); -fx-text-fill: white;-fx-font-size: 16px; -fx-padding: 10px 15px;"); // Light green with white text
+        btnLogin.setCursor(Cursor.HAND);
 
         Hyperlink signUpText= new Hyperlink("Sign up");
         signUpText.setStyle(" -fx-font-size: 14px; -fx-underline: true");

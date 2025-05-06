@@ -9,7 +9,6 @@ public class UserDao {
 
     public static User checkLogin(String username, String password) throws SQLException {
         try (Connection conn = DatabaseUtil.getConnection()) {
-
             // Check admin
             PreparedStatement adminStmt = conn.prepareStatement(
                     "select id, name, surname, email, password, salt from admin where username = ?"
@@ -32,7 +31,7 @@ public class UserDao {
 
             // Check tutor
             PreparedStatement tutorStmt = conn.prepareStatement(
-                    "select id, name, surname, email, password, salt, field from tutor where username = ?"
+                    "select id, name, surname, email, password, salt, field from tutor where username = ?;"
             );
             tutorStmt.setString(1, username);
             ResultSet rsTutor = tutorStmt.executeQuery();
@@ -52,13 +51,16 @@ public class UserDao {
 
             // Check student
             PreparedStatement studentStmt = conn.prepareStatement(
-                    "select id, name, surname, email, password, salt from student where username = ?"
+                    "select id, name, surname, email, password, salt from student where username = ?;"
             );
             studentStmt.setString(1, username);
             ResultSet rsStudent = studentStmt.executeQuery();
             if (rsStudent.next()) {
                 String storedPasswordHash = rsStudent.getString("password");
                 String storedSalt = rsStudent.getString("salt");
+
+                System.out.println("Generated salt: " + storedSalt);
+                System.out.println("Generated hashed password: " + storedPasswordHash);
 
                 // Verify the password by hashing the entered password with the stored salt
                 try {
@@ -73,5 +75,4 @@ public class UserDao {
             return null; // Login failed
         }
     }
-
 }

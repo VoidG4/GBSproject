@@ -37,5 +37,6 @@ public class Quiz {
 
     public void setPassingScore(int passingScore) {
         this.passingScore = passingScore;
+        int _ = getPassingScore();
     }
 }

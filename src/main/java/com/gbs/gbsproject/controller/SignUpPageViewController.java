@@ -2,7 +2,6 @@ package com.gbs.gbsproject.controller;
 
 import com.gbs.gbsproject.dao.StudentDao;
 import com.gbs.gbsproject.model.Student;
-import com.gbs.gbsproject.util.PasswordUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -121,19 +120,13 @@ public class SignUpPageViewController {
     private void SignUp(String name, String surname, String username, String password, String passwordConfirm, String email) {
         if (passwordConfirm.equals(password)) {
             try {
-                // Hash the password and generate the salt
-                String[] hashedAndSalted = PasswordUtil.createPasswordHashAndSalt(password);
-                String hashedPassword = hashedAndSalted[0];
-                String salt = hashedAndSalted[1];
-
                 // Create a new Student object and set its fields
                 Student student = new Student();
                 student.setName(name);
                 student.setSurname(surname);
                 student.setUsername(username);
-                student.setPassword(hashedPassword);  // Store hashed password, not plain text
+                student.setPassword(password);  // Store hashed password, not plain text
                 student.setEmail(email);
-                student.setSalt(salt);
 
                 // Add the student to the database (or wherever you're storing the student data)
                 StudentDao.addStudent(student);
