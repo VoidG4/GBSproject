@@ -6,18 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import java.util.concurrent.*;
 
 public class TTSServiceTest {
 
     @Mock
-    private ProcessBuilder mockProcessBuilder;
-
-    @Mock
     private Process mockProcess;
-
-    @Mock
-    private ExecutorService mockExecutorService;
 
     @BeforeEach
     void setUp() {
