@@ -34,7 +34,6 @@ public class AdminPageViewController {
     public AnchorPane passwordPane;
     public AnchorPane emailPane;
     public ScrollPane userScrollPane;
-
     public TextField deleteUserField;
     public TextField name;
     public TextField surname;
