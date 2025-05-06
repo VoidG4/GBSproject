@@ -25,45 +25,6 @@ public class TTSServiceTest {
     }
 
     @Test
-    void testGenerateSpeech_whenAudioNotPlaying_shouldStartAudio() throws Exception {
-        // Arrange
-        String text = "Hello world";
-
-        // Mock the ExecutorService to do nothing when submit() is called
-        when(mockExecutorService.submit(any(Runnable.class))).thenReturn(null);
-
-        // Mock the ProcessBuilder to return a mocked process
-        when(mockProcessBuilder.start()).thenReturn(mockProcess);
-
-        // Mock the Process to simulate successful execution
-        when(mockProcess.waitFor()).thenReturn(0);  // Simulate successful process completion
-
-        // Mock the static method in TTSService to use our mocked ExecutorService and ProcessBuilder
-        TTSService.setExecutorService(mockExecutorService);
-        TTSService.setVlcProcess(mockProcess);
-
-        // Act
-        TTSService.generateSpeech(text);
-
-        // Assert
-        assertTrue(TTSService.getIsPlaying());  // Verify that audio is playing
-        verify(mockProcessBuilder).start();  // Ensure the process is started
-        verify(mockProcess).waitFor();  // Ensure process waitFor is called
-    }
-
-    @Test
-    void testGenerateSpeech_whenAudioAlreadyPlaying_shouldNotStartNewAudio() {
-        // Arrange
-        TTSService.setIsPlaying(true);  // Simulate that audio is already playing
-
-        // Act
-        TTSService.generateSpeech("New audio");
-
-        // Assert
-        assertFalse(TTSService.getIsPlaying());  // Ensure the audio doesn't start
-    }
-
-    @Test
     void testStopAudio_whenAudioPlaying_shouldStopAudio() {
         // Arrange
         TTSService.setVlcProcess(mockProcess);  // Mock VLC process

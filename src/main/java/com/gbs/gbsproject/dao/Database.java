@@ -46,4 +46,8 @@ public class Database {
             LOGGER.log(Level.SEVERE, "An error occurred ", e);
         }
     }
+
+    public static void setConnection(Connection connection) {
+        Database.connection = connection;
+    }
 }
