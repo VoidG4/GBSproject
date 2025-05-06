@@ -2,8 +2,6 @@ package com.gbs.gbsproject.util;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Base64;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class PasswordUtilTest {
