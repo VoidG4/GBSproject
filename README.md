@@ -25,6 +25,7 @@ Welcome to the official repository of **GBS (Greece Business School)** — an e-
 - ✅ Quiz and assessment module
 - ✅ GPA for students and pdf generation for certification
 - ✅ Admin dashboard for managing users
+- 🔐 Secure password storage using **hashing + salt**
 - 🤖 **AI Tutor** powered by AI Google Studio API
 - 🗣️ **Text-to-Speech (TTS)** for reading course content aloud
 - 🎙️ **Speech-to-Text (STT)** for voice input for speaking with AI
@@ -108,7 +109,7 @@ The following libraries and APIs are used in this project:
       deactivate
       ```
 
-5. **Build and run the application:**
+2. **Build and run the application:**
     ```bash
     mvn clean install
     mvn javafx:run
@@ -119,10 +120,17 @@ Or run directly from your IDE (e.g., IntelliJ IDEA):
 - Make sure JavaFX is correctly set up in your SDK
 - Run the main class (GBSApplication.java)
 
----
-
 This ensures that the user has a specific environment set up for the TTS and STT libraries, keeping it isolated from other Python installations.
 
+---
+
+## 🔐 Security
+
+- User passwords are **securely hashed and salted** before being stored in the PostgreSQL database.
+- This ensures protection against common attacks like **rainbow table** or **brute-force** attempts.
+- The application follows standard security practices for user authentication and data protection.
+
+---
 
 ## ✅ Testing
 
@@ -133,7 +141,7 @@ This project includes unit tests to ensure core functionality is working as expe
 - **JUnit 5** is used for writing and running tests.
 - Tests are located in the `src/test/java/com/gbs/gbsproject` directory.
 
-
+---
 
 ## 📖 User Manual
 
@@ -148,6 +156,8 @@ Or find it inside the project folder `/Greece_Business_School_User_Manual.pdf`.
 ## 👨‍💻 Developer
 - Name: VoidG4
 - GitHub: https://github.com/VoidG4
+
+---
 
 ## 📝 License
 This project is for educational and demonstration purposes. All rights reserved.
