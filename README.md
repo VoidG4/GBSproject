@@ -72,7 +72,7 @@ The following libraries and APIs are used in this project:
 - Create a new database named GBSproject in PostgreSQL
 - Run the schema SQL file (/db/schema.sql) to create the necessary tables.
 - Update your database credentials in the configuration a file named `config.properties` :
-   ```bash
+   ```properties
     db.url=jdbc:postgresql://localhost:5432/GBSproject
     db.username=your_db_username
     db.password=your_db_password
@@ -129,6 +129,22 @@ This ensures that the user has a specific environment set up for the TTS and STT
 - User passwords are **securely hashed and salted** before being stored in the PostgreSQL database.
 - This ensures protection against common attacks like **rainbow table** or **brute-force** attempts.
 - The application follows standard security practices for user authentication and data protection.
+
+---
+
+## 🔑 Configuration Security
+
+- Sensitive information such as **API keys, database URLs, usernames**, and **passwords** are not hard-coded in the source code.
+- These credentials are stored securely in a separate `config.properties` file.
+
+Example:
+```properties
+db.url=jdbc:postgresql://localhost:5432/GBSproject
+db.username=your_username
+db.password=your_password
+gemini.api.key=your_google_ai_key
+API_URL=https://api.studio.google.com/...
+```
 
 ---
 
