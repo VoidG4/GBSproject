@@ -1,5 +1,5 @@
 # 📘 GBS - Greece Business School
-![Home Page](screenshots/homepage.png)
+![Home Page](src/main/resources/homepage.png)
 
 Welcome to the official repository of **GBS (Greece Business School)** — an e-learning platform built with **JavaFX** for the front-end and **PostgreSQL** for the database. This platform supports online learning, course management, and user interaction tailored for business school education.
 
@@ -38,9 +38,10 @@ The following libraries and APIs are used in this project:
 - **JavaFX** – for building the GUI
 - **PostgreSQL JDBC Driver** – to connect Java with PostgreSQL
 - **JUnit 5** – for unit testing
-- **Gson / Jackson** – for handling JSON (used in AI API responses)
+- **Json** – for handling JSON (used in AI API responses)
 - **AI Studio API** – for AI tutor features
-- **FreeTTS / Google TTS** – for Text-to-Speech (based on what you used)
+- **Google TTS** – for Text-to-Speech
+- **Speech Recognition** – for Speech-to-Text
 
 ---
 
@@ -69,18 +70,18 @@ The following libraries and APIs are used in this project:
 2. **Set up the PostgreSQL database:**
 - Create a new database named GBSproject in PostgreSQL
 - Run the schema SQL file (/db/schema.sql) to create the necessary tables.
-- Update your database credentials in the configuration a file named config.properties :
+- Update your database credentials in the configuration a file named `config.properties` :
    ```bash
     db.url=jdbc:postgresql://localhost:5432/GBSproject
     db.username=your_db_username
     db.password=your_db_password
     ```
 
-3. **Set up the PostgreSQL database:**
+3. **Set up AI & Audio Configuration:**
 - Obtain an API Key from Google AI Studio.
-- Add the API key to your project in config.properties with names of variables *gemini.api.key* and *API_URL*
+- Add the API key to your project in `config.properties` with names of variables *gemini.api.key* and *API_URL*
 - Ensure microphone access is enabled on your device (for STT).
--(Linux) Make sure any required audio libraries are installed for TTS/STT functionality.
+- (Linux) Make sure any required audio libraries are installed for TTS/STT functionality.
 
 4. **Set up a Python environment for TTS and STT:**
 
